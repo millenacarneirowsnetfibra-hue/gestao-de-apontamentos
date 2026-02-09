@@ -523,6 +523,12 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .alert-success {
@@ -690,7 +696,6 @@
                                 </tr>
                             </thead>
                             <tbody id="atividades-table-body">
-                                <!-- Atividades serão carregadas aqui via Firebase -->
                                 <tr>
                                     <td colspan="5" class="loading">
                                         <div class="loading-spinner"></div>
@@ -1020,6 +1025,11 @@
             multas: 'multas'
         };
 
+        // Dados em cache para selects
+        let empresasCache = [];
+        let departamentosCache = [];
+        let colaboradoresCache = [];
+
         // Inicializar a aplicação
         document.addEventListener('DOMContentLoaded', async function() {
             // Verificar se Firebase está disponível
@@ -1037,11 +1047,11 @@
             // Testar conexão com Firebase
             await testFirebaseConnection();
             
-            // Configurar listeners em tempo real
-            setupRealtimeListeners();
-            
             // Carregar dados iniciais
             await loadInitialData();
+            
+            // Configurar listeners em tempo real APÓS carregar dados iniciais
+            setupRealtimeListeners();
         });
 
         // Testar conexão com Firebase
@@ -1087,17 +1097,20 @@
                 unsubscribeListeners[section] = firebase.onSnapshot(
                     firebase.collection(firebase.db, collectionName),
                     (snapshot) => {
-                        console.log(`Dados atualizados em tempo real para ${section}`);
-                        // Atualizar tabela correspondente
-                        updateTableFromSnapshot(section, snapshot);
+                        console.log(`🔥 Dados atualizados em tempo real para ${section}:`, snapshot.size, 'documentos');
                         
-                        // Atualizar dashboard se necessário
+                        // Atualizar cache para selects
+                        updateCache(section, snapshot);
+                        
+                        // Atualizar tabela se estiver visível
+                        if (currentSection === section || section === 'dashboard') {
+                            updateTableFromSnapshot(section, snapshot);
+                        }
+                        
+                        // Atualizar dashboard
                         if (section === 'dashboard' || currentSection === 'dashboard') {
                             updateDashboardCounts();
                         }
-                        
-                        // Atualizar selects se necessário
-                        updateSelectOptions();
                     },
                     (error) => {
                         console.error(`Erro no listener em tempo real para ${section}:`, error);
@@ -1106,15 +1119,35 @@
             });
         }
 
+        // Atualizar cache
+        function updateCache(section, snapshot) {
+            const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            if (section === 'empresas') {
+                empresasCache = docs;
+            } else if (section === 'departamentos') {
+                departamentosCache = docs;
+            } else if (section === 'colaboradores') {
+                colaboradoresCache = docs;
+            }
+        }
+
         // Atualizar tabela a partir de snapshot
         function updateTableFromSnapshot(section, snapshot) {
+            console.log(`📊 Atualizando tabela ${section} com ${snapshot.size} documentos`);
+            
             const tableBody = document.getElementById(`${section}-table-body`);
-            if (!tableBody) return;
+            if (!tableBody) {
+                console.error(`Tabela não encontrada: ${section}-table-body`);
+                return;
+            }
             
             if (snapshot.empty) {
+                console.log(`📭 Coleção ${section} está vazia`);
+                const colCount = getColumnCount(section);
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="4">
+                        <td colspan="${colCount}">
                             Nenhum registro encontrado. Clique em "Adicionar" para criar o primeiro.
                         </td>
                     </tr>
@@ -1123,12 +1156,15 @@
             }
             
             // Converter snapshot para array de documentos
-            const docs = snapshot.docs;
-            updateTable(section, docs);
+            const docs = Array.from(snapshot.docs);
+            console.log(`✅ Renderizando ${docs.length} documentos na tabela ${section}`);
+            
+            // Atualizar tabela
+            renderTable(section, docs);
             
             // Se for a seção atual, mostrar mensagem de sucesso
             if (section === currentSection) {
-                showAlert(`Dados de ${section} atualizados em tempo real!`, 'success', `${section}-alert`);
+                showAlert(`Dados atualizados: ${docs.length} registros`, 'success', `${section}-alert`);
             }
         }
 
@@ -1157,7 +1193,7 @@
                     // Atualizar seção atual
                     currentSection = targetSection;
                     
-                    // Carregar dados da seção
+                    // Carregar dados da seção se não estiver carregada
                     if (targetSection !== 'dashboard') {
                         loadTableData(targetSection);
                     }
@@ -1221,6 +1257,8 @@
         // Carregar dados iniciais
         async function loadInitialData() {
             try {
+                console.log('📥 Carregando dados iniciais...');
+                
                 // Carregar dados do dashboard
                 await loadDashboardData();
                 
@@ -1229,8 +1267,10 @@
                     await loadTableData(section);
                 }
                 
+                console.log('✅ Dados iniciais carregados com sucesso!');
+                
             } catch (error) {
-                console.error('Erro ao carregar dados iniciais:', error);
+                console.error('❌ Erro ao carregar dados iniciais:', error);
             }
         }
 
@@ -1390,8 +1430,10 @@
             if (!tableBody) return;
             
             try {
+                console.log(`📥 Carregando dados de ${section}...`);
+                
                 // Mostrar loading
-                let colCount = getColumnCount(section);
+                const colCount = getColumnCount(section);
                 
                 tableBody.innerHTML = `
                     <tr>
@@ -1404,11 +1446,17 @@
                 const collectionName = collections[section];
                 const snapshot = await firebase.getDocs(firebase.collection(firebase.db, collectionName));
                 
-                updateTableFromSnapshot(section, snapshot);
+                console.log(`✅ ${section}: ${snapshot.size} documentos carregados`);
+                
+                // Atualizar cache
+                updateCache(section, snapshot);
+                
+                // Renderizar tabela
+                renderTable(section, snapshot.docs);
                 
             } catch (error) {
-                console.error(`Erro ao carregar dados de ${section}:`, error);
-                let colCount = getColumnCount(section);
+                console.error(`❌ Erro ao carregar dados de ${section}:`, error);
+                const colCount = getColumnCount(section);
                 
                 tableBody.innerHTML = `
                     <tr>
@@ -1435,10 +1483,26 @@
             return counts[section] || 4;
         }
 
-        // Atualizar tabela com dados do Firebase
-        function updateTable(section, docs) {
+        // Renderizar tabela
+        function renderTable(section, docs) {
             const tableBody = document.getElementById(`${section}-table-body`);
+            if (!tableBody) return;
+            
+            console.log(`🎨 Renderizando ${docs.length} itens na tabela ${section}`);
+            
             tableBody.innerHTML = '';
+            
+            if (docs.length === 0) {
+                const colCount = getColumnCount(section);
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="${colCount}">
+                            Nenhum registro encontrado. Clique em "Adicionar" para criar o primeiro.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
             
             docs.forEach((docSnapshot, index) => {
                 const data = docSnapshot.data();
@@ -1451,7 +1515,7 @@
                     const dataCadastro = data.dataCadastro || data.createdAt || new Date().toISOString();
                     row.innerHTML = `
                         <td>${index + 1}</td>
-                        <td>${data.nome || ''}</td>
+                        <td><strong>${data.nome || 'Sem nome'}</strong></td>
                         <td>${formatDate(dataCadastro)}</td>
                         <td>
                             <div class="action-buttons">
@@ -1463,9 +1527,9 @@
                 } else if (section === 'departamentos') {
                     row.innerHTML = `
                         <td>${index + 1}</td>
-                        <td>${data.nome || ''}</td>
-                        <td>${data.empresa || ''}</td>
-                        <td>${data.responsavel || ''}</td>
+                        <td><strong>${data.nome || 'Sem nome'}</strong></td>
+                        <td>${data.empresa || 'Não especificado'}</td>
+                        <td>${data.responsavel || 'Não especificado'}</td>
                         <td><span class="status ${data.status === 'Ativo' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
@@ -1477,10 +1541,10 @@
                 } else if (section === 'colaboradores') {
                     row.innerHTML = `
                         <td>${index + 1}</td>
-                        <td>${data.nome || ''}</td>
-                        <td>${data.cargo || ''}</td>
-                        <td>${data.departamento || ''}</td>
-                        <td>${formatDate(data.dataAdmissao) || ''}</td>
+                        <td><strong>${data.nome || 'Sem nome'}</strong></td>
+                        <td>${data.cargo || 'Não especificado'}</td>
+                        <td>${data.departamento || 'Não especificado'}</td>
+                        <td>${formatDate(data.dataAdmissao) || 'Não especificada'}</td>
                         <td><span class="status ${data.status === 'Ativo' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
@@ -1492,11 +1556,11 @@
                 } else if (section === 'advertencias') {
                     row.innerHTML = `
                         <td>${index + 1}</td>
-                        <td>${data.colaborador || ''}</td>
-                        <td>${formatDate(data.data) || ''}</td>
-                        <td>${data.tipo || ''}</td>
-                        <td>${data.gravidade || ''}</td>
-                        <td>${data.descricao ? (data.descricao.substring(0, 30) + '...') : ''}</td>
+                        <td>${data.colaborador || 'Não especificado'}</td>
+                        <td>${formatDate(data.data) || 'Não especificada'}</td>
+                        <td>${data.tipo || 'Não especificado'}</td>
+                        <td>${data.gravidade || 'Não especificada'}</td>
+                        <td>${data.descricao ? (data.descricao.substring(0, 30) + '...') : 'Sem descrição'}</td>
                         <td><span class="status ${data.status === 'Ativa' ? 'status-warning' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
@@ -1508,11 +1572,11 @@
                 } else if (section === 'danos') {
                     row.innerHTML = `
                         <td>${index + 1}</td>
-                        <td>${data.item || ''}</td>
-                        <td>${data.colaborador || ''}</td>
-                        <td>${formatDate(data.data) || ''}</td>
+                        <td>${data.item || 'Não especificado'}</td>
+                        <td>${data.colaborador || 'Não especificado'}</td>
+                        <td>${formatDate(data.data) || 'Não especificada'}</td>
                         <td>${data.valor ? 'R$ ' + parseFloat(data.valor).toFixed(2) : 'R$ 0,00'}</td>
-                        <td>${data.descricao ? (data.descricao.substring(0, 30) + '...') : ''}</td>
+                        <td>${data.descricao ? (data.descricao.substring(0, 30) + '...') : 'Sem descrição'}</td>
                         <td><span class="status ${data.status === 'Resolvido' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
@@ -1524,9 +1588,9 @@
                 } else if (section === 'faltas') {
                     row.innerHTML = `
                         <td>${index + 1}</td>
-                        <td>${data.colaborador || ''}</td>
-                        <td>${formatDate(data.data) || ''}</td>
-                        <td>${data.tipo || ''}</td>
+                        <td>${data.colaborador || 'Não especificado'}</td>
+                        <td>${formatDate(data.data) || 'Não especificada'}</td>
+                        <td>${data.tipo || 'Não especificado'}</td>
                         <td>${data.justificativa ? (data.justificativa.substring(0, 30) + '...') : 'Nenhuma'}</td>
                         <td><span class="status ${data.status === 'Aprovada' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
@@ -1539,11 +1603,11 @@
                 } else if (section === 'feedbacks') {
                     row.innerHTML = `
                         <td>${index + 1}</td>
-                        <td>${data.colaborador || ''}</td>
-                        <td>${formatDate(data.data) || ''}</td>
-                        <td>${data.tipo || ''}</td>
-                        <td>${data.avaliacao || ''}</td>
-                        <td>${data.descricao ? (data.descricao.substring(0, 30) + '...') : ''}</td>
+                        <td>${data.colaborador || 'Não especificado'}</td>
+                        <td>${formatDate(data.data) || 'Não especificada'}</td>
+                        <td>${data.tipo || 'Não especificado'}</td>
+                        <td>${data.avaliacao || 'Não avaliado'}</td>
+                        <td>${data.descricao ? (data.descricao.substring(0, 30) + '...') : 'Sem descrição'}</td>
                         <td>
                             <div class="action-buttons">
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${docId}')"><i class="fas fa-edit"></i></button>
@@ -1554,10 +1618,10 @@
                 } else if (section === 'multas') {
                     row.innerHTML = `
                         <td>${index + 1}</td>
-                        <td>${data.colaborador || ''}</td>
-                        <td>${formatDate(data.data) || ''}</td>
+                        <td>${data.colaborador || 'Não especificado'}</td>
+                        <td>${formatDate(data.data) || 'Não especificada'}</td>
                         <td>${data.valor ? 'R$ ' + parseFloat(data.valor).toFixed(2) : 'R$ 0,00'}</td>
-                        <td>${data.motivo ? (data.motivo.substring(0, 30) + '...') : ''}</td>
+                        <td>${data.motivo ? (data.motivo.substring(0, 30) + '...') : 'Sem motivo'}</td>
                         <td><span class="status ${data.status === 'Paga' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
@@ -1570,6 +1634,8 @@
                 
                 tableBody.appendChild(row);
             });
+            
+            console.log(`✅ Tabela ${section} renderizada com sucesso!`);
         }
 
         // Abrir modal com formulário
@@ -1622,7 +1688,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="nome">Nome do Departamento *</label>
-                            <input type="text" id="nome" class="form-control" required>
+                            <input type="text" id="nome" class="form-control" placeholder="Ex: Recursos Humanos" required>
                         </div>
                         <div class="form-group">
                             <label for="empresa">Empresa *</label>
@@ -1634,7 +1700,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="responsavel">Responsável</label>
-                            <input type="text" id="responsavel" class="form-control">
+                            <input type="text" id="responsavel" class="form-control" placeholder="Nome do responsável">
                         </div>
                         <div class="form-group">
                             <label for="status">Status</label>
@@ -1650,11 +1716,11 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="nome">Nome Completo *</label>
-                            <input type="text" id="nome" class="form-control" required>
+                            <input type="text" id="nome" class="form-control" placeholder="Ex: João Silva" required>
                         </div>
                         <div class="form-group">
                             <label for="cargo">Cargo *</label>
-                            <input type="text" id="cargo" class="form-control" required>
+                            <input type="text" id="cargo" class="form-control" placeholder="Ex: Analista de RH" required>
                         </div>
                     </div>
                     <div class="form-row">
@@ -1715,7 +1781,7 @@
                     <div class="form-row">
                         <div class="form-group" style="flex: 100%;">
                             <label for="descricao">Descrição *</label>
-                            <textarea id="descricao" class="form-control" required></textarea>
+                            <textarea id="descricao" class="form-control" placeholder="Descreva a advertência..." required></textarea>
                         </div>
                     </div>
                     <div class="form-row">
@@ -1733,7 +1799,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="item">Item Danificado *</label>
-                            <input type="text" id="item" class="form-control" required>
+                            <input type="text" id="item" class="form-control" placeholder="Ex: Notebook Dell" required>
                         </div>
                         <div class="form-group">
                             <label for="colaborador">Colaborador *</label>
@@ -1749,13 +1815,13 @@
                         </div>
                         <div class="form-group">
                             <label for="valor">Valor do Dano (R$) *</label>
-                            <input type="number" id="valor" class="form-control" step="0.01" min="0" required>
+                            <input type="number" id="valor" class="form-control" step="0.01" min="0" placeholder="0.00" required>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group" style="flex: 100%;">
                             <label for="descricao">Descrição *</label>
-                            <textarea id="descricao" class="form-control" required></textarea>
+                            <textarea id="descricao" class="form-control" placeholder="Descreva o dano/avaria..." required></textarea>
                         </div>
                     </div>
                     <div class="form-row">
@@ -1792,7 +1858,7 @@
                         </div>
                         <div class="form-group">
                             <label for="justificativa">Justificativa</label>
-                            <textarea id="justificativa" class="form-control"></textarea>
+                            <textarea id="justificativa" class="form-control" placeholder="Caso a falta seja justificada..."></textarea>
                         </div>
                     </div>
                     <div class="form-row">
@@ -1843,7 +1909,7 @@
                     <div class="form-row">
                         <div class="form-group" style="flex: 100%;">
                             <label for="descricao">Descrição *</label>
-                            <textarea id="descricao" class="form-control" required></textarea>
+                            <textarea id="descricao" class="form-control" placeholder="Descreva o feedback..." required></textarea>
                         </div>
                     </div>
                 `;
@@ -1864,11 +1930,11 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="valor">Valor (R$) *</label>
-                            <input type="number" id="valor" class="form-control" step="0.01" min="0" required>
+                            <input type="number" id="valor" class="form-control" step="0.01" min="0" placeholder="0.00" required>
                         </div>
                         <div class="form-group">
                             <label for="motivo">Motivo *</label>
-                            <input type="text" id="motivo" class="form-control" required>
+                            <input type="text" id="motivo" class="form-control" placeholder="Ex: Estacionamento irregular" required>
                         </div>
                     </div>
                     <div class="form-row">
@@ -1885,8 +1951,8 @@
             
             modalForm.innerHTML = formHTML;
             
-            // Carregar dados para selects
-            loadSelectOptions(action);
+            // Carregar dados para selects do CACHE
+            loadSelectOptionsFromCache(action);
             
             // Preencher formulário se estiver no modo de edição
             if (mode === 'edit' && id) {
@@ -1894,70 +1960,54 @@
             }
         }
 
-        // Atualizar opções dos selects
-        async function updateSelectOptions() {
-            // Esta função é chamada pelos listeners em tempo real
-            // para atualizar os selects quando os dados mudam
-        }
-
-        // Carregar opções para selects
-        async function loadSelectOptions(action) {
-            try {
-                if (action === 'add-departamento') {
-                    // Carregar empresas para select
-                    const empresasSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'empresas'));
-                    const empresasSelect = document.getElementById('empresa');
-                    
-                    if (empresasSelect && empresasSnapshot) {
-                        empresasSelect.innerHTML = '<option value="">Selecione uma empresa</option>';
-                        empresasSnapshot.docs.forEach(doc => {
-                            const data = doc.data();
-                            const option = document.createElement('option');
-                            option.value = data.nome;
-                            option.textContent = data.nome;
-                            empresasSelect.appendChild(option);
-                        });
-                    }
-                }
+        // Carregar opções para selects do cache
+        function loadSelectOptionsFromCache(action) {
+            if (action === 'add-departamento') {
+                // Carregar empresas para select do cache
+                const empresasSelect = document.getElementById('empresa');
                 
-                if (action === 'add-colaborador') {
-                    // Carregar departamentos para select
-                    const departamentosSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'departamentos'));
-                    const departamentosSelect = document.getElementById('departamento');
-                    
-                    if (departamentosSelect && departamentosSnapshot) {
-                        departamentosSelect.innerHTML = '<option value="">Selecione um departamento</option>';
-                        departamentosSnapshot.docs.forEach(doc => {
-                            const data = doc.data();
-                            const option = document.createElement('option');
-                            option.value = data.nome;
-                            option.textContent = data.nome;
-                            departamentosSelect.appendChild(option);
-                        });
-                    }
+                if (empresasSelect) {
+                    empresasSelect.innerHTML = '<option value="">Selecione uma empresa</option>';
+                    empresasCache.forEach(empresa => {
+                        const option = document.createElement('option');
+                        option.value = empresa.nome;
+                        option.textContent = empresa.nome;
+                        empresasSelect.appendChild(option);
+                    });
                 }
+            }
+            
+            if (action === 'add-colaborador') {
+                // Carregar departamentos para select do cache
+                const departamentosSelect = document.getElementById('departamento');
                 
-                if (action === 'add-advertencia' || action === 'add-dano' || 
-                    action === 'add-falta' || action === 'add-feedback' || 
-                    action === 'add-multa') {
-                    
-                    // Carregar colaboradores para select
-                    const colaboradoresSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'colaboradores'));
-                    const colaboradorSelect = document.getElementById('colaborador');
-                    
-                    if (colaboradorSelect && colaboradoresSnapshot) {
-                        colaboradorSelect.innerHTML = '<option value="">Selecione um colaborador</option>';
-                        colaboradoresSnapshot.docs.forEach(doc => {
-                            const data = doc.data();
-                            const option = document.createElement('option');
-                            option.value = data.nome;
-                            option.textContent = data.nome;
-                            colaboradorSelect.appendChild(option);
-                        });
-                    }
+                if (departamentosSelect) {
+                    departamentosSelect.innerHTML = '<option value="">Selecione um departamento</option>';
+                    departamentosCache.forEach(departamento => {
+                        const option = document.createElement('option');
+                        option.value = departamento.nome;
+                        option.textContent = departamento.nome;
+                        departamentosSelect.appendChild(option);
+                    });
                 }
-            } catch (error) {
-                console.error('Erro ao carregar opções para selects:', error);
+            }
+            
+            if (action === 'add-advertencia' || action === 'add-dano' || 
+                action === 'add-falta' || action === 'add-feedback' || 
+                action === 'add-multa') {
+                
+                // Carregar colaboradores para select do cache
+                const colaboradorSelect = document.getElementById('colaborador');
+                
+                if (colaboradorSelect) {
+                    colaboradorSelect.innerHTML = '<option value="">Selecione um colaborador</option>';
+                    colaboradoresCache.forEach(colaborador => {
+                        const option = document.createElement('option');
+                        option.value = colaborador.nome;
+                        option.textContent = colaborador.nome;
+                        colaboradorSelect.appendChild(option);
+                    });
+                }
             }
         }
 
@@ -2009,10 +2059,7 @@
             try {
                 // Coletar dados do formulário
                 const formData = getFormData();
-                console.log('Dados do formulário:', formData);
-                console.log('Coleção:', currentCollection);
-                console.log('Ação:', currentAction);
-                console.log('ID do item:', currentItemId);
+                console.log('💾 Salvando dados no Firebase:', formData);
                 
                 // Adicionar timestamp para empresas
                 if (currentCollection === 'empresas') {
@@ -2026,21 +2073,28 @@
                 
                 if (currentAction === 'add') {
                     // Adicionar novo documento
-                    console.log('Tentando adicionar documento...');
+                    console.log(`➕ Adicionando novo documento na coleção: ${currentCollection}`);
                     const docRef = await firebase.addDoc(
                         firebase.collection(firebase.db, currentCollection),
                         formData
                     );
                     
-                    console.log('Documento adicionado com ID:', docRef.id);
+                    console.log('✅ Documento adicionado com ID:', docRef.id);
                     showAlert('Item adicionado com sucesso!', 'success', `${currentSection}-alert`);
+                    
+                    // Forçar atualização da tabela atual
+                    if (currentSection && unsubscribeListeners[currentSection]) {
+                        const snapshot = await firebase.getDocs(firebase.collection(firebase.db, collections[currentSection]));
+                        updateTableFromSnapshot(currentSection, snapshot);
+                    }
+                    
                 } else if (currentAction === 'edit' && currentItemId) {
                     // Atualizar documento existente
-                    console.log('Tentando atualizar documento:', currentItemId);
+                    console.log(`✏️ Atualizando documento ${currentItemId} na coleção: ${currentCollection}`);
                     const docRef = firebase.doc(firebase.db, currentCollection, currentItemId);
                     await firebase.updateDoc(docRef, formData);
                     
-                    console.log('Documento atualizado');
+                    console.log('✅ Documento atualizado');
                     showAlert('Item atualizado com sucesso!', 'success', `${currentSection}-alert`);
                 }
                 
@@ -2048,10 +2102,9 @@
                 closeModal();
                 
             } catch (error) {
-                console.error('Erro completo ao salvar dados:', error);
+                console.error('❌ Erro completo ao salvar dados:', error);
                 console.error('Código do erro:', error.code);
                 console.error('Mensagem do erro:', error.message);
-                console.error('Stack trace:', error.stack);
                 
                 // Mensagens de erro específicas
                 if (error.code === 'permission-denied') {
@@ -2107,6 +2160,7 @@
             if (confirm('Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.')) {
                 try {
                     const collectionName = collections[section];
+                    console.log(`🗑️ Excluindo documento ${id} da coleção ${collectionName}`);
                     await firebase.deleteDoc(firebase.doc(firebase.db, collectionName, id));
                     
                     showAlert('Item excluído com sucesso!', 'success', `${section}-alert`);
