@@ -987,22 +987,57 @@
                         <h3 class="section-title">Faltas</h3>
                         <button class="btn btn-primary" id="add-falta-btn">Registrar Falta</button>
                     </div>
+                    
+                    <!-- FILTROS PARA FALTAS -->
+                    <div class="filters-container">
+                        <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-nome-falta">Nome do Colaborador</label>
+                                <input type="text" id="filtro-nome-falta" class="filter-input" placeholder="Digite o nome...">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-departamento-falta">Departamento</label>
+                                <select id="filtro-departamento-falta" class="filter-input">
+                                    <option value="">Todos os departamentos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-data-inicio-falta">Data Início</label>
+                                <input type="date" id="filtro-data-inicio-falta" class="filter-input">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-data-fim-falta">Data Fim</label>
+                                <input type="date" id="filtro-data-fim-falta" class="filter-input">
+                            </div>
+                        </div>
+                        <div class="filter-buttons">
+                            <button class="btn btn-primary" id="aplicar-filtros-falta">
+                                <i class="fas fa-search"></i> Aplicar Filtros
+                            </button>
+                            <button class="btn btn-secondary" id="limpar-filtros-falta">
+                                <i class="fas fa-times"></i> Limpar Filtros
+                            </button>
+                        </div>
+                    </div>
+                    
                     <div id="faltas-alert"></div>
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Colaborador</th>
+                                    <th>Departamento</th>
                                     <th>Data</th>
-                                    <th>Tipo</th>
                                     <th>Justificativa</th>
-                                    <th>Status</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="faltas-table-body">
                                 <tr>
-                                    <td colspan="6" class="loading">
+                                    <td colspan="5" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -1122,6 +1157,14 @@
         
         // Filtros atuais para advertências
         let advertenciasFiltroAtual = {
+            nome: '',
+            departamento: '',
+            dataInicio: '',
+            dataFim: ''
+        };
+        
+        // Filtros atuais para faltas
+        let faltasFiltroAtual = {
             nome: '',
             departamento: '',
             dataInicio: '',
@@ -1324,8 +1367,11 @@
             tableBody.innerHTML = '';
             let docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             
+            // Aplicar filtros conforme a seção
             if (section === 'advertencias') {
                 docs = applyAdvertenciasFilters(docs);
+            } else if (section === 'faltas') {
+                docs = applyFaltasFilters(docs);
             }
             
             if (docs.length === 0) {
@@ -1421,12 +1467,14 @@
                         </td>
                     `;
                 } else if (section === 'faltas') {
+                    const colaboradorInfo = colaboradoresData.find(c => c.nome === data.colaborador);
+                    const departamento = colaboradorInfo ? colaboradorInfo.departamento : 'Não especificado';
+                    
                     row.innerHTML = `
                         <td>${data.colaborador || 'Não especificado'}</td>
+                        <td>${departamento}</td>
                         <td>${formatDateExactly(data.data) || 'Não especificada'}</td>
-                        <td>${data.tipo || 'Não especificado'}</td>
                         <td>${data.justificativa ? (data.justificativa.substring(0, 30) + '...') : 'Nenhuma'}</td>
-                        <td><span class="status ${data.status === 'Aprovada' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
@@ -1513,6 +1561,48 @@
                         const dataFim = new Date(advertenciasFiltroAtual.dataFim);
                         dataFim.setHours(23, 59, 59, 999);
                         if (dataAdvertencia > dataFim) return false;
+                    }
+                    
+                    return true;
+                });
+            }
+            
+            return filtered;
+        }
+
+        // Aplicar filtros às faltas
+        function applyFaltasFilters(docs) {
+            let filtered = [...docs];
+            
+            if (faltasFiltroAtual.nome) {
+                const termo = faltasFiltroAtual.nome.toLowerCase();
+                filtered = filtered.filter(item => 
+                    item.colaborador && item.colaborador.toLowerCase().includes(termo)
+                );
+            }
+            
+            if (faltasFiltroAtual.departamento) {
+                filtered = filtered.filter(item => {
+                    const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
+                    return colaboradorInfo && colaboradorInfo.departamento === faltasFiltroAtual.departamento;
+                });
+            }
+            
+            if (faltasFiltroAtual.dataInicio || faltasFiltroAtual.dataFim) {
+                filtered = filtered.filter(item => {
+                    if (!item.data) return false;
+                    
+                    const dataFalta = parseDateExactly(item.data);
+                    
+                    if (faltasFiltroAtual.dataInicio) {
+                        const dataInicio = new Date(faltasFiltroAtual.dataInicio);
+                        if (dataFalta < dataInicio) return false;
+                    }
+                    
+                    if (faltasFiltroAtual.dataFim) {
+                        const dataFim = new Date(faltasFiltroAtual.dataFim);
+                        dataFim.setHours(23, 59, 59, 999);
+                        if (dataFalta > dataFim) return false;
                     }
                     
                     return true;
@@ -1732,7 +1822,7 @@
             }
         }
 
-        // FORMULÁRIO PARA FALTAS - ATUALIZADO (com colaboradores pré-carregados)
+        // FORMULÁRIO PARA FALTAS - ATUALIZADO (SIMPLIFICADO)
         function loadFaltaForm(mode = 'add', id = null) {
             let formHTML = `
                 <div class="form-row">
@@ -1745,26 +1835,6 @@
                     <div class="form-group">
                         <label for="data">Data da Falta *</label>
                         <input type="date" id="data" class="form-control" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="tipo">Tipo de Falta *</label>
-                        <select id="tipo" class="form-control" required>
-                            <option value="">Selecione o tipo</option>
-                            <option value="Justificada">Justificada</option>
-                            <option value="Não Justificada">Não Justificada</option>
-                            <option value="Atestado">Atestado</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="status">Status *</label>
-                        <select id="status" class="form-control" required>
-                            <option value="">Selecione o status</option>
-                            <option value="Pendente">Pendente</option>
-                            <option value="Aprovada">Aprovada</option>
-                            <option value="Rejeitada">Rejeitada</option>
-                        </select>
                     </div>
                 </div>
                 <div class="form-row">
@@ -2177,7 +2247,7 @@
             }
         }
 
-        // SALVAR FALTA - ATUALIZADO
+        // SALVAR FALTA - ATUALIZADO (SIMPLIFICADO)
         async function saveFalta(formData, mode, id) {
             try {
                 const collectionName = 'faltas';
@@ -2191,20 +2261,10 @@
                     throw new Error('Selecione a data da falta');
                 }
                 
-                if (!formData.tipo || formData.tipo === '') {
-                    throw new Error('Selecione o tipo de falta');
-                }
-                
-                if (!formData.status || formData.status === '') {
-                    throw new Error('Selecione o status da falta');
-                }
-                
                 const faltaData = {
                     colaborador: formData.colaborador,
                     data: formData.data, // Data exata como foi selecionada
-                    tipo: formData.tipo,
                     justificativa: formData.justificativa || '',
-                    status: formData.status,
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
                 };
@@ -2409,14 +2469,6 @@
                     alert('Por favor, selecione a data da falta.');
                     return;
                 }
-                if (!formData.tipo || formData.tipo === '') {
-                    alert('Por favor, selecione o tipo de falta.');
-                    return;
-                }
-                if (!formData.status || formData.status === '') {
-                    alert('Por favor, selecione o status da falta.');
-                    return;
-                }
             }
             
             if (currentSection === 'multas') {
@@ -2508,6 +2560,49 @@
             showAlert('Filtros limpos com sucesso!', 'success', 'advertencias-alert');
         }
 
+        // Aplicar filtros de faltas
+        function aplicarFiltrosFaltas() {
+            faltasFiltroAtual.nome = document.getElementById('filtro-nome-falta').value;
+            faltasFiltroAtual.departamento = document.getElementById('filtro-departamento-falta').value;
+            faltasFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio-falta').value;
+            faltasFiltroAtual.dataFim = document.getElementById('filtro-data-fim-falta').value;
+            
+            if (unsubscribeListeners.faltas) {
+                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
+                const snapshot = unsubscribeListeners.faltas._snapshot;
+                if (snapshot) {
+                    updateTableFromSnapshot('faltas', snapshot);
+                }
+            }
+            
+            showAlert('Filtros aplicados com sucesso!', 'success', 'faltas-alert');
+        }
+
+        // Limpar filtros de faltas
+        function limparFiltrosFaltas() {
+            document.getElementById('filtro-nome-falta').value = '';
+            document.getElementById('filtro-departamento-falta').value = '';
+            document.getElementById('filtro-data-inicio-falta').value = '';
+            document.getElementById('filtro-data-fim-falta').value = '';
+            
+            faltasFiltroAtual = {
+                nome: '',
+                departamento: '',
+                dataInicio: '',
+                dataFim: ''
+            };
+            
+            if (unsubscribeListeners.faltas) {
+                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
+                const snapshot = unsubscribeListeners.faltas._snapshot;
+                if (snapshot) {
+                    updateTableFromSnapshot('faltas', snapshot);
+                }
+            }
+            
+            showAlert('Filtros limpos com sucesso!', 'success', 'faltas-alert');
+        }
+
         // Configurar eventos
         function setupEventListeners() {
             // Navegação
@@ -2536,8 +2631,23 @@
                     };
                     document.getElementById('page-title').textContent = titles[targetSection] || 'Dashboard';
                     
+                    // Popular filtros quando acessar a seção
                     if (targetSection === 'advertencias') {
                         const departamentoSelect = document.getElementById('filtro-departamento');
+                        if (departamentoSelect) {
+                            departamentoSelect.innerHTML = '<option value="">Todos os departamentos</option>';
+                            const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome))];
+                            departamentosUnicos.forEach(depto => {
+                                const option = document.createElement('option');
+                                option.value = depto;
+                                option.textContent = depto;
+                                departamentoSelect.appendChild(option);
+                            });
+                        }
+                    }
+                    
+                    if (targetSection === 'faltas') {
+                        const departamentoSelect = document.getElementById('filtro-departamento-falta');
                         if (departamentoSelect) {
                             departamentoSelect.innerHTML = '<option value="">Todos os departamentos</option>';
                             const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome))];
@@ -2570,6 +2680,10 @@
             // Filtros de advertências
             document.getElementById('aplicar-filtros').addEventListener('click', aplicarFiltrosAdvertencias);
             document.getElementById('limpar-filtros').addEventListener('click', limparFiltrosAdvertencias);
+            
+            // Filtros de faltas
+            document.getElementById('aplicar-filtros-falta').addEventListener('click', aplicarFiltrosFaltas);
+            document.getElementById('limpar-filtros-falta').addEventListener('click', limparFiltrosFaltas);
             
             // Fechar modal ao clicar fora
             document.getElementById('modal').addEventListener('click', function(e) {
