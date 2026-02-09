@@ -18,7 +18,9 @@
             updateDoc, 
             deleteDoc, 
             onSnapshot,
-            setDoc 
+            setDoc,
+            query,
+            where 
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -43,7 +45,9 @@
                 updateDoc,
                 deleteDoc,
                 onSnapshot,
-                setDoc
+                setDoc,
+                query,
+                where
             }
         };
         
@@ -283,6 +287,70 @@
             font-size: 1.3rem;
             color: var(--primary-color);
             font-weight: 600;
+        }
+
+        /* Filtros */
+        .filters-container {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+        }
+
+        .filters-title {
+            font-size: 1rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filters-title i {
+            color: var(--secondary-color);
+        }
+
+        .filters-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+            font-size: 0.9rem;
+        }
+
+        .filter-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: border 0.3s ease;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
         }
 
         .btn {
@@ -605,6 +673,14 @@
                 align-items: flex-start;
                 gap: 15px;
             }
+
+            .filters-row {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                min-width: 100%;
+            }
         }
     </style>
 </head>
@@ -813,23 +889,58 @@
                         <h3 class="section-title">Advertências</h3>
                         <button class="btn btn-primary" id="add-advertencia-btn">Adicionar Advertência</button>
                     </div>
+                    
+                    <!-- Filtros -->
+                    <div class="filters-container">
+                        <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-nome">Nome do Colaborador</label>
+                                <input type="text" id="filtro-nome" class="filter-input" placeholder="Digite o nome...">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-departamento">Departamento</label>
+                                <select id="filtro-departamento" class="filter-input">
+                                    <option value="">Todos os departamentos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-data-inicio">Data Início</label>
+                                <input type="date" id="filtro-data-inicio" class="filter-input">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-data-fim">Data Fim</label>
+                                <input type="date" id="filtro-data-fim" class="filter-input">
+                            </div>
+                        </div>
+                        <div class="filter-buttons">
+                            <button class="btn btn-primary" id="aplicar-filtros">
+                                <i class="fas fa-search"></i> Aplicar Filtros
+                            </button>
+                            <button class="btn btn-secondary" id="limpar-filtros">
+                                <i class="fas fa-times"></i> Limpar Filtros
+                            </button>
+                        </div>
+                    </div>
+                    
                     <div id="advertencias-alert"></div>
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Colaborador</th>
+                                    <th>Departamento</th>
                                     <th>Data</th>
-                                    <th>Tipo</th>
                                     <th>Motivo</th>
                                     <th>Observação</th>
-                                    <th>Status</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="advertencias-table-body">
                                 <tr>
-                                    <td colspan="7" class="loading">
+                                    <td colspan="6" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -1011,6 +1122,14 @@
         let currentItemId = null;
         let currentCollection = null;
         let unsubscribeListeners = {};
+        
+        // Filtros atuais para advertências
+        let advertenciasFiltroAtual = {
+            nome: '',
+            departamento: '',
+            dataInicio: '',
+            dataFim: ''
+        };
 
         // Elementos DOM
         const firebaseStatus = document.getElementById('firebase-status');
@@ -1184,8 +1303,8 @@
             }
         }
 
-        // Carregar dados da tabela
-        async function loadTableData(section) {
+        // Carregar dados da tabela com filtros (apenas para advertências)
+        async function loadTableData(section, filters = null) {
             const tableBody = document.getElementById(`${section}-table-body`);
             if (!tableBody) return;
             
@@ -1193,11 +1312,18 @@
                 tableBody.innerHTML = '<tr><td colspan="6" class="loading"><div class="loading-spinner"></div></td></tr>';
                 
                 const collectionName = collections[section];
-                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
-                const snapshot = await firebaseApp.firestore.getDocs(collectionRef);
+                let query = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                
+                // Aplicar filtros apenas para advertências
+                if (section === 'advertencias' && filters) {
+                    // Aqui você pode adicionar filtros específicos se necessário
+                    // Por enquanto carregamos tudo e filtramos client-side
+                }
+                
+                const snapshot = await firebaseApp.firestore.getDocs(query);
                 
                 console.log(`${section}: ${snapshot.size} documentos carregados`);
-                updateTableFromSnapshot(section, snapshot);
+                updateTableFromSnapshot(section, snapshot, filters);
                 updateCache(section, snapshot);
                 
             } catch (error) {
@@ -1209,8 +1335,8 @@
             }
         }
 
-        // Atualizar tabela com snapshot
-        function updateTableFromSnapshot(section, snapshot) {
+        // Atualizar tabela com snapshot e filtros
+        function updateTableFromSnapshot(section, snapshot, filters = null) {
             const tableBody = document.getElementById(`${section}-table-body`);
             if (!tableBody) return;
             
@@ -1220,10 +1346,19 @@
             }
             
             tableBody.innerHTML = '';
-            const docs = snapshot.docs;
+            let docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             
-            docs.forEach((doc, index) => {
-                const data = doc.data();
+            // Aplicar filtros para advertências
+            if (section === 'advertencias') {
+                docs = applyAdvertenciasFilters(docs);
+            }
+            
+            if (docs.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6">Nenhum registro encontrado com os filtros aplicados.</td></tr>`;
+                return;
+            }
+            
+            docs.forEach((data, index) => {
                 const row = document.createElement('tr');
                 
                 if (section === 'empresas') {
@@ -1232,10 +1367,10 @@
                         <td><strong>${data.nome || 'Sem nome'}</strong></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${doc.id}')">
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${doc.id}')">
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${data.id}')">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -1247,10 +1382,10 @@
                         <td><strong>${data.nome || 'Sem nome'}</strong></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${doc.id}')">
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${doc.id}')">
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${data.id}')">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -1266,29 +1401,32 @@
                         <td><span class="status ${data.status === 'Ativo' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${doc.id}')">
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${doc.id}')">
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${data.id}')">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </td>
                     `;
                 } else if (section === 'advertencias') {
+                    // COLOCAR DEPARTAMENTO NA TABELA
+                    const colaboradorInfo = colaboradoresData.find(c => c.nome === data.colaborador);
+                    const departamento = colaboradorInfo ? colaboradorInfo.departamento : 'Não especificado';
+                    
                     row.innerHTML = `
                         <td>${data.colaborador || 'Não especificado'}</td>
+                        <td>${departamento}</td>
                         <td>${formatDate(data.data) || 'Não especificada'}</td>
-                        <td>${data.tipo || 'Não especificado'}</td>
                         <td>${data.motivo || 'Não especificado'}</td>
                         <td>${data.observacao ? (data.observacao.substring(0, 30) + '...') : 'Sem observação'}</td>
-                        <td><span class="status ${data.status === 'Ativa' ? 'status-warning' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${doc.id}')">
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${doc.id}')">
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${data.id}')">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -1304,10 +1442,10 @@
                         <td><span class="status ${data.status === 'Resolvido' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${doc.id}')">
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${doc.id}')">
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${data.id}')">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -1322,10 +1460,10 @@
                         <td><span class="status ${data.status === 'Aprovada' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${doc.id}')">
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${doc.id}')">
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${data.id}')">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -1340,10 +1478,10 @@
                         <td>${data.descricao ? (data.descricao.substring(0, 30) + '...') : 'Sem descrição'}</td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${doc.id}')">
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${doc.id}')">
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${data.id}')">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -1358,10 +1496,10 @@
                         <td><span class="status ${data.status === 'Paga' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${doc.id}')">
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${doc.id}')">
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${data.id}')">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -1371,6 +1509,51 @@
                 
                 tableBody.appendChild(row);
             });
+        }
+
+        // Aplicar filtros às advertências
+        function applyAdvertenciasFilters(docs) {
+            let filtered = [...docs];
+            
+            // Filtro por nome
+            if (advertenciasFiltroAtual.nome) {
+                const termo = advertenciasFiltroAtual.nome.toLowerCase();
+                filtered = filtered.filter(item => 
+                    item.colaborador && item.colaborador.toLowerCase().includes(termo)
+                );
+            }
+            
+            // Filtro por departamento
+            if (advertenciasFiltroAtual.departamento) {
+                filtered = filtered.filter(item => {
+                    const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
+                    return colaboradorInfo && colaboradorInfo.departamento === advertenciasFiltroAtual.departamento;
+                });
+            }
+            
+            // Filtro por data
+            if (advertenciasFiltroAtual.dataInicio || advertenciasFiltroAtual.dataFim) {
+                filtered = filtered.filter(item => {
+                    if (!item.data) return false;
+                    
+                    const dataAdvertencia = new Date(item.data);
+                    
+                    if (advertenciasFiltroAtual.dataInicio) {
+                        const dataInicio = new Date(advertenciasFiltroAtual.dataInicio);
+                        if (dataAdvertencia < dataInicio) return false;
+                    }
+                    
+                    if (advertenciasFiltroAtual.dataFim) {
+                        const dataFim = new Date(advertenciasFiltroAtual.dataFim);
+                        dataFim.setHours(23, 59, 59, 999); // Fim do dia
+                        if (dataAdvertencia > dataFim) return false;
+                    }
+                    
+                    return true;
+                });
+            }
+            
+            return filtered;
         }
 
         // Formulário para empresas
@@ -1453,7 +1636,7 @@
             }
         }
 
-        // Formulário para advertências - AJUSTADO
+        // Formulário para advertências - SIMPLIFICADO (sem tipo, gravidade e status)
         function loadAdvertenciaForm(mode = 'add', id = null) {
             let formHTML = `
                 <div class="form-row">
@@ -1469,29 +1652,6 @@
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="tipo">Tipo *</label>
-                        <select id="tipo" class="form-control" required>
-                            <option value="">Selecione o tipo</option>
-                            <option value="Leve">Leve</option>
-                            <option value="Média">Média</option>
-                            <option value="Grave">Grave</option>
-                            <option value="Atraso">Atraso</option>
-                            <option value="Comportamento">Comportamento</option>
-                            <option value="Desempenho">Desempenho</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="gravidade">Gravidade *</label>
-                        <select id="gravidade" class="form-control" required>
-                            <option value="">Selecione a gravidade</option>
-                            <option value="Baixa">Baixa</option>
-                            <option value="Média">Média</option>
-                            <option value="Alta">Alta</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
                     <div class="form-group" style="flex: 100%;">
                         <label for="motivo">Motivo da Advertência *</label>
                         <input type="text" id="motivo" class="form-control" placeholder="Ex: Atraso frequente" required>
@@ -1501,15 +1661,6 @@
                     <div class="form-group" style="flex: 100%;">
                         <label for="observacao">Observação</label>
                         <textarea id="observacao" class="form-control" placeholder="Anotações adicionais..."></textarea>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="status">Status</label>
-                        <select id="status" class="form-control">
-                            <option value="Ativa">Ativa</option>
-                            <option value="Inativa">Inativa</option>
-                        </select>
                     </div>
                 </div>
             `;
@@ -1681,18 +1832,16 @@
             }
         }
 
-        // Salvar advertência - AJUSTADO
+        // Salvar advertência - SIMPLIFICADO (sem tipo, gravidade e status)
         async function saveAdvertencia(formData, mode, id) {
             try {
                 const collectionName = 'advertencias';
                 const advertenciaData = {
                     colaborador: formData.colaborador,
                     data: formData.data,
-                    tipo: formData.tipo,
-                    gravidade: formData.gravidade,
                     motivo: formData.motivo,
                     observacao: formData.observacao,
-                    status: formData.status || 'Ativa',
+                    status: 'Ativa', // Mantém status fixo como "Ativa"
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
                 };
@@ -2222,6 +2371,52 @@
             }
         }
 
+        // Aplicar filtros de advertências
+        function aplicarFiltrosAdvertencias() {
+            // Obter valores dos filtros
+            advertenciasFiltroAtual.nome = document.getElementById('filtro-nome').value;
+            advertenciasFiltroAtual.departamento = document.getElementById('filtro-departamento').value;
+            advertenciasFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio').value;
+            advertenciasFiltroAtual.dataFim = document.getElementById('filtro-data-fim').value;
+            
+            // Recarregar tabela com filtros
+            if (unsubscribeListeners.advertencias) {
+                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
+                const snapshot = unsubscribeListeners.advertencias._snapshot;
+                if (snapshot) {
+                    updateTableFromSnapshot('advertencias', snapshot);
+                }
+            }
+            
+            showAlert('Filtros aplicados com sucesso!', 'success', 'advertencias-alert');
+        }
+
+        // Limpar filtros de advertências
+        function limparFiltrosAdvertencias() {
+            document.getElementById('filtro-nome').value = '';
+            document.getElementById('filtro-departamento').value = '';
+            document.getElementById('filtro-data-inicio').value = '';
+            document.getElementById('filtro-data-fim').value = '';
+            
+            advertenciasFiltroAtual = {
+                nome: '',
+                departamento: '',
+                dataInicio: '',
+                dataFim: ''
+            };
+            
+            // Recarregar tabela sem filtros
+            if (unsubscribeListeners.advertencias) {
+                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
+                const snapshot = unsubscribeListeners.advertencias._snapshot;
+                if (snapshot) {
+                    updateTableFromSnapshot('advertencias', snapshot);
+                }
+            }
+            
+            showAlert('Filtros limpos com sucesso!', 'success', 'advertencias-alert');
+        }
+
         // Configurar eventos
         function setupEventListeners() {
             // Navegação
@@ -2251,6 +2446,21 @@
                         multas: 'Multas'
                     };
                     document.getElementById('page-title').textContent = titles[targetSection] || 'Dashboard';
+                    
+                    // Se for advertências, popular select de departamentos
+                    if (targetSection === 'advertencias') {
+                        const departamentoSelect = document.getElementById('filtro-departamento');
+                        if (departamentoSelect) {
+                            departamentoSelect.innerHTML = '<option value="">Todos os departamentos</option>';
+                            const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome))];
+                            departamentosUnicos.forEach(depto => {
+                                const option = document.createElement('option');
+                                option.value = depto;
+                                option.textContent = depto;
+                                departamentoSelect.appendChild(option);
+                            });
+                        }
+                    }
                 });
             });
 
@@ -2268,6 +2478,10 @@
             document.getElementById('close-modal').addEventListener('click', closeModal);
             document.getElementById('cancel-form').addEventListener('click', closeModal);
             document.getElementById('submit-form').addEventListener('click', handleFormSubmit);
+            
+            // Filtros de advertências
+            document.getElementById('aplicar-filtros').addEventListener('click', aplicarFiltrosAdvertencias);
+            document.getElementById('limpar-filtros').addEventListener('click', limparFiltrosAdvertencias);
             
             // Fechar modal ao clicar fora
             document.getElementById('modal').addEventListener('click', function(e) {
