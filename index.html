@@ -475,7 +475,7 @@
             background-color: white;
             border-radius: var(--border-radius);
             width: 90%;
-            max-width: 600px;
+            max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
@@ -680,7 +680,7 @@
                 </div>
             </div>
 
-            <!-- Empresas Section -->
+            <!-- Empresas Section - APENAS NOME -->
             <div id="empresas" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -693,16 +693,13 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Nome</th>
-                                    <th>CNPJ</th>
-                                    <th>Endereço</th>
-                                    <th>Colaboradores</th>
-                                    <th>Status</th>
+                                    <th>Data de Cadastro</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="empresas-table-body">
                                 <tr>
-                                    <td colspan="7" class="loading">
+                                    <td colspan="4" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -727,14 +724,13 @@
                                     <th>Nome</th>
                                     <th>Empresa</th>
                                     <th>Responsável</th>
-                                    <th>Colaboradores</th>
                                     <th>Status</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="departamentos-table-body">
                                 <tr>
-                                    <td colspan="7" class="loading">
+                                    <td colspan="6" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -1005,12 +1001,40 @@
             // Configurar eventos
             setupEventListeners();
             
+            // Testar conexão com Firebase
+            await testFirebaseConnection();
+            
             // Carregar dados iniciais
             await loadInitialData();
-            
-            // Configurar listeners em tempo real
-            setupRealtimeListeners();
         });
+
+        // Testar conexão com Firebase
+        async function testFirebaseConnection() {
+            try {
+                console.log('Testando conexão com Firebase...');
+                
+                // Tentar ler uma coleção para testar a conexão
+                const testSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'empresas'));
+                console.log('Conexão com Firebase estabelecida com sucesso!');
+                
+                // Atualizar status
+                firebaseStatus.className = 'firebase-status firebase-connected';
+                firebaseStatus.innerHTML = '<i class="fas fa-cloud"></i> <span>Conectado</span>';
+                
+                return true;
+            } catch (error) {
+                console.error('Erro na conexão com Firebase:', error);
+                
+                // Atualizar status
+                firebaseStatus.className = 'firebase-status firebase-disconnected';
+                firebaseStatus.innerHTML = '<i class="fas fa-cloud"></i> <span>Erro de conexão</span>';
+                
+                // Mostrar detalhes do erro
+                showError(`Erro Firebase: ${error.code} - ${error.message}`);
+                
+                return false;
+            }
+        }
 
         // Configurar listeners de eventos
         function setupEventListeners() {
@@ -1109,39 +1133,9 @@
                     await loadTableData(section);
                 }
                 
-                // Atualizar status do Firebase
-                firebaseStatus.className = 'firebase-status firebase-connected';
-                firebaseStatus.innerHTML = '<i class="fas fa-cloud"></i> <span>Conectado</span>';
-                
             } catch (error) {
                 console.error('Erro ao carregar dados iniciais:', error);
-                firebaseStatus.className = 'firebase-status firebase-disconnected';
-                firebaseStatus.innerHTML = '<i class="fas fa-cloud"></i> <span>Erro de conexão</span>';
-                showError('Erro ao conectar com o Firebase. Verifique sua configuração.');
             }
-        }
-
-        // Configurar listeners em tempo real
-        function setupRealtimeListeners() {
-            // Configurar listeners em tempo real para todas as coleções
-            Object.values(collections).forEach(collectionName => {
-                const unsubscribe = firebase.onSnapshot(
-                    firebase.collection(firebase.db, collectionName),
-                    (snapshot) => {
-                        // Atualizar dados quando houver mudanças
-                        if (currentSection === 'dashboard') {
-                            loadDashboardData();
-                        } else if (currentSection === collectionName) {
-                            loadTableData(currentSection);
-                        }
-                    },
-                    (error) => {
-                        console.error(`Erro no listener em tempo real para ${collectionName}:`, error);
-                    }
-                );
-                
-                // Armazenar unsubscribe function se necessário
-            });
         }
 
         // Carregar dados do dashboard
@@ -1175,7 +1169,7 @@
                 let totalMultas = 0;
                 multasSnapshot.docs.forEach(doc => {
                     if (doc.data().status === 'Pendente') {
-                        const valor = parseFloat(doc.data().valor.replace('R$ ', '').replace(',', '.')) || 0;
+                        const valor = parseFloat(doc.data().valor) || 0;
                         totalMultas += valor;
                     }
                 });
@@ -1206,7 +1200,7 @@
                         data: data.data,
                         tipo: 'Advertência',
                         colaborador: data.colaborador,
-                        descricao: data.descricao.substring(0, 50) + '...',
+                        descricao: data.descricao ? (data.descricao.substring(0, 50) + '...') : '',
                         status: data.status
                     });
                 });
@@ -1219,7 +1213,7 @@
                         data: data.data,
                         tipo: 'Feedback',
                         colaborador: data.colaborador,
-                        descricao: data.descricao.substring(0, 50) + '...',
+                        descricao: data.descricao ? (data.descricao.substring(0, 50) + '...') : '',
                         status: 'Concluído'
                     });
                 });
@@ -1232,7 +1226,7 @@
                         data: data.data,
                         tipo: 'Danos',
                         colaborador: data.colaborador,
-                        descricao: data.descricao.substring(0, 50) + '...',
+                        descricao: data.descricao ? (data.descricao.substring(0, 50) + '...') : '',
                         status: data.status
                     });
                 });
@@ -1288,9 +1282,15 @@
             
             try {
                 // Mostrar loading
+                let colCount = 4; // empresas
+                if (section === 'departamentos') colCount = 6;
+                if (section === 'colaboradores') colCount = 7;
+                if (section === 'advertencias' || section === 'danos') colCount = 8;
+                if (section === 'faltas' || section === 'feedbacks' || section === 'multas') colCount = 7;
+                
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="${section === 'advertencias' || section === 'danos' ? '8' : '7'}" class="loading">
+                        <td colspan="${colCount}" class="loading">
                             <div class="loading-spinner"></div>
                         </td>
                     </tr>
@@ -1302,7 +1302,7 @@
                 if (snapshot.empty) {
                     tableBody.innerHTML = `
                         <tr>
-                            <td colspan="${section === 'advertencias' || section === 'danos' ? '8' : '7'}">
+                            <td colspan="${colCount}">
                                 Nenhum registro encontrado. Clique em "Adicionar" para criar o primeiro.
                             </td>
                         </tr>
@@ -1315,9 +1315,15 @@
                 
             } catch (error) {
                 console.error(`Erro ao carregar dados de ${section}:`, error);
+                let colCount = 4; // empresas
+                if (section === 'departamentos') colCount = 6;
+                if (section === 'colaboradores') colCount = 7;
+                if (section === 'advertencias' || section === 'danos') colCount = 8;
+                if (section === 'faltas' || section === 'feedbacks' || section === 'multas') colCount = 7;
+                
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="${section === 'advertencias' || section === 'danos' ? '8' : '7'}">
+                        <td colspan="${colCount}">
                             Erro ao carregar dados. Tente novamente.
                         </td>
                     </tr>
@@ -1337,18 +1343,16 @@
                 const row = document.createElement('tr');
                 
                 if (section === 'empresas') {
+                    // APENAS NOME para empresas
+                    const dataCadastro = data.dataCadastro || data.createdAt || new Date().toISOString();
                     row.innerHTML = `
                         <td>${index + 1}</td>
                         <td>${data.nome || ''}</td>
-                        <td>${data.cnpj || ''}</td>
-                        <td>${data.endereco || ''}</td>
-                        <td>${data.colaboradores || 0}</td>
-                        <td><span class="status ${data.status === 'Ativa' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
+                        <td>${formatDate(dataCadastro)}</td>
                         <td>
                             <div class="action-buttons">
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${docId}')"><i class="fas fa-edit"></i></button>
                                 <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${docId}')"><i class="fas fa-trash"></i></button>
-                                <button class="action-btn view-btn" onclick="viewItem('${section}', '${docId}')"><i class="fas fa-eye"></i></button>
                             </div>
                         </td>
                     `;
@@ -1358,13 +1362,11 @@
                         <td>${data.nome || ''}</td>
                         <td>${data.empresa || ''}</td>
                         <td>${data.responsavel || ''}</td>
-                        <td>${data.colaboradores || 0}</td>
                         <td><span class="status ${data.status === 'Ativo' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${docId}')"><i class="fas fa-edit"></i></button>
                                 <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${docId}')"><i class="fas fa-trash"></i></button>
-                                <button class="action-btn view-btn" onclick="viewItem('${section}', '${docId}')"><i class="fas fa-eye"></i></button>
                             </div>
                         </td>
                     `;
@@ -1380,7 +1382,6 @@
                             <div class="action-buttons">
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${docId}')"><i class="fas fa-edit"></i></button>
                                 <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${docId}')"><i class="fas fa-trash"></i></button>
-                                <button class="action-btn view-btn" onclick="viewItem('${section}', '${docId}')"><i class="fas fa-eye"></i></button>
                             </div>
                         </td>
                     `;
@@ -1391,7 +1392,7 @@
                         <td>${formatDate(data.data) || ''}</td>
                         <td>${data.tipo || ''}</td>
                         <td>${data.gravidade || ''}</td>
-                        <td>${data.descricao ? data.descricao.substring(0, 30) + '...' : ''}</td>
+                        <td>${data.descricao ? (data.descricao.substring(0, 30) + '...') : ''}</td>
                         <td><span class="status ${data.status === 'Ativa' ? 'status-warning' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
@@ -1406,8 +1407,8 @@
                         <td>${data.item || ''}</td>
                         <td>${data.colaborador || ''}</td>
                         <td>${formatDate(data.data) || ''}</td>
-                        <td>${data.valor ? 'R$ ' + data.valor : ''}</td>
-                        <td>${data.descricao ? data.descricao.substring(0, 30) + '...' : ''}</td>
+                        <td>${data.valor ? 'R$ ' + parseFloat(data.valor).toFixed(2) : 'R$ 0,00'}</td>
+                        <td>${data.descricao ? (data.descricao.substring(0, 30) + '...') : ''}</td>
                         <td><span class="status ${data.status === 'Resolvido' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
@@ -1422,7 +1423,7 @@
                         <td>${data.colaborador || ''}</td>
                         <td>${formatDate(data.data) || ''}</td>
                         <td>${data.tipo || ''}</td>
-                        <td>${data.justificativa ? data.justificativa.substring(0, 30) + '...' : 'Nenhuma'}</td>
+                        <td>${data.justificativa ? (data.justificativa.substring(0, 30) + '...') : 'Nenhuma'}</td>
                         <td><span class="status ${data.status === 'Aprovada' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
@@ -1438,7 +1439,7 @@
                         <td>${formatDate(data.data) || ''}</td>
                         <td>${data.tipo || ''}</td>
                         <td>${data.avaliacao || ''}</td>
-                        <td>${data.descricao ? data.descricao.substring(0, 30) + '...' : ''}</td>
+                        <td>${data.descricao ? (data.descricao.substring(0, 30) + '...') : ''}</td>
                         <td>
                             <div class="action-buttons">
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${docId}')"><i class="fas fa-edit"></i></button>
@@ -1451,8 +1452,8 @@
                         <td>${index + 1}</td>
                         <td>${data.colaborador || ''}</td>
                         <td>${formatDate(data.data) || ''}</td>
-                        <td>${data.valor ? 'R$ ' + data.valor : ''}</td>
-                        <td>${data.motivo ? data.motivo.substring(0, 30) + '...' : ''}</td>
+                        <td>${data.valor ? 'R$ ' + parseFloat(data.valor).toFixed(2) : 'R$ 0,00'}</td>
+                        <td>${data.motivo ? (data.motivo.substring(0, 30) + '...') : ''}</td>
                         <td><span class="status ${data.status === 'Paga' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
@@ -1503,28 +1504,12 @@
             let formHTML = '';
             
             if (action === 'add-empresa') {
+                // FORMULÁRIO SIMPLIFICADO APENAS COM NOME
                 formHTML = `
                     <div class="form-row">
-                        <div class="form-group">
+                        <div class="form-group" style="flex: 100%;">
                             <label for="nome">Nome da Empresa *</label>
-                            <input type="text" id="nome" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="cnpj">CNPJ *</label>
-                            <input type="text" id="cnpj" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="endereco">Endereço *</label>
-                            <input type="text" id="endereco" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="status">Status</label>
-                            <select id="status" class="form-control">
-                                <option value="Ativa">Ativa</option>
-                                <option value="Inativa">Inativa</option>
-                            </select>
+                            <input type="text" id="nome" class="form-control" placeholder="Digite o nome da empresa" required>
                         </div>
                     </div>
                 `;
@@ -1544,8 +1529,8 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="responsavel">Responsável *</label>
-                            <input type="text" id="responsavel" class="form-control" required>
+                            <label for="responsavel">Responsável</label>
+                            <input type="text" id="responsavel" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="status">Status</label>
@@ -1624,7 +1609,7 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group">
+                        <div class="form-group" style="flex: 100%;">
                             <label for="descricao">Descrição *</label>
                             <textarea id="descricao" class="form-control" required></textarea>
                         </div>
@@ -1659,12 +1644,12 @@
                             <input type="date" id="data" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="valor">Valor do Dano *</label>
-                            <input type="number" id="valor" class="form-control" step="0.01" required>
+                            <label for="valor">Valor do Dano (R$) *</label>
+                            <input type="number" id="valor" class="form-control" step="0.01" min="0" required>
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group">
+                        <div class="form-group" style="flex: 100%;">
                             <label for="descricao">Descrição *</label>
                             <textarea id="descricao" class="form-control" required></textarea>
                         </div>
@@ -1752,7 +1737,7 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group">
+                        <div class="form-group" style="flex: 100%;">
                             <label for="descricao">Descrição *</label>
                             <textarea id="descricao" class="form-control" required></textarea>
                         </div>
@@ -1775,7 +1760,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="valor">Valor (R$) *</label>
-                            <input type="number" id="valor" class="form-control" step="0.01" required>
+                            <input type="number" id="valor" class="form-control" step="0.01" min="0" required>
                         </div>
                         <div class="form-group">
                             <label for="motivo">Motivo *</label>
@@ -1808,12 +1793,13 @@
         // Carregar opções para selects
         async function loadSelectOptions(action) {
             try {
-                if (action === 'add-departamento' || action === 'add-colaborador') {
+                if (action === 'add-departamento') {
                     // Carregar empresas para select
                     const empresasSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'empresas'));
                     const empresasSelect = document.getElementById('empresa');
                     
-                    if (empresasSelect) {
+                    if (empresasSelect && empresasSnapshot) {
+                        empresasSelect.innerHTML = '<option value="">Selecione uma empresa</option>';
                         empresasSnapshot.docs.forEach(doc => {
                             const data = doc.data();
                             const option = document.createElement('option');
@@ -1824,15 +1810,13 @@
                     }
                 }
                 
-                if (action === 'add-colaborador' || action === 'add-advertencia' || 
-                    action === 'add-dano' || action === 'add-falta' || 
-                    action === 'add-feedback' || action === 'add-multa') {
-                    
+                if (action === 'add-colaborador') {
                     // Carregar departamentos para select
                     const departamentosSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'departamentos'));
                     const departamentosSelect = document.getElementById('departamento');
                     
-                    if (departamentosSelect) {
+                    if (departamentosSelect && departamentosSnapshot) {
+                        departamentosSelect.innerHTML = '<option value="">Selecione um departamento</option>';
                         departamentosSnapshot.docs.forEach(doc => {
                             const data = doc.data();
                             const option = document.createElement('option');
@@ -1841,12 +1825,18 @@
                             departamentosSelect.appendChild(option);
                         });
                     }
+                }
+                
+                if (action === 'add-advertencia' || action === 'add-dano' || 
+                    action === 'add-falta' || action === 'add-feedback' || 
+                    action === 'add-multa') {
                     
                     // Carregar colaboradores para select
                     const colaboradoresSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'colaboradores'));
                     const colaboradorSelect = document.getElementById('colaborador');
                     
-                    if (colaboradorSelect) {
+                    if (colaboradorSelect && colaboradoresSnapshot) {
+                        colaboradorSelect.innerHTML = '<option value="">Selecione um colaborador</option>';
                         colaboradoresSnapshot.docs.forEach(doc => {
                             const data = doc.data();
                             const option = document.createElement('option');
@@ -1865,10 +1855,6 @@
         async function fillFormWithData(action, id) {
             try {
                 const collectionName = action.replace('add-', '');
-                const docRef = firebase.doc(firebase.db, collectionName, id);
-                
-                // Em uma aplicação real, você precisaria buscar o documento
-                // Para este exemplo, vamos usar uma abordagem simplificada
                 const snapshot = await firebase.getDocs(firebase.collection(firebase.db, collectionName));
                 const doc = snapshot.docs.find(d => d.id === id);
                 
@@ -1913,20 +1899,33 @@
             try {
                 // Coletar dados do formulário
                 const formData = getFormData();
+                console.log('Dados do formulário:', formData);
+                console.log('Coleção:', currentCollection);
+                console.log('Ação:', currentAction);
+                console.log('ID do item:', currentItemId);
+                
+                // Adicionar timestamp para empresas
+                if (currentCollection === 'empresas') {
+                    formData.dataCadastro = new Date().toISOString();
+                }
                 
                 if (currentAction === 'add') {
                     // Adicionar novo documento
-                    await firebase.addDoc(
+                    console.log('Tentando adicionar documento...');
+                    const docRef = await firebase.addDoc(
                         firebase.collection(firebase.db, currentCollection),
                         formData
                     );
                     
+                    console.log('Documento adicionado com ID:', docRef.id);
                     alert('Item adicionado com sucesso!');
                 } else if (currentAction === 'edit' && currentItemId) {
                     // Atualizar documento existente
+                    console.log('Tentando atualizar documento:', currentItemId);
                     const docRef = firebase.doc(firebase.db, currentCollection, currentItemId);
                     await firebase.updateDoc(docRef, formData);
                     
+                    console.log('Documento atualizado');
                     alert('Item atualizado com sucesso!');
                 }
                 
@@ -1942,8 +1941,19 @@
                 closeModal();
                 
             } catch (error) {
-                console.error('Erro ao salvar dados:', error);
-                alert('Erro ao salvar dados. Por favor, tente novamente.');
+                console.error('Erro completo ao salvar dados:', error);
+                console.error('Código do erro:', error.code);
+                console.error('Mensagem do erro:', error.message);
+                console.error('Stack trace:', error.stack);
+                
+                // Mensagens de erro específicas
+                if (error.code === 'permission-denied') {
+                    alert('Permissão negada! Configure as regras do Firestore para permitir escrita.');
+                } else if (error.code === 'unavailable') {
+                    alert('Firestore não disponível. Verifique sua conexão com a internet.');
+                } else {
+                    alert(`Erro ao salvar dados: ${error.message}. Verifique o console (F12) para mais detalhes.`);
+                }
             }
         }
 
@@ -2004,31 +2014,6 @@
                     console.error('Erro ao excluir item:', error);
                     alert('Erro ao excluir item. Por favor, tente novamente.');
                 }
-            }
-        };
-
-        // Visualizar item
-        window.viewItem = async function(section, id) {
-            try {
-                const collectionName = collections[section];
-                const snapshot = await firebase.getDocs(firebase.collection(firebase.db, collectionName));
-                const doc = snapshot.docs.find(d => d.id === id);
-                
-                if (doc) {
-                    const data = doc.data();
-                    let details = `Detalhes do Item:\n\n`;
-                    
-                    for (const key in data) {
-                        if (key !== 'id') {
-                            details += `${key}: ${data[key]}\n`;
-                        }
-                    }
-                    
-                    alert(details);
-                }
-            } catch (error) {
-                console.error('Erro ao visualizar item:', error);
-                alert('Erro ao carregar detalhes do item.');
             }
         };
 
