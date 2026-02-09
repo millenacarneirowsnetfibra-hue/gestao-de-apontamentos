@@ -515,6 +515,28 @@
             gap: 10px;
         }
 
+        /* Alert */
+        .alert {
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(39, 174, 96, 0.2);
+        }
+
+        .alert-error {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--accent-color);
+            border: 1px solid rgba(231, 76, 60, 0.2);
+        }
+
         /* Responsive */
         @media (max-width: 992px) {
             .container {
@@ -617,7 +639,7 @@
                             </div>
                         </div>
                         <div class="card-value" id="total-colaboradores">0</div>
-                        <div class="card-change positive"><i class="fas fa-sync"></i> Atualizado em tempo real</div>
+                        <div class="card-change positive"><i class="fas fa-sync"></i> Em tempo real</div>
                     </div>
                     <div class="card">
                         <div class="card-header">
@@ -627,7 +649,7 @@
                             </div>
                         </div>
                         <div class="card-value" id="total-advertencias">0</div>
-                        <div class="card-change positive"><i class="fas fa-sync"></i> Atualizado em tempo real</div>
+                        <div class="card-change positive"><i class="fas fa-sync"></i> Em tempo real</div>
                     </div>
                     <div class="card">
                         <div class="card-header">
@@ -637,7 +659,7 @@
                             </div>
                         </div>
                         <div class="card-value" id="total-faltas">0</div>
-                        <div class="card-change positive"><i class="fas fa-sync"></i> Atualizado em tempo real</div>
+                        <div class="card-change positive"><i class="fas fa-sync"></i> Em tempo real</div>
                     </div>
                     <div class="card">
                         <div class="card-header">
@@ -647,7 +669,7 @@
                             </div>
                         </div>
                         <div class="card-value" id="total-multas">R$ 0</div>
-                        <div class="card-change positive"><i class="fas fa-sync"></i> Atualizado em tempo real</div>
+                        <div class="card-change positive"><i class="fas fa-sync"></i> Em tempo real</div>
                     </div>
                 </div>
 
@@ -680,13 +702,14 @@
                 </div>
             </div>
 
-            <!-- Empresas Section - APENAS NOME -->
+            <!-- Empresas Section -->
             <div id="empresas" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
                         <h3 class="section-title">Empresas</h3>
                         <button class="btn btn-primary" id="add-empresa-btn">Adicionar Empresa</button>
                     </div>
+                    <div id="empresas-alert"></div>
                     <div class="table-container">
                         <table>
                             <thead>
@@ -716,6 +739,7 @@
                         <h3 class="section-title">Departamentos</h3>
                         <button class="btn btn-primary" id="add-departamento-btn">Adicionar Departamento</button>
                     </div>
+                    <div id="departamentos-alert"></div>
                     <div class="table-container">
                         <table>
                             <thead>
@@ -747,6 +771,7 @@
                         <h3 class="section-title">Colaboradores</h3>
                         <button class="btn btn-primary" id="add-colaborador-btn">Adicionar Colaborador</button>
                     </div>
+                    <div id="colaboradores-alert"></div>
                     <div class="table-container">
                         <table>
                             <thead>
@@ -779,6 +804,7 @@
                         <h3 class="section-title">Advertências</h3>
                         <button class="btn btn-primary" id="add-advertencia-btn">Adicionar Advertência</button>
                     </div>
+                    <div id="advertencias-alert"></div>
                     <div class="table-container">
                         <table>
                             <thead>
@@ -812,6 +838,7 @@
                         <h3 class="section-title">Danos e Avarias</h3>
                         <button class="btn btn-primary" id="add-dano-btn">Registrar Dano/Avaria</button>
                     </div>
+                    <div id="danos-alert"></div>
                     <div class="table-container">
                         <table>
                             <thead>
@@ -845,6 +872,7 @@
                         <h3 class="section-title">Faltas</h3>
                         <button class="btn btn-primary" id="add-falta-btn">Registrar Falta</button>
                     </div>
+                    <div id="faltas-alert"></div>
                     <div class="table-container">
                         <table>
                             <thead>
@@ -877,6 +905,7 @@
                         <h3 class="section-title">Feedbacks</h3>
                         <button class="btn btn-primary" id="add-feedback-btn">Adicionar Feedback</button>
                     </div>
+                    <div id="feedbacks-alert"></div>
                     <div class="table-container">
                         <table>
                             <thead>
@@ -909,6 +938,7 @@
                         <h3 class="section-title">Multas</h3>
                         <button class="btn btn-primary" id="add-multa-btn">Adicionar Multa</button>
                     </div>
+                    <div id="multas-alert"></div>
                     <div class="table-container">
                         <table>
                             <thead>
@@ -975,6 +1005,9 @@
         let currentItemId = null;
         let currentCollection = null;
 
+        // Listeners em tempo real
+        let unsubscribeListeners = {};
+
         // Mapeamento de coleções do Firebase
         const collections = {
             empresas: 'empresas',
@@ -994,7 +1027,7 @@
                 console.error('Firebase não carregou corretamente');
                 firebaseStatus.className = 'firebase-status firebase-disconnected';
                 firebaseStatus.innerHTML = '<i class="fas fa-cloud"></i> <span>Firebase não carregado</span>';
-                showError('Firebase não carregou corretamente. Verifique sua conexão.');
+                showAlert('Firebase não carregou corretamente. Verifique sua conexão.', 'error');
                 return;
             }
 
@@ -1003,6 +1036,9 @@
             
             // Testar conexão com Firebase
             await testFirebaseConnection();
+            
+            // Configurar listeners em tempo real
+            setupRealtimeListeners();
             
             // Carregar dados iniciais
             await loadInitialData();
@@ -1030,9 +1066,69 @@
                 firebaseStatus.innerHTML = '<i class="fas fa-cloud"></i> <span>Erro de conexão</span>';
                 
                 // Mostrar detalhes do erro
-                showError(`Erro Firebase: ${error.code} - ${error.message}`);
+                showAlert(`Erro Firebase: ${error.code} - ${error.message}`, 'error');
                 
                 return false;
+            }
+        }
+
+        // Configurar listeners em tempo real
+        function setupRealtimeListeners() {
+            // Configurar listeners em tempo real para todas as coleções
+            Object.keys(collections).forEach(section => {
+                const collectionName = collections[section];
+                
+                // Cancelar listener anterior se existir
+                if (unsubscribeListeners[section]) {
+                    unsubscribeListeners[section]();
+                }
+                
+                // Configurar novo listener
+                unsubscribeListeners[section] = firebase.onSnapshot(
+                    firebase.collection(firebase.db, collectionName),
+                    (snapshot) => {
+                        console.log(`Dados atualizados em tempo real para ${section}`);
+                        // Atualizar tabela correspondente
+                        updateTableFromSnapshot(section, snapshot);
+                        
+                        // Atualizar dashboard se necessário
+                        if (section === 'dashboard' || currentSection === 'dashboard') {
+                            updateDashboardCounts();
+                        }
+                        
+                        // Atualizar selects se necessário
+                        updateSelectOptions();
+                    },
+                    (error) => {
+                        console.error(`Erro no listener em tempo real para ${section}:`, error);
+                    }
+                );
+            });
+        }
+
+        // Atualizar tabela a partir de snapshot
+        function updateTableFromSnapshot(section, snapshot) {
+            const tableBody = document.getElementById(`${section}-table-body`);
+            if (!tableBody) return;
+            
+            if (snapshot.empty) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4">
+                            Nenhum registro encontrado. Clique em "Adicionar" para criar o primeiro.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Converter snapshot para array de documentos
+            const docs = snapshot.docs;
+            updateTable(section, docs);
+            
+            // Se for a seção atual, mostrar mensagem de sucesso
+            if (section === currentSection) {
+                showAlert(`Dados de ${section} atualizados em tempo real!`, 'success', `${section}-alert`);
             }
         }
 
@@ -1141,6 +1237,20 @@
         // Carregar dados do dashboard
         async function loadDashboardData() {
             try {
+                // Atualizar contagens
+                await updateDashboardCounts();
+                
+                // Carregar atividades recentes
+                await loadAtividadesRecentes();
+                
+            } catch (error) {
+                console.error('Erro ao carregar dados do dashboard:', error);
+            }
+        }
+
+        // Atualizar contagens do dashboard
+        async function updateDashboardCounts() {
+            try {
                 // Carregar contagens
                 const colaboradoresSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'colaboradores'));
                 const advertenciasSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'advertencias'));
@@ -1160,8 +1270,10 @@
                 const hoje = new Date();
                 const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
                 const faltasEsteMes = faltasSnapshot.docs.filter(doc => {
-                    const dataFalta = new Date(doc.data().data);
-                    return dataFalta >= primeiroDiaMes;
+                    const dataFalta = doc.data().data;
+                    if (!dataFalta) return false;
+                    const data = new Date(dataFalta);
+                    return data >= primeiroDiaMes;
                 }).length;
                 document.getElementById('total-faltas').textContent = faltasEsteMes;
                 
@@ -1175,11 +1287,8 @@
                 });
                 document.getElementById('total-multas').textContent = `R$ ${totalMultas.toFixed(2)}`;
                 
-                // Carregar atividades recentes
-                await loadAtividadesRecentes();
-                
             } catch (error) {
-                console.error('Erro ao carregar dados do dashboard:', error);
+                console.error('Erro ao atualizar contagens do dashboard:', error);
             }
         }
 
@@ -1266,9 +1375,9 @@
                 row.innerHTML = `
                     <td>${formatDate(atividade.data)}</td>
                     <td>${atividade.tipo}</td>
-                    <td>${atividade.colaborador}</td>
-                    <td>${atividade.descricao}</td>
-                    <td><span class="status ${statusClass}">${atividade.status}</span></td>
+                    <td>${atividade.colaborador || 'N/A'}</td>
+                    <td>${atividade.descricao || 'N/A'}</td>
+                    <td><span class="status ${statusClass}">${atividade.status || 'N/A'}</span></td>
                 `;
                 
                 tableBody.appendChild(row);
@@ -1282,11 +1391,7 @@
             
             try {
                 // Mostrar loading
-                let colCount = 4; // empresas
-                if (section === 'departamentos') colCount = 6;
-                if (section === 'colaboradores') colCount = 7;
-                if (section === 'advertencias' || section === 'danos') colCount = 8;
-                if (section === 'faltas' || section === 'feedbacks' || section === 'multas') colCount = 7;
+                let colCount = getColumnCount(section);
                 
                 tableBody.innerHTML = `
                     <tr>
@@ -1299,27 +1404,11 @@
                 const collectionName = collections[section];
                 const snapshot = await firebase.getDocs(firebase.collection(firebase.db, collectionName));
                 
-                if (snapshot.empty) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="${colCount}">
-                                Nenhum registro encontrado. Clique em "Adicionar" para criar o primeiro.
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                // Atualizar tabela
-                updateTable(section, snapshot.docs);
+                updateTableFromSnapshot(section, snapshot);
                 
             } catch (error) {
                 console.error(`Erro ao carregar dados de ${section}:`, error);
-                let colCount = 4; // empresas
-                if (section === 'departamentos') colCount = 6;
-                if (section === 'colaboradores') colCount = 7;
-                if (section === 'advertencias' || section === 'danos') colCount = 8;
-                if (section === 'faltas' || section === 'feedbacks' || section === 'multas') colCount = 7;
+                let colCount = getColumnCount(section);
                 
                 tableBody.innerHTML = `
                     <tr>
@@ -1329,6 +1418,21 @@
                     </tr>
                 `;
             }
+        }
+
+        // Obter contagem de colunas por seção
+        function getColumnCount(section) {
+            const counts = {
+                empresas: 4,
+                departamentos: 6,
+                colaboradores: 7,
+                advertencias: 8,
+                danos: 8,
+                faltas: 7,
+                feedbacks: 7,
+                multas: 7
+            };
+            return counts[section] || 4;
         }
 
         // Atualizar tabela com dados do Firebase
@@ -1790,6 +1894,12 @@
             }
         }
 
+        // Atualizar opções dos selects
+        async function updateSelectOptions() {
+            // Esta função é chamada pelos listeners em tempo real
+            // para atualizar os selects quando os dados mudam
+        }
+
         // Carregar opções para selects
         async function loadSelectOptions(action) {
             try {
@@ -1892,7 +2002,7 @@
         async function handleFormSubmit() {
             // Validar formulário
             if (!validateForm()) {
-                alert('Por favor, preencha todos os campos obrigatórios.');
+                showAlert('Por favor, preencha todos os campos obrigatórios.', 'error');
                 return;
             }
             
@@ -1909,6 +2019,11 @@
                     formData.dataCadastro = new Date().toISOString();
                 }
                 
+                // Adicionar timestamp para outros registros
+                if (!formData.dataCadastro && currentCollection !== 'empresas') {
+                    formData.createdAt = new Date().toISOString();
+                }
+                
                 if (currentAction === 'add') {
                     // Adicionar novo documento
                     console.log('Tentando adicionar documento...');
@@ -1918,7 +2033,7 @@
                     );
                     
                     console.log('Documento adicionado com ID:', docRef.id);
-                    alert('Item adicionado com sucesso!');
+                    showAlert('Item adicionado com sucesso!', 'success', `${currentSection}-alert`);
                 } else if (currentAction === 'edit' && currentItemId) {
                     // Atualizar documento existente
                     console.log('Tentando atualizar documento:', currentItemId);
@@ -1926,15 +2041,7 @@
                     await firebase.updateDoc(docRef, formData);
                     
                     console.log('Documento atualizado');
-                    alert('Item atualizado com sucesso!');
-                }
-                
-                // Atualizar tabela
-                await loadTableData(currentSection);
-                
-                // Atualizar dashboard se necessário
-                if (currentSection === 'dashboard') {
-                    await loadDashboardData();
+                    showAlert('Item atualizado com sucesso!', 'success', `${currentSection}-alert`);
                 }
                 
                 // Fechar modal
@@ -1948,11 +2055,11 @@
                 
                 // Mensagens de erro específicas
                 if (error.code === 'permission-denied') {
-                    alert('Permissão negada! Configure as regras do Firestore para permitir escrita.');
+                    showAlert('Permissão negada! Configure as regras do Firestore para permitir escrita.', 'error');
                 } else if (error.code === 'unavailable') {
-                    alert('Firestore não disponível. Verifique sua conexão com a internet.');
+                    showAlert('Firestore não disponível. Verifique sua conexão com a internet.', 'error');
                 } else {
-                    alert(`Erro ao salvar dados: ${error.message}. Verifique o console (F12) para mais detalhes.`);
+                    showAlert(`Erro ao salvar dados: ${error.message}`, 'error');
                 }
             }
         }
@@ -1967,6 +2074,8 @@
                     // Tratamento especial para campos de data
                     if (element.type === 'date') {
                         formData[element.id] = element.value;
+                    } else if (element.type === 'number') {
+                        formData[element.id] = parseFloat(element.value) || 0;
                     } else {
                         formData[element.id] = element.value;
                     }
@@ -2000,19 +2109,11 @@
                     const collectionName = collections[section];
                     await firebase.deleteDoc(firebase.doc(firebase.db, collectionName, id));
                     
-                    alert('Item excluído com sucesso!');
-                    
-                    // Atualizar tabela
-                    await loadTableData(section);
-                    
-                    // Atualizar dashboard se necessário
-                    if (section === 'dashboard') {
-                        await loadDashboardData();
-                    }
+                    showAlert('Item excluído com sucesso!', 'success', `${section}-alert`);
                     
                 } catch (error) {
                     console.error('Erro ao excluir item:', error);
-                    alert('Erro ao excluir item. Por favor, tente novamente.');
+                    showAlert('Erro ao excluir item. Por favor, tente novamente.', 'error', `${section}-alert`);
                 }
             }
         };
@@ -2029,24 +2130,37 @@
             }
         }
 
-        function showError(message) {
-            const errorDiv = document.createElement('div');
-            errorDiv.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background-color: #e74c3c;
-                color: white;
-                padding: 15px;
-                border-radius: 5px;
-                z-index: 10000;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        function showAlert(message, type = 'info', targetId = null) {
+            // Criar elemento de alerta
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
             `;
-            errorDiv.textContent = message;
-            document.body.appendChild(errorDiv);
             
+            // Adicionar ao container apropriado ou ao body
+            let targetElement;
+            if (targetId) {
+                targetElement = document.getElementById(targetId);
+            }
+            
+            if (targetElement) {
+                targetElement.innerHTML = '';
+                targetElement.appendChild(alertDiv);
+            } else {
+                // Adicionar no topo do main-content
+                const mainContent = document.querySelector('.main-content');
+                if (mainContent) {
+                    mainContent.insertBefore(alertDiv, mainContent.firstChild);
+                }
+            }
+            
+            // Remover após 5 segundos
             setTimeout(() => {
-                errorDiv.remove();
+                if (alertDiv.parentNode) {
+                    alertDiv.parentNode.removeChild(alertDiv);
+                }
             }, 5000);
         }
     </script>
