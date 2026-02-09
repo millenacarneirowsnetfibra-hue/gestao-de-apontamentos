@@ -1732,7 +1732,7 @@
             }
         }
 
-        // Formulário para faltas
+        // FORMULÁRIO PARA FALTAS - ATUALIZADO (com colaboradores pré-carregados)
         function loadFaltaForm(mode = 'add', id = null) {
             let formHTML = `
                 <div class="form-row">
@@ -1743,49 +1743,64 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="data">Data *</label>
+                        <label for="data">Data da Falta *</label>
                         <input type="date" id="data" class="form-control" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="tipo">Tipo *</label>
+                        <label for="tipo">Tipo de Falta *</label>
                         <select id="tipo" class="form-control" required>
+                            <option value="">Selecione o tipo</option>
                             <option value="Justificada">Justificada</option>
                             <option value="Não Justificada">Não Justificada</option>
                             <option value="Atestado">Atestado</option>
                         </select>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group" style="flex: 100%;">
-                        <label for="justificativa">Justificativa</label>
-                        <textarea id="justificativa" class="form-control" placeholder="Justificativa da falta..."></textarea>
-                    </div>
-                </div>
-                <div class="form-row">
                     <div class="form-group">
-                        <label for="status">Status</label>
-                        <select id="status" class="form-control">
+                        <label for="status">Status *</label>
+                        <select id="status" class="form-control" required>
+                            <option value="">Selecione o status</option>
                             <option value="Pendente">Pendente</option>
                             <option value="Aprovada">Aprovada</option>
                             <option value="Rejeitada">Rejeitada</option>
                         </select>
                     </div>
                 </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 100%;">
+                        <label for="justificativa">Justificativa</label>
+                        <textarea id="justificativa" class="form-control" rows="4" placeholder="Descreva a justificativa da falta..."></textarea>
+                    </div>
+                </div>
             `;
             
             document.getElementById('modal-form').innerHTML = formHTML;
             
+            // Popular select de colaboradores COM OS DADOS DO CACHE
             const colaboradorSelect = document.getElementById('colaborador');
             if (colaboradorSelect) {
                 colaboradorSelect.innerHTML = '<option value="">Selecione um colaborador</option>';
-                colaboradoresData.forEach(colab => {
-                    const option = document.createElement('option');
-                    option.value = colab.nome;
-                    option.textContent = colab.nome;
-                    colaboradorSelect.appendChild(option);
-                });
+                
+                if (colaboradoresData && colaboradoresData.length > 0) {
+                    colaboradoresData.forEach(colab => {
+                        if (colab.nome) {
+                            const option = document.createElement('option');
+                            option.value = colab.nome;
+                            option.textContent = colab.nome;
+                            colaboradorSelect.appendChild(option);
+                        }
+                    });
+                } else {
+                    console.log('⚠️ Nenhum colaborador encontrado no cache');
+                }
+            }
+            
+            // Definir data atual como padrão
+            const today = new Date().toISOString().split('T')[0];
+            const dataInput = document.getElementById('data');
+            if (dataInput) {
+                dataInput.value = today;
             }
             
             if (mode === 'edit' && id) {
@@ -1812,6 +1827,7 @@
                     <div class="form-group">
                         <label for="tipo">Tipo *</label>
                         <select id="tipo" class="form-control" required>
+                            <option value="">Selecione o tipo</option>
                             <option value="Positivo">Positivo</option>
                             <option value="Construtivo">Construtivo</option>
                             <option value="Negativo">Negativo</option>
@@ -1820,6 +1836,7 @@
                     <div class="form-group">
                         <label for="avaliacao">Avaliação *</label>
                         <select id="avaliacao" class="form-control" required>
+                            <option value="">Selecione a avaliação</option>
                             <option value="1">1 - Muito Insatisfeito</option>
                             <option value="2">2 - Insatisfeito</option>
                             <option value="3">3 - Neutro</option>
@@ -1872,23 +1889,22 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="valor">Valor (R$) *</label>
-                        <input type="number" id="valor" class="form-control" placeholder="0.00" step="0.01" required>
+                        <input type="number" id="valor" class="form-control" placeholder="0.00" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status *</label>
+                        <select id="status" class="form-control" required>
+                            <option value="">Selecione o status</option>
+                            <option value="Pendente">Pendente</option>
+                            <option value="Paga">Paga</option>
+                            <option value="Cancelada">Cancelada</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group" style="flex: 100%;">
                         <label for="motivo">Motivo *</label>
-                        <textarea id="motivo" class="form-control" placeholder="Descreva o motivo da multa..." required></textarea>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="status">Status</label>
-                        <select id="status" class="form-control">
-                            <option value="Pendente">Pendente</option>
-                            <option value="Paga">Paga</option>
-                            <option value="Cancelada">Cancelada</option>
-                        </select>
+                        <textarea id="motivo" class="form-control" placeholder="Descreva o motivo da multa..." rows="3" required></textarea>
                     </div>
                 </div>
             `;
@@ -2161,19 +2177,39 @@
             }
         }
 
-        // Salvar falta - DATAS PRESERVADAS
+        // SALVAR FALTA - ATUALIZADO
         async function saveFalta(formData, mode, id) {
             try {
                 const collectionName = 'faltas';
+                
+                // Validações
+                if (!formData.colaborador || formData.colaborador === '') {
+                    throw new Error('Selecione um colaborador');
+                }
+                
+                if (!formData.data || formData.data === '') {
+                    throw new Error('Selecione a data da falta');
+                }
+                
+                if (!formData.tipo || formData.tipo === '') {
+                    throw new Error('Selecione o tipo de falta');
+                }
+                
+                if (!formData.status || formData.status === '') {
+                    throw new Error('Selecione o status da falta');
+                }
+                
                 const faltaData = {
                     colaborador: formData.colaborador,
                     data: formData.data, // Data exata como foi selecionada
                     tipo: formData.tipo,
-                    justificativa: formData.justificativa,
-                    status: formData.status || 'Pendente',
+                    justificativa: formData.justificativa || '',
+                    status: formData.status,
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
                 };
+                
+                console.log(`Salvando falta: ${JSON.stringify(faltaData)}`);
                 
                 if (mode === 'add') {
                     const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
@@ -2188,7 +2224,7 @@
                 }
             } catch (error) {
                 console.error(`❌ Erro ao salvar falta: ${error.message}`);
-                return false;
+                throw error; // Re-throw para tratamento no handleFormSubmit
             }
         }
 
@@ -2273,7 +2309,7 @@
             };
             
             document.getElementById('modal-title').textContent = 
-                `${mode === 'add' ? 'Adicionar' : 'Editar'} ${titles[section] || 'Item'}`;
+                `${mode === 'add' ? 'Registrar' : 'Editar'} ${titles[section] || 'Item'}`;
             
             if (section === 'empresas') {
                 loadEmpresaForm(mode, id);
@@ -2317,6 +2353,26 @@
                 }
             });
             
+            // Validações gerais
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+            let errorMessage = '';
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.style.borderColor = 'var(--accent-color)';
+                    errorMessage = 'Por favor, preencha todos os campos obrigatórios (*).';
+                } else {
+                    field.style.borderColor = '#ddd';
+                }
+            });
+            
+            if (!isValid) {
+                alert(errorMessage);
+                return;
+            }
+            
             // Validações específicas
             if (currentSection === 'colaboradores') {
                 if (!formData.departamento || formData.departamento === '') {
@@ -2340,6 +2396,32 @@
                 }
                 if (!formData.valor || parseFloat(formData.valor) <= 0) {
                     alert('Por favor, informe um valor válido.');
+                    return;
+                }
+            }
+            
+            if (currentSection === 'faltas') {
+                if (!formData.colaborador || formData.colaborador === '') {
+                    alert('Por favor, selecione um colaborador.');
+                    return;
+                }
+                if (!formData.data || formData.data === '') {
+                    alert('Por favor, selecione a data da falta.');
+                    return;
+                }
+                if (!formData.tipo || formData.tipo === '') {
+                    alert('Por favor, selecione o tipo de falta.');
+                    return;
+                }
+                if (!formData.status || formData.status === '') {
+                    alert('Por favor, selecione o status da falta.');
+                    return;
+                }
+            }
+            
+            if (currentSection === 'multas') {
+                if (!formData.valor || parseFloat(formData.valor) <= 0) {
+                    alert('Por favor, informe um valor válido para a multa.');
                     return;
                 }
             }
@@ -2522,26 +2604,22 @@
 
         // FUNÇÕES AUXILIARES PARA DATAS EXATAS
         function parseDateExactly(dateString) {
-            if (!dateString) return 'N/A';
+            if (!dateString) return null;
             try {
                 // Se já for uma string de data no formato YYYY-MM-DD
                 if (dateString.includes('-') && dateString.length === 10) {
                     const [year, month, day] = dateString.split('-');
-                    return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
+                    return new Date(year, month - 1, day);
                 }
                 
                 // Se for uma string ISO
                 if (dateString.includes('T')) {
-                    const date = new Date(dateString);
-                    const day = String(date.getDate()).padStart(2, '0');
-                    const month = String(date.getMonth() + 1).padStart(2, '0');
-                    const year = date.getFullYear();
-                    return `${day}/${month}/${year}`;
+                    return new Date(dateString);
                 }
                 
-                return dateString;
+                return new Date(dateString);
             } catch {
-                return dateString;
+                return null;
             }
         }
 
