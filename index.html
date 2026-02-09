@@ -6,13 +6,21 @@
     <title>Gestão de RH - Sistema Completo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Import Firebase SDK -->
+    <!-- Firebase 9 Modular -->
     <script type="module">
-        // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        
-        // Your web app's Firebase configuration
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            doc, 
+            updateDoc, 
+            deleteDoc, 
+            onSnapshot,
+            setDoc 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyDgbEXbB_WsTz_1G7m3LZSF1-YYYpqQApo",
             authDomain: "gestao-de-apontamentos.firebaseapp.com",
@@ -22,21 +30,24 @@
             appId: "1:542288976862:web:b9ecca9ce5e1fdae871b4f"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        
-        // Export Firebase functions to be used globally
-        window.firebase = {
+
+        window.firebaseApp = {
             db,
-            collection,
-            addDoc,
-            getDocs,
-            doc,
-            updateDoc,
-            deleteDoc,
-            onSnapshot
+            firestore: {
+                collection,
+                addDoc,
+                getDocs,
+                doc,
+                updateDoc,
+                deleteDoc,
+                onSnapshot,
+                setDoc
+            }
         };
+        
+        console.log("✅ Firebase inicializado com sucesso!");
     </script>
     <style>
         :root {
@@ -603,8 +614,8 @@
         <nav class="sidebar">
             <div class="sidebar-header">
                 <h2><i class="fas fa-users-cog"></i> Gestão de RH</h2>
-                <div class="firebase-status firebase-connected" id="firebase-status">
-                    <i class="fas fa-cloud"></i> <span>Conectado</span>
+                <div class="firebase-status" id="firebase-status">
+                    <i class="fas fa-cloud"></i> <span>Conectando...</span>
                 </div>
             </div>
             <ul class="sidebar-menu">
@@ -626,15 +637,15 @@
             <div class="header">
                 <h1 id="page-title">Dashboard</h1>
                 <div class="user-info">
-                    <div class="user-avatar">JS</div>
+                    <div class="user-avatar">ADM</div>
                     <div>
-                        <div class="user-name">João Silva</div>
-                        <div class="user-role">Administrador</div>
+                        <div class="user-name">Administrador</div>
+                        <div class="user-role">Sistema</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Dashboard Cards -->
+            <!-- Dashboard -->
             <div id="dashboard" class="section-content">
                 <div class="cards-container">
                     <div class="card">
@@ -707,7 +718,7 @@
                 </div>
             </div>
 
-            <!-- Empresas Section -->
+            <!-- Empresas Section - APENAS NOME -->
             <div id="empresas" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -719,15 +730,13 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Nome</th>
-                                    <th>Data de Cadastro</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="empresas-table-body">
                                 <tr>
-                                    <td colspan="4" class="loading">
+                                    <td colspan="2" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -737,7 +746,7 @@
                 </div>
             </div>
 
-            <!-- Departamentos Section -->
+            <!-- Departamentos Section - APENAS NOME -->
             <div id="departamentos" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -749,17 +758,13 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Nome</th>
-                                    <th>Empresa</th>
-                                    <th>Responsável</th>
-                                    <th>Status</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="departamentos-table-body">
                                 <tr>
-                                    <td colspan="6" class="loading">
+                                    <td colspan="2" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -769,7 +774,7 @@
                 </div>
             </div>
 
-            <!-- Colaboradores Section -->
+            <!-- Colaboradores Section - COM EMPRESA E SEM CARGO -->
             <div id="colaboradores" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -781,10 +786,9 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Nome</th>
-                                    <th>Cargo</th>
                                     <th>Departamento</th>
+                                    <th>Empresa</th>
                                     <th>Data Admissão</th>
                                     <th>Status</th>
                                     <th>Ações</th>
@@ -792,7 +796,7 @@
                             </thead>
                             <tbody id="colaboradores-table-body">
                                 <tr>
-                                    <td colspan="7" class="loading">
+                                    <td colspan="6" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -814,7 +818,6 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Colaborador</th>
                                     <th>Data</th>
                                     <th>Tipo</th>
@@ -826,7 +829,7 @@
                             </thead>
                             <tbody id="advertencias-table-body">
                                 <tr>
-                                    <td colspan="8" class="loading">
+                                    <td colspan="7" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -848,7 +851,6 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Item</th>
                                     <th>Colaborador</th>
                                     <th>Data</th>
@@ -860,7 +862,7 @@
                             </thead>
                             <tbody id="danos-table-body">
                                 <tr>
-                                    <td colspan="8" class="loading">
+                                    <td colspan="7" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -882,7 +884,6 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Colaborador</th>
                                     <th>Data</th>
                                     <th>Tipo</th>
@@ -893,7 +894,7 @@
                             </thead>
                             <tbody id="faltas-table-body">
                                 <tr>
-                                    <td colspan="7" class="loading">
+                                    <td colspan="6" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -915,7 +916,6 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Colaborador</th>
                                     <th>Data</th>
                                     <th>Tipo</th>
@@ -926,7 +926,7 @@
                             </thead>
                             <tbody id="feedbacks-table-body">
                                 <tr>
-                                    <td colspan="7" class="loading">
+                                    <td colspan="6" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -948,7 +948,6 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Colaborador</th>
                                     <th>Data</th>
                                     <th>Valor</th>
@@ -959,7 +958,7 @@
                             </thead>
                             <tbody id="multas-table-body">
                                 <tr>
-                                    <td colspan="7" class="loading">
+                                    <td colspan="6" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -971,7 +970,7 @@
         </main>
     </div>
 
-    <!-- Modal para formulários -->
+    <!-- Modal -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -979,9 +978,7 @@
                 <button class="close-btn" id="close-modal">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="modal-form">
-                    <!-- O formulário será carregado dinamicamente aqui -->
-                </form>
+                <form id="modal-form"></form>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="cancel-form">Cancelar</button>
@@ -991,29 +988,7 @@
     </div>
 
     <script>
-        // Elementos DOM
-        const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
-        const sectionContents = document.querySelectorAll('.section-content');
-        const pageTitle = document.getElementById('page-title');
-        const modal = document.getElementById('modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalForm = document.getElementById('modal-form');
-        const closeModalBtn = document.getElementById('close-modal');
-        const cancelFormBtn = document.getElementById('cancel-form');
-        const submitFormBtn = document.getElementById('submit-form');
-        const addButtons = document.querySelectorAll('[id$="-btn"]');
-        const firebaseStatus = document.getElementById('firebase-status');
-
-        // Estado da aplicação
-        let currentSection = 'dashboard';
-        let currentAction = 'add';
-        let currentItemId = null;
-        let currentCollection = null;
-
-        // Listeners em tempo real
-        let unsubscribeListeners = {};
-
-        // Mapeamento de coleções do Firebase
+        // Configuração do sistema
         const collections = {
             empresas: 'empresas',
             departamentos: 'departamentos',
@@ -1025,97 +1000,109 @@
             multas: 'multas'
         };
 
-        // Dados em cache para selects
-        let empresasCache = [];
-        let departamentosCache = [];
-        let colaboradoresCache = [];
+        // Cache de dados para selects
+        let empresasData = [];
+        let departamentosData = [];
+        let colaboradoresData = [];
 
-        // Inicializar a aplicação
-        document.addEventListener('DOMContentLoaded', async function() {
-            // Verificar se Firebase está disponível
-            if (typeof firebase === 'undefined') {
-                console.error('Firebase não carregou corretamente');
-                firebaseStatus.className = 'firebase-status firebase-disconnected';
-                firebaseStatus.innerHTML = '<i class="fas fa-cloud"></i> <span>Firebase não carregado</span>';
-                showAlert('Firebase não carregou corretamente. Verifique sua conexão.', 'error');
-                return;
-            }
+        // Estado
+        let currentSection = 'dashboard';
+        let currentAction = 'add';
+        let currentItemId = null;
+        let currentCollection = null;
+        let unsubscribeListeners = {};
 
-            // Configurar eventos
-            setupEventListeners();
-            
-            // Testar conexão com Firebase
-            await testFirebaseConnection();
-            
-            // Carregar dados iniciais
-            await loadInitialData();
-            
-            // Configurar listeners em tempo real APÓS carregar dados iniciais
-            setupRealtimeListeners();
-        });
+        // Elementos DOM
+        const firebaseStatus = document.getElementById('firebase-status');
 
         // Testar conexão com Firebase
         async function testFirebaseConnection() {
             try {
                 console.log('Testando conexão com Firebase...');
                 
-                // Tentar ler uma coleção para testar a conexão
-                const testSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'empresas'));
-                console.log('Conexão com Firebase estabelecida com sucesso!');
+                if (!window.firebaseApp || !window.firebaseApp.db) {
+                    throw new Error('Firebase não inicializado');
+                }
+
+                // Tentar ler uma coleção para testar
+                const empresasRef = firebaseApp.firestore.collection(firebaseApp.db, 'empresas');
+                const snapshot = await firebaseApp.firestore.getDocs(empresasRef);
                 
-                // Atualizar status
                 firebaseStatus.className = 'firebase-status firebase-connected';
                 firebaseStatus.innerHTML = '<i class="fas fa-cloud"></i> <span>Conectado</span>';
+                console.log(`✅ Firebase conectado! Empresas encontradas: ${snapshot.size}`);
                 
                 return true;
             } catch (error) {
-                console.error('Erro na conexão com Firebase:', error);
-                
-                // Atualizar status
+                console.error('Firebase error:', error);
                 firebaseStatus.className = 'firebase-status firebase-disconnected';
-                firebaseStatus.innerHTML = '<i class="fas fa-cloud"></i> <span>Erro de conexão</span>';
-                
-                // Mostrar detalhes do erro
-                showAlert(`Erro Firebase: ${error.code} - ${error.message}`, 'error');
-                
+                firebaseStatus.innerHTML = `<i class="fas fa-cloud"></i> <span>Erro: ${error.code || error.message}</span>`;
                 return false;
             }
         }
 
-        // Configurar listeners em tempo real
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('Aplicação iniciando...');
+            
+            // Aguardar Firebase carregar
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            if (!window.firebaseApp) {
+                console.error('Firebase não carregou corretamente');
+                alert('Erro: Firebase não carregou. Verifique o console (F12) para detalhes.');
+                return;
+            }
+
+            // Testar conexão
+            const connected = await testFirebaseConnection();
+            if (!connected) {
+                alert('ERRO: Não foi possível conectar ao Firebase.\n\n1. Verifique se as regras do Firestore estão abertas\n2. Verifique sua conexão com a internet');
+                return;
+            }
+
+            // Configurar eventos
+            setupEventListeners();
+            
+            // Carregar dados iniciais
+            await loadInitialData();
+            
+            // Configurar listeners em tempo real
+            setupRealtimeListeners();
+            
+            console.log('✅ Aplicação inicializada com sucesso!');
+        });
+
+        // Setup de listeners em tempo real
         function setupRealtimeListeners() {
-            // Configurar listeners em tempo real para todas as coleções
+            console.log('Configurando listeners em tempo real...');
+            
             Object.keys(collections).forEach(section => {
                 const collectionName = collections[section];
                 
-                // Cancelar listener anterior se existir
-                if (unsubscribeListeners[section]) {
-                    unsubscribeListeners[section]();
-                }
-                
-                // Configurar novo listener
-                unsubscribeListeners[section] = firebase.onSnapshot(
-                    firebase.collection(firebase.db, collectionName),
-                    (snapshot) => {
-                        console.log(`🔥 Dados atualizados em tempo real para ${section}:`, snapshot.size, 'documentos');
-                        
-                        // Atualizar cache para selects
-                        updateCache(section, snapshot);
-                        
-                        // Atualizar tabela se estiver visível
-                        if (currentSection === section || section === 'dashboard') {
+                try {
+                    const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                    
+                    unsubscribeListeners[section] = firebaseApp.firestore.onSnapshot(
+                        collectionRef,
+                        (snapshot) => {
+                            console.log(`${section}: ${snapshot.size} documentos (tempo real)`);
                             updateTableFromSnapshot(section, snapshot);
+                            updateCache(section, snapshot);
+                            
+                            // Atualizar dashboard se necessário
+                            if (section === 'colaboradores' || section === 'advertencias' || section === 'faltas' || section === 'multas') {
+                                updateDashboardCounts();
+                            }
+                        },
+                        (error) => {
+                            console.error(`Erro listener ${section}: ${error.message}`);
                         }
-                        
-                        // Atualizar dashboard
-                        if (section === 'dashboard' || currentSection === 'dashboard') {
-                            updateDashboardCounts();
-                        }
-                    },
-                    (error) => {
-                        console.error(`Erro no listener em tempo real para ${section}:`, error);
-                    }
-                );
+                    );
+                    
+                } catch (error) {
+                    console.error(`Erro ao configurar listener ${section}: ${error.message}`);
+                }
             });
         }
 
@@ -1124,189 +1111,52 @@
             const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             
             if (section === 'empresas') {
-                empresasCache = docs;
+                empresasData = docs;
             } else if (section === 'departamentos') {
-                departamentosCache = docs;
+                departamentosData = docs;
             } else if (section === 'colaboradores') {
-                colaboradoresCache = docs;
-            }
-        }
-
-        // Atualizar tabela a partir de snapshot
-        function updateTableFromSnapshot(section, snapshot) {
-            console.log(`📊 Atualizando tabela ${section} com ${snapshot.size} documentos`);
-            
-            const tableBody = document.getElementById(`${section}-table-body`);
-            if (!tableBody) {
-                console.error(`Tabela não encontrada: ${section}-table-body`);
-                return;
-            }
-            
-            if (snapshot.empty) {
-                console.log(`📭 Coleção ${section} está vazia`);
-                const colCount = getColumnCount(section);
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="${colCount}">
-                            Nenhum registro encontrado. Clique em "Adicionar" para criar o primeiro.
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            // Converter snapshot para array de documentos
-            const docs = Array.from(snapshot.docs);
-            console.log(`✅ Renderizando ${docs.length} documentos na tabela ${section}`);
-            
-            // Atualizar tabela
-            renderTable(section, docs);
-            
-            // Se for a seção atual, mostrar mensagem de sucesso
-            if (section === currentSection) {
-                showAlert(`Dados atualizados: ${docs.length} registros`, 'success', `${section}-alert`);
-            }
-        }
-
-        // Configurar listeners de eventos
-        function setupEventListeners() {
-            // Navegação do sidebar
-            sidebarLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Remover classe active de todos os links
-                    sidebarLinks.forEach(l => l.classList.remove('active'));
-                    
-                    // Adicionar classe active ao link clicado
-                    this.classList.add('active');
-                    
-                    // Obter a seção alvo
-                    const targetSection = this.getAttribute('data-section');
-                    
-                    // Atualizar título da página
-                    updatePageTitle(targetSection);
-                    
-                    // Mostrar seção correspondente
-                    showSection(targetSection);
-                    
-                    // Atualizar seção atual
-                    currentSection = targetSection;
-                    
-                    // Carregar dados da seção se não estiver carregada
-                    if (targetSection !== 'dashboard') {
-                        loadTableData(targetSection);
-                    }
-                });
-            });
-
-            // Botões de adicionar
-            addButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const action = this.id.replace('-btn', '');
-                    openModal(action, 'add');
-                });
-            });
-
-            // Fechar modal
-            closeModalBtn.addEventListener('click', closeModal);
-            cancelFormBtn.addEventListener('click', closeModal);
-            
-            // Submeter formulário
-            submitFormBtn.addEventListener('click', handleFormSubmit);
-            
-            // Fechar modal clicando fora
-            window.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    closeModal();
-                }
-            });
-        }
-
-        // Atualizar título da página
-        function updatePageTitle(section) {
-            const titles = {
-                dashboard: 'Dashboard',
-                empresas: 'Gestão de Empresas',
-                departamentos: 'Gestão de Departamentos',
-                colaboradores: 'Gestão de Colaboradores',
-                advertencias: 'Controle de Advertências',
-                danos: 'Controle de Danos e Avarias',
-                faltas: 'Controle de Faltas',
-                feedbacks: 'Gestão de Feedbacks',
-                multas: 'Controle de Multas'
-            };
-            
-            pageTitle.textContent = titles[section] || 'Dashboard';
-        }
-
-        // Mostrar seção específica
-        function showSection(sectionId) {
-            // Esconder todas as seções
-            sectionContents.forEach(section => {
-                section.style.display = 'none';
-            });
-            
-            // Mostrar a seção selecionada
-            const targetSection = document.getElementById(sectionId);
-            if (targetSection) {
-                targetSection.style.display = 'block';
+                colaboradoresData = docs;
             }
         }
 
         // Carregar dados iniciais
         async function loadInitialData() {
+            console.log('Carregando dados iniciais...');
+            
             try {
-                console.log('📥 Carregando dados iniciais...');
-                
-                // Carregar dados do dashboard
-                await loadDashboardData();
-                
-                // Carregar dados das tabelas
+                // Carregar todas as coleções
                 for (const section in collections) {
                     await loadTableData(section);
                 }
                 
-                console.log('✅ Dados iniciais carregados com sucesso!');
-                
-            } catch (error) {
-                console.error('❌ Erro ao carregar dados iniciais:', error);
-            }
-        }
-
-        // Carregar dados do dashboard
-        async function loadDashboardData() {
-            try {
-                // Atualizar contagens
+                // Atualizar dashboard
                 await updateDashboardCounts();
                 
-                // Carregar atividades recentes
-                await loadAtividadesRecentes();
-                
+                console.log('✅ Dados iniciais carregados');
             } catch (error) {
-                console.error('Erro ao carregar dados do dashboard:', error);
+                console.error(`Erro ao carregar dados: ${error.message}`);
             }
         }
 
-        // Atualizar contagens do dashboard
+        // Atualizar dashboard
         async function updateDashboardCounts() {
             try {
-                // Carregar contagens
-                const colaboradoresSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'colaboradores'));
-                const advertenciasSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'advertencias'));
-                const faltasSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'faltas'));
-                const multasSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'multas'));
-                
-                // Atualizar cards
+                // Total de colaboradores
+                const colaboradoresRef = firebaseApp.firestore.collection(firebaseApp.db, 'colaboradores');
+                const colaboradoresSnapshot = await firebaseApp.firestore.getDocs(colaboradoresRef);
                 document.getElementById('total-colaboradores').textContent = colaboradoresSnapshot.size;
                 
-                // Contar advertências ativas
+                // Advertências ativas
+                const advertenciasRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
+                const advertenciasSnapshot = await firebaseApp.firestore.getDocs(advertenciasRef);
                 const advertenciasAtivas = advertenciasSnapshot.docs.filter(doc => 
                     doc.data().status === 'Ativa'
                 ).length;
                 document.getElementById('total-advertencias').textContent = advertenciasAtivas;
                 
-                // Contar faltas do mês atual
+                // Faltas deste mês
+                const faltasRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
+                const faltasSnapshot = await firebaseApp.firestore.getDocs(faltasRef);
                 const hoje = new Date();
                 const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
                 const faltasEsteMes = faltasSnapshot.docs.filter(doc => {
@@ -1317,245 +1167,116 @@
                 }).length;
                 document.getElementById('total-faltas').textContent = faltasEsteMes;
                 
-                // Calcular total de multas pendentes
+                // Multas pendentes
+                const multasRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
+                const multasSnapshot = await firebaseApp.firestore.getDocs(multasRef);
                 let totalMultas = 0;
                 multasSnapshot.docs.forEach(doc => {
                     if (doc.data().status === 'Pendente') {
-                        const valor = parseFloat(doc.data().valor) || 0;
-                        totalMultas += valor;
+                        totalMultas += parseFloat(doc.data().valor) || 0;
                     }
                 });
                 document.getElementById('total-multas').textContent = `R$ ${totalMultas.toFixed(2)}`;
                 
+                console.log(`Dashboard atualizado`);
             } catch (error) {
-                console.error('Erro ao atualizar contagens do dashboard:', error);
+                console.error(`Erro ao atualizar dashboard: ${error.message}`);
             }
         }
 
-        // Carregar atividades recentes
-        async function loadAtividadesRecentes() {
-            const tableBody = document.getElementById('atividades-table-body');
-            if (!tableBody) return;
-            
-            try {
-                // Carregar todas as coleções para atividades
-                const atividades = [];
-                
-                // Advertências
-                const advertenciasSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'advertencias'));
-                advertenciasSnapshot.docs.forEach(doc => {
-                    const data = doc.data();
-                    atividades.push({
-                        data: data.data,
-                        tipo: 'Advertência',
-                        colaborador: data.colaborador,
-                        descricao: data.descricao ? (data.descricao.substring(0, 50) + '...') : '',
-                        status: data.status
-                    });
-                });
-                
-                // Feedbacks
-                const feedbacksSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'feedbacks'));
-                feedbacksSnapshot.docs.forEach(doc => {
-                    const data = doc.data();
-                    atividades.push({
-                        data: data.data,
-                        tipo: 'Feedback',
-                        colaborador: data.colaborador,
-                        descricao: data.descricao ? (data.descricao.substring(0, 50) + '...') : '',
-                        status: 'Concluído'
-                    });
-                });
-                
-                // Danos
-                const danosSnapshot = await firebase.getDocs(firebase.collection(firebase.db, 'danos'));
-                danosSnapshot.docs.forEach(doc => {
-                    const data = doc.data();
-                    atividades.push({
-                        data: data.data,
-                        tipo: 'Danos',
-                        colaborador: data.colaborador,
-                        descricao: data.descricao ? (data.descricao.substring(0, 50) + '...') : '',
-                        status: data.status
-                    });
-                });
-                
-                // Ordenar por data (mais recente primeiro)
-                atividades.sort((a, b) => new Date(b.data) - new Date(a.data));
-                
-                // Pegar as 5 mais recentes
-                const atividadesRecentes = atividades.slice(0, 5);
-                
-                // Atualizar tabela
-                updateAtividadesTable(atividadesRecentes);
-                
-            } catch (error) {
-                console.error('Erro ao carregar atividades recentes:', error);
-                tableBody.innerHTML = '<tr><td colspan="5">Erro ao carregar atividades</td></tr>';
-            }
-        }
-
-        // Atualizar tabela de atividades
-        function updateAtividadesTable(atividades) {
-            const tableBody = document.getElementById('atividades-table-body');
-            tableBody.innerHTML = '';
-            
-            if (atividades.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5">Nenhuma atividade recente</td></tr>';
-                return;
-            }
-            
-            atividades.forEach(atividade => {
-                const row = document.createElement('tr');
-                
-                let statusClass = 'status-active';
-                if (atividade.status === 'Ativa') statusClass = 'status-warning';
-                if (atividade.status === 'Pendente') statusClass = 'status-inactive';
-                
-                row.innerHTML = `
-                    <td>${formatDate(atividade.data)}</td>
-                    <td>${atividade.tipo}</td>
-                    <td>${atividade.colaborador || 'N/A'}</td>
-                    <td>${atividade.descricao || 'N/A'}</td>
-                    <td><span class="status ${statusClass}">${atividade.status || 'N/A'}</span></td>
-                `;
-                
-                tableBody.appendChild(row);
-            });
-        }
-
-        // Carregar dados na tabela
+        // Carregar dados da tabela
         async function loadTableData(section) {
             const tableBody = document.getElementById(`${section}-table-body`);
             if (!tableBody) return;
             
             try {
-                console.log(`📥 Carregando dados de ${section}...`);
-                
-                // Mostrar loading
-                const colCount = getColumnCount(section);
-                
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="${colCount}" class="loading">
-                            <div class="loading-spinner"></div>
-                        </td>
-                    </tr>
-                `;
+                tableBody.innerHTML = '<tr><td colspan="6" class="loading"><div class="loading-spinner"></div></td></tr>';
                 
                 const collectionName = collections[section];
-                const snapshot = await firebase.getDocs(firebase.collection(firebase.db, collectionName));
+                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                const snapshot = await firebaseApp.firestore.getDocs(collectionRef);
                 
-                console.log(`✅ ${section}: ${snapshot.size} documentos carregados`);
-                
-                // Atualizar cache
+                console.log(`${section}: ${snapshot.size} documentos carregados`);
+                updateTableFromSnapshot(section, snapshot);
                 updateCache(section, snapshot);
                 
-                // Renderizar tabela
-                renderTable(section, snapshot.docs);
-                
             } catch (error) {
-                console.error(`❌ Erro ao carregar dados de ${section}:`, error);
-                const colCount = getColumnCount(section);
-                
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="${colCount}">
-                            Erro ao carregar dados. Tente novamente.
-                        </td>
-                    </tr>
-                `;
+                console.error(`Erro ao carregar ${section}: ${error.message}`);
+                const tableBody = document.getElementById(`${section}-table-body`);
+                if (tableBody) {
+                    tableBody.innerHTML = `<tr><td colspan="6">Erro: ${error.message}</td></tr>`;
+                }
             }
         }
 
-        // Obter contagem de colunas por seção
-        function getColumnCount(section) {
-            const counts = {
-                empresas: 4,
-                departamentos: 6,
-                colaboradores: 7,
-                advertencias: 8,
-                danos: 8,
-                faltas: 7,
-                feedbacks: 7,
-                multas: 7
-            };
-            return counts[section] || 4;
-        }
-
-        // Renderizar tabela
-        function renderTable(section, docs) {
+        // Atualizar tabela com snapshot
+        function updateTableFromSnapshot(section, snapshot) {
             const tableBody = document.getElementById(`${section}-table-body`);
             if (!tableBody) return;
             
-            console.log(`🎨 Renderizando ${docs.length} itens na tabela ${section}`);
-            
-            tableBody.innerHTML = '';
-            
-            if (docs.length === 0) {
-                const colCount = getColumnCount(section);
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="${colCount}">
-                            Nenhum registro encontrado. Clique em "Adicionar" para criar o primeiro.
-                        </td>
-                    </tr>
-                `;
+            if (snapshot.empty) {
+                tableBody.innerHTML = `<tr><td colspan="6">Nenhum registro encontrado.</td></tr>`;
                 return;
             }
             
-            docs.forEach((docSnapshot, index) => {
-                const data = docSnapshot.data();
-                const docId = docSnapshot.id;
-                
+            tableBody.innerHTML = '';
+            const docs = snapshot.docs;
+            
+            docs.forEach((doc, index) => {
+                const data = doc.data();
                 const row = document.createElement('tr');
                 
                 if (section === 'empresas') {
-                    // APENAS NOME para empresas
-                    const dataCadastro = data.dataCadastro || data.createdAt || new Date().toISOString();
+                    // APENAS NOME
                     row.innerHTML = `
-                        <td>${index + 1}</td>
                         <td><strong>${data.nome || 'Sem nome'}</strong></td>
-                        <td>${formatDate(dataCadastro)}</td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${docId}')"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${docId}')"><i class="fas fa-trash"></i></button>
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${doc.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${doc.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </td>
                     `;
                 } else if (section === 'departamentos') {
+                    // APENAS NOME
                     row.innerHTML = `
-                        <td>${index + 1}</td>
                         <td><strong>${data.nome || 'Sem nome'}</strong></td>
-                        <td>${data.empresa || 'Não especificado'}</td>
-                        <td>${data.responsavel || 'Não especificado'}</td>
-                        <td><span class="status ${data.status === 'Ativo' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${docId}')"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${docId}')"><i class="fas fa-trash"></i></button>
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${doc.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${doc.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </td>
                     `;
                 } else if (section === 'colaboradores') {
+                    // NOME, DEPARTAMENTO, EMPRESA, DATA ADMISSÃO, STATUS
                     row.innerHTML = `
-                        <td>${index + 1}</td>
                         <td><strong>${data.nome || 'Sem nome'}</strong></td>
-                        <td>${data.cargo || 'Não especificado'}</td>
                         <td>${data.departamento || 'Não especificado'}</td>
+                        <td>${data.empresa || 'Não especificada'}</td>
                         <td>${formatDate(data.dataAdmissao) || 'Não especificada'}</td>
                         <td><span class="status ${data.status === 'Ativo' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${docId}')"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${docId}')"><i class="fas fa-trash"></i></button>
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${doc.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${doc.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </td>
                     `;
                 } else if (section === 'advertencias') {
                     row.innerHTML = `
-                        <td>${index + 1}</td>
                         <td>${data.colaborador || 'Não especificado'}</td>
                         <td>${formatDate(data.data) || 'Não especificada'}</td>
                         <td>${data.tipo || 'Não especificado'}</td>
@@ -1564,14 +1285,17 @@
                         <td><span class="status ${data.status === 'Ativa' ? 'status-warning' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${docId}')"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${docId}')"><i class="fas fa-trash"></i></button>
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${doc.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${doc.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </td>
                     `;
                 } else if (section === 'danos') {
                     row.innerHTML = `
-                        <td>${index + 1}</td>
                         <td>${data.item || 'Não especificado'}</td>
                         <td>${data.colaborador || 'Não especificado'}</td>
                         <td>${formatDate(data.data) || 'Não especificada'}</td>
@@ -1580,14 +1304,17 @@
                         <td><span class="status ${data.status === 'Resolvido' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${docId}')"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${docId}')"><i class="fas fa-trash"></i></button>
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${doc.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${doc.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </td>
                     `;
                 } else if (section === 'faltas') {
                     row.innerHTML = `
-                        <td>${index + 1}</td>
                         <td>${data.colaborador || 'Não especificado'}</td>
                         <td>${formatDate(data.data) || 'Não especificada'}</td>
                         <td>${data.tipo || 'Não especificado'}</td>
@@ -1595,14 +1322,17 @@
                         <td><span class="status ${data.status === 'Aprovada' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${docId}')"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${docId}')"><i class="fas fa-trash"></i></button>
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${doc.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${doc.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </td>
                     `;
                 } else if (section === 'feedbacks') {
                     row.innerHTML = `
-                        <td>${index + 1}</td>
                         <td>${data.colaborador || 'Não especificado'}</td>
                         <td>${formatDate(data.data) || 'Não especificada'}</td>
                         <td>${data.tipo || 'Não especificado'}</td>
@@ -1610,14 +1340,17 @@
                         <td>${data.descricao ? (data.descricao.substring(0, 30) + '...') : 'Sem descrição'}</td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${docId}')"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${docId}')"><i class="fas fa-trash"></i></button>
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${doc.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${doc.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </td>
                     `;
                 } else if (section === 'multas') {
                     row.innerHTML = `
-                        <td>${index + 1}</td>
                         <td>${data.colaborador || 'Não especificado'}</td>
                         <td>${formatDate(data.data) || 'Não especificada'}</td>
                         <td>${data.valor ? 'R$ ' + parseFloat(data.valor).toFixed(2) : 'R$ 0,00'}</td>
@@ -1625,8 +1358,12 @@
                         <td><span class="status ${data.status === 'Paga' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${docId}')"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${docId}')"><i class="fas fa-trash"></i></button>
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${doc.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${doc.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </td>
                     `;
@@ -1634,558 +1371,585 @@
                 
                 tableBody.appendChild(row);
             });
-            
-            console.log(`✅ Tabela ${section} renderizada com sucesso!`);
         }
 
-        // Abrir modal com formulário
-        function openModal(action, mode, id = null) {
-            currentAction = mode;
-            currentItemId = id;
-            currentCollection = action.replace('add-', '');
+        // Formulário para empresas
+        function loadEmpresaForm(mode = 'add', id = null) {
+            let formHTML = `
+                <div class="form-group" style="flex: 100%;">
+                    <label for="nome">Nome da Empresa *</label>
+                    <input type="text" id="nome" class="form-control" placeholder="Ex: Minha Empresa Ltda" required>
+                </div>
+            `;
             
-            // Definir título do modal
-            const actionText = mode === 'add' ? 'Adicionar' : 'Editar';
-            const sectionNames = {
-                'add-empresa': 'Empresa',
-                'add-departamento': 'Departamento',
-                'add-colaborador': 'Colaborador',
-                'add-advertencia': 'Advertência',
-                'add-dano': 'Dano/Avaria',
-                'add-falta': 'Falta',
-                'add-feedback': 'Feedback',
-                'add-multa': 'Multa'
-            };
+            document.getElementById('modal-form').innerHTML = formHTML;
             
-            modalTitle.textContent = `${actionText} ${sectionNames[action] || 'Item'}`;
-            
-            // Carregar formulário apropriado
-            loadForm(action, mode, id);
-            
-            // Mostrar modal
-            modal.style.display = 'flex';
-        }
-
-        // Carregar formulário no modal
-        function loadForm(action, mode, id) {
-            // Limpar formulário
-            modalForm.innerHTML = '';
-            
-            let formHTML = '';
-            
-            if (action === 'add-empresa') {
-                // FORMULÁRIO SIMPLIFICADO APENAS COM NOME
-                formHTML = `
-                    <div class="form-row">
-                        <div class="form-group" style="flex: 100%;">
-                            <label for="nome">Nome da Empresa *</label>
-                            <input type="text" id="nome" class="form-control" placeholder="Digite o nome da empresa" required>
-                        </div>
-                    </div>
-                `;
-            } else if (action === 'add-departamento') {
-                formHTML = `
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="nome">Nome do Departamento *</label>
-                            <input type="text" id="nome" class="form-control" placeholder="Ex: Recursos Humanos" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="empresa">Empresa *</label>
-                            <select id="empresa" class="form-control" required>
-                                <option value="">Selecione uma empresa</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="responsavel">Responsável</label>
-                            <input type="text" id="responsavel" class="form-control" placeholder="Nome do responsável">
-                        </div>
-                        <div class="form-group">
-                            <label for="status">Status</label>
-                            <select id="status" class="form-control">
-                                <option value="Ativo">Ativo</option>
-                                <option value="Inativo">Inativo</option>
-                            </select>
-                        </div>
-                    </div>
-                `;
-            } else if (action === 'add-colaborador') {
-                formHTML = `
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="nome">Nome Completo *</label>
-                            <input type="text" id="nome" class="form-control" placeholder="Ex: João Silva" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="cargo">Cargo *</label>
-                            <input type="text" id="cargo" class="form-control" placeholder="Ex: Analista de RH" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="departamento">Departamento *</label>
-                            <select id="departamento" class="form-control" required>
-                                <option value="">Selecione um departamento</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="dataAdmissao">Data de Admissão *</label>
-                            <input type="date" id="dataAdmissao" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="status">Status</label>
-                            <select id="status" class="form-control">
-                                <option value="Ativo">Ativo</option>
-                                <option value="Inativo">Inativo</option>
-                            </select>
-                        </div>
-                    </div>
-                `;
-            } else if (action === 'add-advertencia') {
-                formHTML = `
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="colaborador">Colaborador *</label>
-                            <select id="colaborador" class="form-control" required>
-                                <option value="">Selecione um colaborador</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="data">Data *</label>
-                            <input type="date" id="data" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="tipo">Tipo *</label>
-                            <select id="tipo" class="form-control" required>
-                                <option value="Atraso">Atraso</option>
-                                <option value="Comportamento">Comportamento</option>
-                                <option value="Desempenho">Desempenho</option>
-                                <option value="Outro">Outro</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="gravidade">Gravidade *</label>
-                            <select id="gravidade" class="form-control" required>
-                                <option value="Baixa">Baixa</option>
-                                <option value="Média">Média</option>
-                                <option value="Alta">Alta</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group" style="flex: 100%;">
-                            <label for="descricao">Descrição *</label>
-                            <textarea id="descricao" class="form-control" placeholder="Descreva a advertência..." required></textarea>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="status">Status</label>
-                            <select id="status" class="form-control">
-                                <option value="Ativa">Ativa</option>
-                                <option value="Inativa">Inativa</option>
-                            </select>
-                        </div>
-                    </div>
-                `;
-            } else if (action === 'add-dano') {
-                formHTML = `
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="item">Item Danificado *</label>
-                            <input type="text" id="item" class="form-control" placeholder="Ex: Notebook Dell" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="colaborador">Colaborador *</label>
-                            <select id="colaborador" class="form-control" required>
-                                <option value="">Selecione um colaborador</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="data">Data *</label>
-                            <input type="date" id="data" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="valor">Valor do Dano (R$) *</label>
-                            <input type="number" id="valor" class="form-control" step="0.01" min="0" placeholder="0.00" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group" style="flex: 100%;">
-                            <label for="descricao">Descrição *</label>
-                            <textarea id="descricao" class="form-control" placeholder="Descreva o dano/avaria..." required></textarea>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="status">Status</label>
-                            <select id="status" class="form-control">
-                                <option value="Pendente">Pendente</option>
-                                <option value="Resolvido">Resolvido</option>
-                            </select>
-                        </div>
-                    </div>
-                `;
-            } else if (action === 'add-falta') {
-                formHTML = `
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="colaborador">Colaborador *</label>
-                            <select id="colaborador" class="form-control" required>
-                                <option value="">Selecione um colaborador</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="data">Data *</label>
-                            <input type="date" id="data" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="tipo">Tipo *</label>
-                            <select id="tipo" class="form-control" required>
-                                <option value="Justificada">Justificada</option>
-                                <option value="Não justificada">Não justificada</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="justificativa">Justificativa</label>
-                            <textarea id="justificativa" class="form-control" placeholder="Caso a falta seja justificada..."></textarea>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="status">Status</label>
-                            <select id="status" class="form-control">
-                                <option value="Registrada">Registrada</option>
-                                <option value="Aprovada">Aprovada</option>
-                                <option value="Rejeitada">Rejeitada</option>
-                            </select>
-                        </div>
-                    </div>
-                `;
-            } else if (action === 'add-feedback') {
-                formHTML = `
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="colaborador">Colaborador *</label>
-                            <select id="colaborador" class="form-control" required>
-                                <option value="">Selecione um colaborador</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="data">Data *</label>
-                            <input type="date" id="data" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="tipo">Tipo *</label>
-                            <select id="tipo" class="form-control" required>
-                                <option value="Positivo">Positivo</option>
-                                <option value="Construtivo">Construtivo</option>
-                                <option value="Negativo">Negativo</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="avaliacao">Avaliação *</label>
-                            <select id="avaliacao" class="form-control" required>
-                                <option value="Excelente">Excelente</option>
-                                <option value="Ótimo">Ótimo</option>
-                                <option value="Bom">Bom</option>
-                                <option value="Regular">Regular</option>
-                                <option value="Ruim">Ruim</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group" style="flex: 100%;">
-                            <label for="descricao">Descrição *</label>
-                            <textarea id="descricao" class="form-control" placeholder="Descreva o feedback..." required></textarea>
-                        </div>
-                    </div>
-                `;
-            } else if (action === 'add-multa') {
-                formHTML = `
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="colaborador">Colaborador *</label>
-                            <select id="colaborador" class="form-control" required>
-                                <option value="">Selecione um colaborador</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="data">Data *</label>
-                            <input type="date" id="data" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="valor">Valor (R$) *</label>
-                            <input type="number" id="valor" class="form-control" step="0.01" min="0" placeholder="0.00" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="motivo">Motivo *</label>
-                            <input type="text" id="motivo" class="form-control" placeholder="Ex: Estacionamento irregular" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="status">Status</label>
-                            <select id="status" class="form-control">
-                                <option value="Pendente">Pendente</option>
-                                <option value="Paga">Paga</option>
-                            </select>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            modalForm.innerHTML = formHTML;
-            
-            // Carregar dados para selects do CACHE
-            loadSelectOptionsFromCache(action);
-            
-            // Preencher formulário se estiver no modo de edição
             if (mode === 'edit' && id) {
-                fillFormWithData(action, id);
+                fillFormWithData('empresas', id);
             }
         }
 
-        // Carregar opções para selects do cache
-        function loadSelectOptionsFromCache(action) {
-            if (action === 'add-departamento') {
-                // Carregar empresas para select do cache
-                const empresasSelect = document.getElementById('empresa');
-                
-                if (empresasSelect) {
-                    empresasSelect.innerHTML = '<option value="">Selecione uma empresa</option>';
-                    empresasCache.forEach(empresa => {
-                        const option = document.createElement('option');
-                        option.value = empresa.nome;
-                        option.textContent = empresa.nome;
-                        empresasSelect.appendChild(option);
-                    });
-                }
-            }
+        // Formulário para departamentos
+        function loadDepartamentoForm(mode = 'add', id = null) {
+            let formHTML = `
+                <div class="form-group" style="flex: 100%;">
+                    <label for="nome">Nome do Departamento *</label>
+                    <input type="text" id="nome" class="form-control" placeholder="Ex: Recursos Humanos" required>
+                </div>
+            `;
             
-            if (action === 'add-colaborador') {
-                // Carregar departamentos para select do cache
-                const departamentosSelect = document.getElementById('departamento');
-                
-                if (departamentosSelect) {
-                    departamentosSelect.innerHTML = '<option value="">Selecione um departamento</option>';
-                    departamentosCache.forEach(departamento => {
-                        const option = document.createElement('option');
-                        option.value = departamento.nome;
-                        option.textContent = departamento.nome;
-                        departamentosSelect.appendChild(option);
-                    });
-                }
-            }
+            document.getElementById('modal-form').innerHTML = formHTML;
             
-            if (action === 'add-advertencia' || action === 'add-dano' || 
-                action === 'add-falta' || action === 'add-feedback' || 
-                action === 'add-multa') {
-                
-                // Carregar colaboradores para select do cache
-                const colaboradorSelect = document.getElementById('colaborador');
-                
-                if (colaboradorSelect) {
-                    colaboradorSelect.innerHTML = '<option value="">Selecione um colaborador</option>';
-                    colaboradoresCache.forEach(colaborador => {
-                        const option = document.createElement('option');
-                        option.value = colaborador.nome;
-                        option.textContent = colaborador.nome;
-                        colaboradorSelect.appendChild(option);
-                    });
-                }
+            if (mode === 'edit' && id) {
+                fillFormWithData('departamentos', id);
             }
         }
 
-        // Preencher formulário com dados existentes
-        async function fillFormWithData(action, id) {
+        // Formulário para colaboradores
+        function loadColaboradorForm(mode = 'add', id = null) {
+            let formHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome Completo *</label>
+                        <input type="text" id="nome" class="form-control" placeholder="Ex: João Silva" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dataAdmissao">Data de Admissão *</label>
+                        <input type="date" id="dataAdmissao" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="departamento">Departamento *</label>
+                        <select id="departamento" class="form-control" required>
+                            <option value="">Selecione um departamento</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="empresa">Empresa *</label>
+                        <select id="empresa" class="form-control" required>
+                            <option value="">Selecione uma empresa</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status" class="form-control">
+                            <option value="Ativo">Ativo</option>
+                            <option value="Inativo">Inativo</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modal-form').innerHTML = formHTML;
+            
+            // Popular selects com dados do cache
+            populateSelectOptions();
+            
+            if (mode === 'edit' && id) {
+                fillFormWithData('colaboradores', id);
+            }
+        }
+
+        // Popular opções dos selects
+        function populateSelectOptions() {
+            const departamentoSelect = document.getElementById('departamento');
+            const empresaSelect = document.getElementById('empresa');
+            
+            if (departamentoSelect) {
+                departamentoSelect.innerHTML = '<option value="">Selecione um departamento</option>';
+                departamentosData.forEach(depto => {
+                    const option = document.createElement('option');
+                    option.value = depto.nome;
+                    option.textContent = depto.nome;
+                    departamentoSelect.appendChild(option);
+                });
+            }
+            
+            if (empresaSelect) {
+                empresaSelect.innerHTML = '<option value="">Selecione uma empresa</option>';
+                empresasData.forEach(empresa => {
+                    const option = document.createElement('option');
+                    option.value = empresa.nome;
+                    option.textContent = empresa.nome;
+                    empresaSelect.appendChild(option);
+                });
+            }
+        }
+
+        // Formulário para advertências
+        function loadAdvertenciaForm(mode = 'add', id = null) {
+            let formHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="colaborador">Colaborador *</label>
+                        <select id="colaborador" class="form-control" required>
+                            <option value="">Selecione um colaborador</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="data">Data *</label>
+                        <input type="date" id="data" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tipo">Tipo *</label>
+                        <select id="tipo" class="form-control" required>
+                            <option value="Atraso">Atraso</option>
+                            <option value="Comportamento">Comportamento</option>
+                            <option value="Desempenho">Desempenho</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="gravidade">Gravidade *</label>
+                        <select id="gravidade" class="form-control" required>
+                            <option value="Baixa">Baixa</option>
+                            <option value="Média">Média</option>
+                            <option value="Alta">Alta</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 100%;">
+                        <label for="descricao">Descrição *</label>
+                        <textarea id="descricao" class="form-control" placeholder="Descreva a advertência..." required></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status" class="form-control">
+                            <option value="Ativa">Ativa</option>
+                            <option value="Inativa">Inativa</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modal-form').innerHTML = formHTML;
+            
+            // Popular select de colaboradores
+            const colaboradorSelect = document.getElementById('colaborador');
+            if (colaboradorSelect) {
+                colaboradorSelect.innerHTML = '<option value="">Selecione um colaborador</option>';
+                colaboradoresData.forEach(colab => {
+                    const option = document.createElement('option');
+                    option.value = colab.nome;
+                    option.textContent = colab.nome;
+                    colaboradorSelect.appendChild(option);
+                });
+            }
+            
+            if (mode === 'edit' && id) {
+                fillFormWithData('advertencias', id);
+            }
+        }
+
+        // Preencher formulário com dados
+        async function fillFormWithData(section, id) {
             try {
-                const collectionName = action.replace('add-', '');
-                const snapshot = await firebase.getDocs(firebase.collection(firebase.db, collectionName));
-                const doc = snapshot.docs.find(d => d.id === id);
+                const collectionName = collections[section];
+                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                const snapshot = await firebaseApp.firestore.getDocs(collectionRef);
                 
+                const doc = snapshot.docs.find(d => d.id === id);
                 if (doc) {
                     const data = doc.data();
                     
-                    // Preencher campos do formulário
-                    for (const key in data) {
+                    // Preencher todos os campos do formulário
+                    Object.keys(data).forEach(key => {
                         const field = document.getElementById(key);
                         if (field) {
-                            // Converter data para formato input[type="date"]
                             if (field.type === 'date' && data[key]) {
                                 const date = new Date(data[key]);
                                 field.value = date.toISOString().split('T')[0];
+                            } else if (field.type === 'select-one') {
+                                field.value = data[key];
                             } else {
                                 field.value = data[key];
                             }
                         }
-                    }
+                    });
                 }
             } catch (error) {
-                console.error('Erro ao preencher formulário:', error);
+                console.error(`Erro ao preencher formulário: ${error.message}`);
+            }
+        }
+
+        // Salvar empresa
+        async function saveEmpresa(formData, mode, id) {
+            try {
+                const collectionName = 'empresas';
+                const empresaData = {
+                    nome: formData.nome,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                console.log(`Salvando empresa: ${JSON.stringify(empresaData)}`);
+                
+                if (mode === 'add') {
+                    const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                    const docRef = await firebaseApp.firestore.addDoc(collectionRef, empresaData);
+                    console.log(`✅ Empresa adicionada com ID: ${docRef.id}`);
+                    return true;
+                } else if (mode === 'edit' && id) {
+                    const docRef = firebaseApp.firestore.doc(firebaseApp.db, collectionName, id);
+                    await firebaseApp.firestore.updateDoc(docRef, empresaData);
+                    console.log(`✅ Empresa atualizada: ${id}`);
+                    return true;
+                }
+            } catch (error) {
+                console.error(`❌ Erro ao salvar empresa: ${error.message}`);
+                return false;
+            }
+        }
+
+        // Salvar departamento
+        async function saveDepartamento(formData, mode, id) {
+            try {
+                const collectionName = 'departamentos';
+                const departamentoData = {
+                    nome: formData.nome,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                console.log(`Salvando departamento: ${JSON.stringify(departamentoData)}`);
+                
+                if (mode === 'add') {
+                    const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                    const docRef = await firebaseApp.firestore.addDoc(collectionRef, departamentoData);
+                    console.log(`✅ Departamento adicionado com ID: ${docRef.id}`);
+                    return true;
+                } else if (mode === 'edit' && id) {
+                    const docRef = firebaseApp.firestore.doc(firebaseApp.db, collectionName, id);
+                    await firebaseApp.firestore.updateDoc(docRef, departamentoData);
+                    console.log(`✅ Departamento atualizado: ${id}`);
+                    return true;
+                }
+            } catch (error) {
+                console.error(`❌ Erro ao salvar departamento: ${error.message}`);
+                return false;
+            }
+        }
+
+        // Salvar colaborador
+        async function saveColaborador(formData, mode, id) {
+            try {
+                const collectionName = 'colaboradores';
+                const colaboradorData = {
+                    nome: formData.nome,
+                    dataAdmissao: formData.dataAdmissao,
+                    departamento: formData.departamento,
+                    empresa: formData.empresa,
+                    status: formData.status || 'Ativo',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                console.log(`Salvando colaborador: ${JSON.stringify(colaboradorData)}`);
+                
+                if (mode === 'add') {
+                    const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                    const docRef = await firebaseApp.firestore.addDoc(collectionRef, colaboradorData);
+                    console.log(`✅ Colaborador adicionado com ID: ${docRef.id}`);
+                    return true;
+                } else if (mode === 'edit' && id) {
+                    const docRef = firebaseApp.firestore.doc(firebaseApp.db, collectionName, id);
+                    await firebaseApp.firestore.updateDoc(docRef, colaboradorData);
+                    console.log(`✅ Colaborador atualizado: ${id}`);
+                    return true;
+                }
+            } catch (error) {
+                console.error(`❌ Erro ao salvar colaborador: ${error.message}`);
+                return false;
+            }
+        }
+
+        // Abrir modal
+        function openModal(section, mode = 'add', id = null) {
+            currentSection = section;
+            currentAction = mode;
+            currentItemId = id;
+            currentCollection = collections[section];
+            
+            const titles = {
+                empresas: 'Empresa',
+                departamentos: 'Departamento',
+                colaboradores: 'Colaborador',
+                advertencias: 'Advertência',
+                danos: 'Dano/Avaria',
+                faltas: 'Falta',
+                feedbacks: 'Feedback',
+                multas: 'Multa'
+            };
+            
+            document.getElementById('modal-title').textContent = 
+                `${mode === 'add' ? 'Adicionar' : 'Editar'} ${titles[section] || 'Item'}`;
+            
+            // Carregar formulário apropriado
+            if (section === 'empresas') {
+                loadEmpresaForm(mode, id);
+            } else if (section === 'departamentos') {
+                loadDepartamentoForm(mode, id);
+            } else if (section === 'colaboradores') {
+                loadColaboradorForm(mode, id);
+            } else if (section === 'advertencias') {
+                loadAdvertenciaForm(mode, id);
+            } else {
+                loadBasicForm(section, mode, id);
+            }
+            
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        // Formulário básico para outras seções
+        function loadBasicForm(section, mode = 'add', id = null) {
+            let formHTML = `
+                <div class="form-group" style="flex: 100%;">
+                    <label for="nome">Nome *</label>
+                    <input type="text" id="nome" class="form-control" required>
+                </div>
+                <div class="form-group" style="flex: 100%;">
+                    <label for="descricao">Descrição</label>
+                    <textarea id="descricao" class="form-control" rows="3"></textarea>
+                </div>
+            `;
+            
+            document.getElementById('modal-form').innerHTML = formHTML;
+            
+            if (mode === 'edit' && id) {
+                fillFormWithData(section, id);
             }
         }
 
         // Fechar modal
         function closeModal() {
-            modal.style.display = 'none';
-            modalForm.reset();
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('modal-form').innerHTML = '';
             currentItemId = null;
-            currentCollection = null;
         }
 
         // Manipular envio do formulário
         async function handleFormSubmit() {
-            // Validar formulário
-            if (!validateForm()) {
-                showAlert('Por favor, preencha todos os campos obrigatórios.', 'error');
-                return;
-            }
-            
-            try {
-                // Coletar dados do formulário
-                const formData = getFormData();
-                console.log('💾 Salvando dados no Firebase:', formData);
-                
-                // Adicionar timestamp para empresas
-                if (currentCollection === 'empresas') {
-                    formData.dataCadastro = new Date().toISOString();
-                }
-                
-                // Adicionar timestamp para outros registros
-                if (!formData.dataCadastro && currentCollection !== 'empresas') {
-                    formData.createdAt = new Date().toISOString();
-                }
-                
-                if (currentAction === 'add') {
-                    // Adicionar novo documento
-                    console.log(`➕ Adicionando novo documento na coleção: ${currentCollection}`);
-                    const docRef = await firebase.addDoc(
-                        firebase.collection(firebase.db, currentCollection),
-                        formData
-                    );
-                    
-                    console.log('✅ Documento adicionado com ID:', docRef.id);
-                    showAlert('Item adicionado com sucesso!', 'success', `${currentSection}-alert`);
-                    
-                    // Forçar atualização da tabela atual
-                    if (currentSection && unsubscribeListeners[currentSection]) {
-                        const snapshot = await firebase.getDocs(firebase.collection(firebase.db, collections[currentSection]));
-                        updateTableFromSnapshot(currentSection, snapshot);
-                    }
-                    
-                } else if (currentAction === 'edit' && currentItemId) {
-                    // Atualizar documento existente
-                    console.log(`✏️ Atualizando documento ${currentItemId} na coleção: ${currentCollection}`);
-                    const docRef = firebase.doc(firebase.db, currentCollection, currentItemId);
-                    await firebase.updateDoc(docRef, formData);
-                    
-                    console.log('✅ Documento atualizado');
-                    showAlert('Item atualizado com sucesso!', 'success', `${currentSection}-alert`);
-                }
-                
-                // Fechar modal
-                closeModal();
-                
-            } catch (error) {
-                console.error('❌ Erro completo ao salvar dados:', error);
-                console.error('Código do erro:', error.code);
-                console.error('Mensagem do erro:', error.message);
-                
-                // Mensagens de erro específicas
-                if (error.code === 'permission-denied') {
-                    showAlert('Permissão negada! Configure as regras do Firestore para permitir escrita.', 'error');
-                } else if (error.code === 'unavailable') {
-                    showAlert('Firestore não disponível. Verifique sua conexão com a internet.', 'error');
-                } else {
-                    showAlert(`Erro ao salvar dados: ${error.message}`, 'error');
-                }
-            }
-        }
-
-        // Coletar dados do formulário
-        function getFormData() {
+            const form = document.getElementById('modal-form');
             const formData = {};
-            const formElements = modalForm.querySelectorAll('input, select, textarea');
             
-            formElements.forEach(element => {
-                if (element.id && element.value !== '') {
-                    // Tratamento especial para campos de data
-                    if (element.type === 'date') {
-                        formData[element.id] = element.value;
-                    } else if (element.type === 'number') {
-                        formData[element.id] = parseFloat(element.value) || 0;
-                    } else {
-                        formData[element.id] = element.value;
-                    }
+            // Coletar dados do formulário
+            const inputs = form.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.id) {
+                    formData[input.id] = input.value;
                 }
             });
             
-            return formData;
-        }
-
-        // Validar formulário
-        function validateForm() {
-            const requiredFields = modalForm.querySelectorAll('[required]');
-            for (const field of requiredFields) {
-                if (!field.value.trim()) {
-                    field.focus();
-                    return false;
+            // Validar
+            if (!formData.nome && currentSection !== 'advertencias' && currentSection !== 'danos' && currentSection !== 'faltas' && currentSection !== 'feedbacks' && currentSection !== 'multas') {
+                alert('Por favor, preencha o nome.');
+                return;
+            }
+            
+            if (currentSection === 'colaboradores') {
+                if (!formData.departamento || formData.departamento === '') {
+                    alert('Por favor, selecione um departamento.');
+                    return;
+                }
+                if (!formData.empresa || formData.empresa === '') {
+                    alert('Por favor, selecione uma empresa.');
+                    return;
                 }
             }
-            return true;
+            
+            try {
+                console.log(`Salvando ${currentSection}...`);
+                
+                let success = false;
+                
+                if (currentSection === 'empresas') {
+                    success = await saveEmpresa(formData, currentAction, currentItemId);
+                } else if (currentSection === 'departamentos') {
+                    success = await saveDepartamento(formData, currentAction, currentItemId);
+                } else if (currentSection === 'colaboradores') {
+                    success = await saveColaborador(formData, currentAction, currentItemId);
+                } else if (currentSection === 'advertencias') {
+                    success = await saveAdvertencia(formData, currentAction, currentItemId);
+                } else {
+                    success = await saveGenericItem(currentSection, formData, currentAction, currentItemId);
+                }
+                
+                if (success) {
+                    showAlert(`${currentSection} salvo com sucesso!`, 'success', `${currentSection}-alert`);
+                    closeModal();
+                    
+                    // Atualizar dashboard se for colaborador
+                    if (currentSection === 'colaboradores') {
+                        await updateDashboardCounts();
+                    }
+                } else {
+                    showAlert('Erro ao salvar. Verifique o console (F12).', 'error');
+                }
+            } catch (error) {
+                console.error(`❌ Erro no submit: ${error.message}`);
+                showAlert(`Erro: ${error.message}`, 'error');
+            }
         }
 
-        // Editar item
-        window.editItem = async function(section, id) {
-            openModal(`add-${section.slice(0, -1)}`, 'edit', id);
+        // Salvar advertência
+        async function saveAdvertencia(formData, mode, id) {
+            try {
+                const collectionName = 'advertencias';
+                const advertenciaData = {
+                    colaborador: formData.colaborador,
+                    data: formData.data,
+                    tipo: formData.tipo,
+                    gravidade: formData.gravidade,
+                    descricao: formData.descricao,
+                    status: formData.status || 'Ativa',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                console.log(`Salvando advertência: ${JSON.stringify(advertenciaData)}`);
+                
+                if (mode === 'add') {
+                    const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                    const docRef = await firebaseApp.firestore.addDoc(collectionRef, advertenciaData);
+                    console.log(`✅ Advertência adicionada com ID: ${docRef.id}`);
+                    return true;
+                } else if (mode === 'edit' && id) {
+                    const docRef = firebaseApp.firestore.doc(firebaseApp.db, collectionName, id);
+                    await firebaseApp.firestore.updateDoc(docRef, advertenciaData);
+                    console.log(`✅ Advertência atualizada: ${id}`);
+                    return true;
+                }
+            } catch (error) {
+                console.error(`❌ Erro ao salvar advertência: ${error.message}`);
+                return false;
+            }
+        }
+
+        // Salvar item genérico
+        async function saveGenericItem(section, formData, mode, id) {
+            try {
+                const collectionName = collections[section];
+                const itemData = {
+                    ...formData,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                if (mode === 'add') {
+                    const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                    const docRef = await firebaseApp.firestore.addDoc(collectionRef, itemData);
+                    console.log(`✅ ${section} adicionado com ID: ${docRef.id}`);
+                    return true;
+                } else if (mode === 'edit' && id) {
+                    const docRef = firebaseApp.firestore.doc(firebaseApp.db, collectionName, id);
+                    await firebaseApp.firestore.updateDoc(docRef, itemData);
+                    console.log(`✅ ${section} atualizado: ${id}`);
+                    return true;
+                }
+            } catch (error) {
+                console.error(`❌ Erro ao salvar ${section}: ${error.message}`);
+                return false;
+            }
+        }
+
+        // Configurar eventos
+        function setupEventListeners() {
+            // Navegação
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelectorAll('.sidebar-menu a').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const targetSection = this.getAttribute('data-section');
+                    currentSection = targetSection;
+                    
+                    // Mostrar seção
+                    document.querySelectorAll('.section-content').forEach(s => s.style.display = 'none');
+                    document.getElementById(targetSection).style.display = 'block';
+                    
+                    // Atualizar título
+                    const titles = {
+                        dashboard: 'Dashboard',
+                        empresas: 'Empresas',
+                        departamentos: 'Departamentos',
+                        colaboradores: 'Colaboradores',
+                        advertencias: 'Advertências',
+                        danos: 'Danos e Avarias',
+                        faltas: 'Faltas',
+                        feedbacks: 'Feedbacks',
+                        multas: 'Multas'
+                    };
+                    document.getElementById('page-title').textContent = titles[targetSection] || 'Dashboard';
+                });
+            });
+
+            // Botões de adicionar
+            document.getElementById('add-empresa-btn').addEventListener('click', () => openModal('empresas', 'add'));
+            document.getElementById('add-departamento-btn').addEventListener('click', () => openModal('departamentos', 'add'));
+            document.getElementById('add-colaborador-btn').addEventListener('click', () => openModal('colaboradores', 'add'));
+            document.getElementById('add-advertencia-btn').addEventListener('click', () => openModal('advertencias', 'add'));
+            document.getElementById('add-dano-btn').addEventListener('click', () => openModal('danos', 'add'));
+            document.getElementById('add-falta-btn').addEventListener('click', () => openModal('faltas', 'add'));
+            document.getElementById('add-feedback-btn').addEventListener('click', () => openModal('feedbacks', 'add'));
+            document.getElementById('add-multa-btn').addEventListener('click', () => openModal('multas', 'add'));
+
+            // Modal
+            document.getElementById('close-modal').addEventListener('click', closeModal);
+            document.getElementById('cancel-form').addEventListener('click', closeModal);
+            document.getElementById('submit-form').addEventListener('click', handleFormSubmit);
+            
+            // Fechar modal ao clicar fora
+            document.getElementById('modal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+        }
+
+        // Funções globais para ações
+        window.editItem = function(section, id) {
+            openModal(section, 'edit', id);
         };
 
-        // Excluir item
         window.deleteItem = async function(section, id) {
-            if (confirm('Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.')) {
-                try {
-                    const collectionName = collections[section];
-                    console.log(`🗑️ Excluindo documento ${id} da coleção ${collectionName}`);
-                    await firebase.deleteDoc(firebase.doc(firebase.db, collectionName, id));
-                    
-                    showAlert('Item excluído com sucesso!', 'success', `${section}-alert`);
-                    
-                } catch (error) {
-                    console.error('Erro ao excluir item:', error);
-                    showAlert('Erro ao excluir item. Por favor, tente novamente.', 'error', `${section}-alert`);
+            if (!confirm('Tem certeza que deseja excluir este item?')) return;
+            
+            try {
+                const collectionName = collections[section];
+                const docRef = firebaseApp.firestore.doc(firebaseApp.db, collectionName, id);
+                await firebaseApp.firestore.deleteDoc(docRef);
+                
+                console.log(`✅ ${section} excluído: ${id}`);
+                showAlert('Item excluído com sucesso!', 'success', `${section}-alert`);
+                
+                // Atualizar dashboard se for colaborador
+                if (section === 'colaboradores') {
+                    await updateDashboardCounts();
                 }
+            } catch (error) {
+                console.error(`❌ Erro ao excluir: ${error.message}`);
+                showAlert(`Erro ao excluir: ${error.message}`, 'error');
             }
         };
 
         // Funções auxiliares
         function formatDate(dateString) {
-            if (!dateString) return '';
-            
+            if (!dateString) return 'N/A';
             try {
-                const date = new Date(dateString);
-                return date.toLocaleDateString('pt-BR');
-            } catch (error) {
+                return new Date(dateString).toLocaleDateString('pt-BR');
+            } catch {
                 return dateString;
             }
         }
 
         function showAlert(message, type = 'info', targetId = null) {
-            // Criar elemento de alerta
             const alertDiv = document.createElement('div');
             alertDiv.className = `alert alert-${type}`;
             alertDiv.innerHTML = `
@@ -2193,15 +1957,12 @@
                 <span>${message}</span>
             `;
             
-            // Adicionar ao container apropriado ou ao body
-            let targetElement;
             if (targetId) {
-                targetElement = document.getElementById(targetId);
-            }
-            
-            if (targetElement) {
-                targetElement.innerHTML = '';
-                targetElement.appendChild(alertDiv);
+                const target = document.getElementById(targetId);
+                if (target) {
+                    target.innerHTML = '';
+                    target.appendChild(alertDiv);
+                }
             } else {
                 // Adicionar no topo do main-content
                 const mainContent = document.querySelector('.main-content');
@@ -2210,7 +1971,6 @@
                 }
             }
             
-            // Remover após 5 segundos
             setTimeout(() => {
                 if (alertDiv.parentNode) {
                     alertDiv.parentNode.removeChild(alertDiv);
