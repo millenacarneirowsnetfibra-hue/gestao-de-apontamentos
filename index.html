@@ -949,7 +949,7 @@
                 </div>
             </div>
 
-            <!-- Danos e Avarias Section - ATUALIZADA -->
+            <!-- Danos e Avarias Section -->
             <div id="danos" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1264,7 +1264,7 @@
                 const faltasEsteMes = faltasSnapshot.docs.filter(doc => {
                     const dataFalta = doc.data().data;
                     if (!dataFalta) return false;
-                    const data = new Date(dataFalta);
+                    const data = parseDateExactly(dataFalta);
                     return data >= primeiroDiaMes;
                 }).length;
                 document.getElementById('total-faltas').textContent = faltasEsteMes;
@@ -1369,7 +1369,7 @@
                         <td><strong>${data.nome || 'Sem nome'}</strong></td>
                         <td>${data.departamento || 'Não especificado'}</td>
                         <td>${data.empresa || 'Não especificada'}</td>
-                        <td>${formatDate(data.dataAdmissao) || 'Não especificada'}</td>
+                        <td>${formatDateExactly(data.dataAdmissao) || 'Não especificada'}</td>
                         <td><span class="status ${data.status === 'Ativo' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
@@ -1389,7 +1389,7 @@
                     row.innerHTML = `
                         <td>${data.colaborador || 'Não especificado'}</td>
                         <td>${departamento}</td>
-                        <td>${formatDate(data.data) || 'Não especificada'}</td>
+                        <td>${formatDateExactly(data.data) || 'Não especificada'}</td>
                         <td>${data.motivo || 'Não especificado'}</td>
                         <td>${data.observacao ? (data.observacao.substring(0, 30) + '...') : 'Sem observação'}</td>
                         <td>
@@ -1404,10 +1404,9 @@
                         </td>
                     `;
                 } else if (section === 'danos') {
-                    // TABELA SIMPLIFICADA PARA DANOS E AVARIAS
                     row.innerHTML = `
                         <td>${data.colaborador || 'Não especificado'}</td>
-                        <td>${formatMonthYear(data.data) || 'Não especificada'}</td>
+                        <td>${formatDateExactly(data.data) || 'Não especificada'}</td>
                         <td>${data.motivo || 'Não especificado'}</td>
                         <td>${data.valor ? 'R$ ' + parseFloat(data.valor).toFixed(2) : 'R$ 0,00'}</td>
                         <td>
@@ -1424,7 +1423,7 @@
                 } else if (section === 'faltas') {
                     row.innerHTML = `
                         <td>${data.colaborador || 'Não especificado'}</td>
-                        <td>${formatDate(data.data) || 'Não especificada'}</td>
+                        <td>${formatDateExactly(data.data) || 'Não especificada'}</td>
                         <td>${data.tipo || 'Não especificado'}</td>
                         <td>${data.justificativa ? (data.justificativa.substring(0, 30) + '...') : 'Nenhuma'}</td>
                         <td><span class="status ${data.status === 'Aprovada' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
@@ -1442,7 +1441,7 @@
                 } else if (section === 'feedbacks') {
                     row.innerHTML = `
                         <td>${data.colaborador || 'Não especificado'}</td>
-                        <td>${formatDate(data.data) || 'Não especificada'}</td>
+                        <td>${formatDateExactly(data.data) || 'Não especificada'}</td>
                         <td>${data.tipo || 'Não especificado'}</td>
                         <td>${data.avaliacao || 'Não avaliado'}</td>
                         <td>${data.descricao ? (data.descricao.substring(0, 30) + '...') : 'Sem descrição'}</td>
@@ -1460,7 +1459,7 @@
                 } else if (section === 'multas') {
                     row.innerHTML = `
                         <td>${data.colaborador || 'Não especificado'}</td>
-                        <td>${formatDate(data.data) || 'Não especificada'}</td>
+                        <td>${formatDateExactly(data.data) || 'Não especificada'}</td>
                         <td>${data.valor ? 'R$ ' + parseFloat(data.valor).toFixed(2) : 'R$ 0,00'}</td>
                         <td>${data.motivo ? (data.motivo.substring(0, 30) + '...') : 'Sem motivo'}</td>
                         <td><span class="status ${data.status === 'Paga' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
@@ -1503,7 +1502,7 @@
                 filtered = filtered.filter(item => {
                     if (!item.data) return false;
                     
-                    const dataAdvertencia = new Date(item.data);
+                    const dataAdvertencia = parseDateExactly(item.data);
                     
                     if (advertenciasFiltroAtual.dataInicio) {
                         const dataInicio = new Date(advertenciasFiltroAtual.dataInicio);
@@ -1660,8 +1659,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="data">Data (MM/AAAA) *</label>
-                        <input type="month" id="data" class="form-control" required>
+                        <label for="data">Data *</label>
+                        <input type="date" id="data" class="form-control" required>
                     </div>
                 </div>
                 <div class="form-row">
@@ -1722,18 +1721,8 @@
             if (mode === 'edit' && id) {
                 fillFormWithData('danos', id);
                 
-                // Se for edição, ajustar campo de data
+                // Ajustar motivo se for "Outro"
                 setTimeout(() => {
-                    const dataField = document.getElementById('data');
-                    if (dataField && dataField.value) {
-                        // Converter data para formato YYYY-MM
-                        const date = new Date(dataField.value);
-                        const year = date.getFullYear();
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        dataField.value = `${year}-${month}`;
-                    }
-                    
-                    // Ajustar motivo se for "Outro"
                     const motivoSelect = document.getElementById('motivo');
                     const outroInput = document.getElementById('outroMotivo');
                     if (motivoSelect && outroInput && motivoSelect.value === 'Outro' && outroInput.value) {
@@ -1963,13 +1952,19 @@
                         const field = document.getElementById(key);
                         if (field) {
                             if (field.type === 'date' && data[key]) {
-                                const date = new Date(data[key]);
-                                field.value = date.toISOString().split('T')[0];
-                            } else if (field.type === 'month' && data[key]) {
-                                const date = new Date(data[key]);
-                                const year = date.getFullYear();
-                                const month = String(date.getMonth() + 1).padStart(2, '0');
-                                field.value = `${year}-${month}`;
+                                // Usar a data exata como string YYYY-MM-DD
+                                const dateStr = data[key];
+                                if (dateStr.includes('T')) {
+                                    // Se for ISO string, converter para YYYY-MM-DD
+                                    const date = new Date(dateStr);
+                                    const year = date.getFullYear();
+                                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                                    const day = String(date.getDate()).padStart(2, '0');
+                                    field.value = `${year}-${month}-${day}`;
+                                } else {
+                                    // Se já estiver em formato YYYY-MM-DD
+                                    field.value = dateStr.substring(0, 10);
+                                }
                             } else if (field.type === 'select-one') {
                                 field.value = data[key];
                             } else {
@@ -1983,7 +1978,6 @@
                         const motivoSelect = document.getElementById('motivo');
                         const outroInput = document.getElementById('outroMotivo');
                         
-                        // Verificar se o motivo existe nas opções
                         if (data.motivo) {
                             const opcoes = ['Perda de ferramenta', 'Conserto do celular', 'Perda de equipamento', 
                                           'Perda cartão sólides', 'Conserto do carro', 'Perda EPI', 'Outro'];
@@ -1991,7 +1985,6 @@
                             if (opcoes.includes(data.motivo)) {
                                 if (motivoSelect) motivoSelect.value = data.motivo;
                             } else {
-                                // Se não está nas opções, definir como "Outro"
                                 if (motivoSelect) motivoSelect.value = 'Outro';
                                 if (outroInput) outroInput.value = data.motivo;
                                 const outroContainer = document.getElementById('outro-motivo-container');
@@ -2063,13 +2056,13 @@
             }
         }
 
-        // Salvar colaborador
+        // Salvar colaborador - DATAS PRESERVADAS
         async function saveColaborador(formData, mode, id) {
             try {
                 const collectionName = 'colaboradores';
                 const colaboradorData = {
                     nome: formData.nome,
-                    dataAdmissao: formData.dataAdmissao,
+                    dataAdmissao: formData.dataAdmissao, // Data exata como foi digitada
                     departamento: formData.departamento,
                     empresa: formData.empresa,
                     status: formData.status || 'Ativo',
@@ -2096,13 +2089,13 @@
             }
         }
 
-        // Salvar advertência
+        // Salvar advertência - DATAS PRESERVADAS
         async function saveAdvertencia(formData, mode, id) {
             try {
                 const collectionName = 'advertencias';
                 const advertenciaData = {
                     colaborador: formData.colaborador,
-                    data: formData.data,
+                    data: formData.data, // Data exata como foi selecionada
                     motivo: formData.motivo,
                     observacao: formData.observacao,
                     status: 'Ativa',
@@ -2129,7 +2122,7 @@
             }
         }
 
-        // SALVAR DANO/AVARIA - ATUALIZADO
+        // SALVAR DANO/AVARIA - DATAS PRESERVADAS
         async function saveDano(formData, mode, id) {
             try {
                 const collectionName = 'danos';
@@ -2140,16 +2133,9 @@
                     motivoFinal = formData.outroMotivo;
                 }
                 
-                // Processar data (adicionar dia 01 para armazenamento)
-                let dataFinal = formData.data;
-                if (dataFinal) {
-                    // Adicionar "-01" para formar data completa YYYY-MM-DD
-                    dataFinal = `${dataFinal}-01`;
-                }
-                
                 const danoData = {
                     colaborador: formData.colaborador,
-                    data: dataFinal,
+                    data: formData.data, // Data exata como foi selecionada
                     motivo: motivoFinal,
                     valor: formData.valor,
                     createdAt: new Date().toISOString(),
@@ -2175,13 +2161,13 @@
             }
         }
 
-        // Salvar falta
+        // Salvar falta - DATAS PRESERVADAS
         async function saveFalta(formData, mode, id) {
             try {
                 const collectionName = 'faltas';
                 const faltaData = {
                     colaborador: formData.colaborador,
-                    data: formData.data,
+                    data: formData.data, // Data exata como foi selecionada
                     tipo: formData.tipo,
                     justificativa: formData.justificativa,
                     status: formData.status || 'Pendente',
@@ -2206,13 +2192,13 @@
             }
         }
 
-        // Salvar feedback
+        // Salvar feedback - DATAS PRESERVADAS
         async function saveFeedback(formData, mode, id) {
             try {
                 const collectionName = 'feedbacks';
                 const feedbackData = {
                     colaborador: formData.colaborador,
-                    data: formData.data,
+                    data: formData.data, // Data exata como foi selecionada
                     tipo: formData.tipo,
                     avaliacao: formData.avaliacao,
                     descricao: formData.descricao,
@@ -2237,13 +2223,13 @@
             }
         }
 
-        // Salvar multa
+        // Salvar multa - DATAS PRESERVADAS
         async function saveMulta(formData, mode, id) {
             try {
                 const collectionName = 'multas';
                 const multaData = {
                     colaborador: formData.colaborador,
-                    data: formData.data,
+                    data: formData.data, // Data exata como foi selecionada
                     valor: formData.valor,
                     motivo: formData.motivo,
                     status: formData.status || 'Pendente',
@@ -2534,23 +2520,50 @@
             }
         };
 
-        // Funções auxiliares
-        function formatDate(dateString) {
+        // FUNÇÕES AUXILIARES PARA DATAS EXATAS
+        function parseDateExactly(dateString) {
             if (!dateString) return 'N/A';
             try {
-                return new Date(dateString).toLocaleDateString('pt-BR');
+                // Se já for uma string de data no formato YYYY-MM-DD
+                if (dateString.includes('-') && dateString.length === 10) {
+                    const [year, month, day] = dateString.split('-');
+                    return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
+                }
+                
+                // Se for uma string ISO
+                if (dateString.includes('T')) {
+                    const date = new Date(dateString);
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                }
+                
+                return dateString;
             } catch {
                 return dateString;
             }
         }
 
-        function formatMonthYear(dateString) {
+        function formatDateExactly(dateString) {
             if (!dateString) return 'N/A';
             try {
-                const date = new Date(dateString);
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const year = date.getFullYear();
-                return `${month}/${year}`;
+                // Se já for uma string de data no formato YYYY-MM-DD
+                if (dateString.includes('-') && dateString.length === 10) {
+                    const [year, month, day] = dateString.split('-');
+                    return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
+                }
+                
+                // Se for uma string ISO
+                if (dateString.includes('T')) {
+                    const date = new Date(dateString);
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                }
+                
+                return dateString;
             } catch {
                 return dateString;
             }
