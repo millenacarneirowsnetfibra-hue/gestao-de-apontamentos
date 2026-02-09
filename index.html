@@ -806,7 +806,7 @@
                 </div>
             </div>
 
-            <!-- Advertências Section -->
+            <!-- Advertências Section - AJUSTADA -->
             <div id="advertencias" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -821,8 +821,8 @@
                                     <th>Colaborador</th>
                                     <th>Data</th>
                                     <th>Tipo</th>
-                                    <th>Gravidade</th>
-                                    <th>Descrição</th>
+                                    <th>Motivo</th>
+                                    <th>Observação</th>
                                     <th>Status</th>
                                     <th>Ações</th>
                                 </tr>
@@ -1280,8 +1280,8 @@
                         <td>${data.colaborador || 'Não especificado'}</td>
                         <td>${formatDate(data.data) || 'Não especificada'}</td>
                         <td>${data.tipo || 'Não especificado'}</td>
-                        <td>${data.gravidade || 'Não especificada'}</td>
-                        <td>${data.descricao ? (data.descricao.substring(0, 30) + '...') : 'Sem descrição'}</td>
+                        <td>${data.motivo || 'Não especificado'}</td>
+                        <td>${data.observacao ? (data.observacao.substring(0, 30) + '...') : 'Sem observação'}</td>
                         <td><span class="status ${data.status === 'Ativa' ? 'status-warning' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
                         <td>
                             <div class="action-buttons">
@@ -1453,33 +1453,7 @@
             }
         }
 
-        // Popular opções dos selects
-        function populateSelectOptions() {
-            const departamentoSelect = document.getElementById('departamento');
-            const empresaSelect = document.getElementById('empresa');
-            
-            if (departamentoSelect) {
-                departamentoSelect.innerHTML = '<option value="">Selecione um departamento</option>';
-                departamentosData.forEach(depto => {
-                    const option = document.createElement('option');
-                    option.value = depto.nome;
-                    option.textContent = depto.nome;
-                    departamentoSelect.appendChild(option);
-                });
-            }
-            
-            if (empresaSelect) {
-                empresaSelect.innerHTML = '<option value="">Selecione uma empresa</option>';
-                empresasData.forEach(empresa => {
-                    const option = document.createElement('option');
-                    option.value = empresa.nome;
-                    option.textContent = empresa.nome;
-                    empresaSelect.appendChild(option);
-                });
-            }
-        }
-
-        // Formulário para advertências
+        // Formulário para advertências - AJUSTADO
         function loadAdvertenciaForm(mode = 'add', id = null) {
             let formHTML = `
                 <div class="form-row">
@@ -1490,7 +1464,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="data">Data *</label>
+                        <label for="data">Data da Advertência *</label>
                         <input type="date" id="data" class="form-control" required>
                     </div>
                 </div>
@@ -1498,15 +1472,19 @@
                     <div class="form-group">
                         <label for="tipo">Tipo *</label>
                         <select id="tipo" class="form-control" required>
+                            <option value="">Selecione o tipo</option>
+                            <option value="Leve">Leve</option>
+                            <option value="Média">Média</option>
+                            <option value="Grave">Grave</option>
                             <option value="Atraso">Atraso</option>
                             <option value="Comportamento">Comportamento</option>
                             <option value="Desempenho">Desempenho</option>
-                            <option value="Outro">Outro</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="gravidade">Gravidade *</label>
                         <select id="gravidade" class="form-control" required>
+                            <option value="">Selecione a gravidade</option>
                             <option value="Baixa">Baixa</option>
                             <option value="Média">Média</option>
                             <option value="Alta">Alta</option>
@@ -1515,8 +1493,14 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group" style="flex: 100%;">
-                        <label for="descricao">Descrição *</label>
-                        <textarea id="descricao" class="form-control" placeholder="Descreva a advertência..." required></textarea>
+                        <label for="motivo">Motivo da Advertência *</label>
+                        <input type="text" id="motivo" class="form-control" placeholder="Ex: Atraso frequente" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 100%;">
+                        <label for="observacao">Observação</label>
+                        <textarea id="observacao" class="form-control" placeholder="Anotações adicionais..."></textarea>
                     </div>
                 </div>
                 <div class="form-row">
@@ -1546,6 +1530,32 @@
             
             if (mode === 'edit' && id) {
                 fillFormWithData('advertencias', id);
+            }
+        }
+
+        // Popular opções dos selects
+        function populateSelectOptions() {
+            const departamentoSelect = document.getElementById('departamento');
+            const empresaSelect = document.getElementById('empresa');
+            
+            if (departamentoSelect) {
+                departamentoSelect.innerHTML = '<option value="">Selecione um departamento</option>';
+                departamentosData.forEach(depto => {
+                    const option = document.createElement('option');
+                    option.value = depto.nome;
+                    option.textContent = depto.nome;
+                    departamentoSelect.appendChild(option);
+                });
+            }
+            
+            if (empresaSelect) {
+                empresaSelect.innerHTML = '<option value="">Selecione uma empresa</option>';
+                empresasData.forEach(empresa => {
+                    const option = document.createElement('option');
+                    option.value = empresa.nome;
+                    option.textContent = empresa.nome;
+                    empresaSelect.appendChild(option);
+                });
             }
         }
 
@@ -1671,6 +1681,166 @@
             }
         }
 
+        // Salvar advertência - AJUSTADO
+        async function saveAdvertencia(formData, mode, id) {
+            try {
+                const collectionName = 'advertencias';
+                const advertenciaData = {
+                    colaborador: formData.colaborador,
+                    data: formData.data,
+                    tipo: formData.tipo,
+                    gravidade: formData.gravidade,
+                    motivo: formData.motivo,
+                    observacao: formData.observacao,
+                    status: formData.status || 'Ativa',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                console.log(`Salvando advertência: ${JSON.stringify(advertenciaData)}`);
+                
+                if (mode === 'add') {
+                    const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                    const docRef = await firebaseApp.firestore.addDoc(collectionRef, advertenciaData);
+                    console.log(`✅ Advertência adicionada com ID: ${docRef.id}`);
+                    return true;
+                } else if (mode === 'edit' && id) {
+                    const docRef = firebaseApp.firestore.doc(firebaseApp.db, collectionName, id);
+                    await firebaseApp.firestore.updateDoc(docRef, advertenciaData);
+                    console.log(`✅ Advertência atualizada: ${id}`);
+                    return true;
+                }
+            } catch (error) {
+                console.error(`❌ Erro ao salvar advertência: ${error.message}`);
+                return false;
+            }
+        }
+
+        // Salvar dano/avaria
+        async function saveDano(formData, mode, id) {
+            try {
+                const collectionName = 'danos';
+                const danoData = {
+                    item: formData.item,
+                    colaborador: formData.colaborador,
+                    data: formData.data,
+                    valor: formData.valor,
+                    descricao: formData.descricao,
+                    status: formData.status || 'Pendente',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                if (mode === 'add') {
+                    const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                    const docRef = await firebaseApp.firestore.addDoc(collectionRef, danoData);
+                    console.log(`✅ Dano registrado com ID: ${docRef.id}`);
+                    return true;
+                } else if (mode === 'edit' && id) {
+                    const docRef = firebaseApp.firestore.doc(firebaseApp.db, collectionName, id);
+                    await firebaseApp.firestore.updateDoc(docRef, danoData);
+                    console.log(`✅ Dano atualizado: ${id}`);
+                    return true;
+                }
+            } catch (error) {
+                console.error(`❌ Erro ao salvar dano: ${error.message}`);
+                return false;
+            }
+        }
+
+        // Salvar falta
+        async function saveFalta(formData, mode, id) {
+            try {
+                const collectionName = 'faltas';
+                const faltaData = {
+                    colaborador: formData.colaborador,
+                    data: formData.data,
+                    tipo: formData.tipo,
+                    justificativa: formData.justificativa,
+                    status: formData.status || 'Pendente',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                if (mode === 'add') {
+                    const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                    const docRef = await firebaseApp.firestore.addDoc(collectionRef, faltaData);
+                    console.log(`✅ Falta registrada com ID: ${docRef.id}`);
+                    return true;
+                } else if (mode === 'edit' && id) {
+                    const docRef = firebaseApp.firestore.doc(firebaseApp.db, collectionName, id);
+                    await firebaseApp.firestore.updateDoc(docRef, faltaData);
+                    console.log(`✅ Falta atualizada: ${id}`);
+                    return true;
+                }
+            } catch (error) {
+                console.error(`❌ Erro ao salvar falta: ${error.message}`);
+                return false;
+            }
+        }
+
+        // Salvar feedback
+        async function saveFeedback(formData, mode, id) {
+            try {
+                const collectionName = 'feedbacks';
+                const feedbackData = {
+                    colaborador: formData.colaborador,
+                    data: formData.data,
+                    tipo: formData.tipo,
+                    avaliacao: formData.avaliacao,
+                    descricao: formData.descricao,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                if (mode === 'add') {
+                    const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                    const docRef = await firebaseApp.firestore.addDoc(collectionRef, feedbackData);
+                    console.log(`✅ Feedback adicionado com ID: ${docRef.id}`);
+                    return true;
+                } else if (mode === 'edit' && id) {
+                    const docRef = firebaseApp.firestore.doc(firebaseApp.db, collectionName, id);
+                    await firebaseApp.firestore.updateDoc(docRef, feedbackData);
+                    console.log(`✅ Feedback atualizado: ${id}`);
+                    return true;
+                }
+            } catch (error) {
+                console.error(`❌ Erro ao salvar feedback: ${error.message}`);
+                return false;
+            }
+        }
+
+        // Salvar multa
+        async function saveMulta(formData, mode, id) {
+            try {
+                const collectionName = 'multas';
+                const multaData = {
+                    colaborador: formData.colaborador,
+                    data: formData.data,
+                    valor: formData.valor,
+                    motivo: formData.motivo,
+                    status: formData.status || 'Pendente',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                if (mode === 'add') {
+                    const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                    const docRef = await firebaseApp.firestore.addDoc(collectionRef, multaData);
+                    console.log(`✅ Multa adicionada com ID: ${docRef.id}`);
+                    return true;
+                } else if (mode === 'edit' && id) {
+                    const docRef = firebaseApp.firestore.doc(firebaseApp.db, collectionName, id);
+                    await firebaseApp.firestore.updateDoc(docRef, multaData);
+                    console.log(`✅ Multa atualizada: ${id}`);
+                    return true;
+                }
+            } catch (error) {
+                console.error(`❌ Erro ao salvar multa: ${error.message}`);
+                return false;
+            }
+        }
+
         // Abrir modal
         function openModal(section, mode = 'add', id = null) {
             currentSection = section;
@@ -1701,11 +1871,263 @@
                 loadColaboradorForm(mode, id);
             } else if (section === 'advertencias') {
                 loadAdvertenciaForm(mode, id);
+            } else if (section === 'danos') {
+                loadDanoForm(mode, id);
+            } else if (section === 'faltas') {
+                loadFaltaForm(mode, id);
+            } else if (section === 'feedbacks') {
+                loadFeedbackForm(mode, id);
+            } else if (section === 'multas') {
+                loadMultaForm(mode, id);
             } else {
                 loadBasicForm(section, mode, id);
             }
             
             document.getElementById('modal').style.display = 'flex';
+        }
+
+        // Formulário para danos
+        function loadDanoForm(mode = 'add', id = null) {
+            let formHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="item">Item *</label>
+                        <input type="text" id="item" class="form-control" placeholder="Ex: Computador, Ferramenta..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="colaborador">Colaborador *</label>
+                        <select id="colaborador" class="form-control" required>
+                            <option value="">Selecione um colaborador</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="data">Data *</label>
+                        <input type="date" id="data" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="valor">Valor do Dano (R$)</label>
+                        <input type="number" id="valor" class="form-control" placeholder="0.00" step="0.01">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 100%;">
+                        <label for="descricao">Descrição *</label>
+                        <textarea id="descricao" class="form-control" placeholder="Descreva o dano ou avaria..." required></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status" class="form-control">
+                            <option value="Pendente">Pendente</option>
+                            <option value="Resolvido">Resolvido</option>
+                            <option value="Em análise">Em análise</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modal-form').innerHTML = formHTML;
+            
+            // Popular select de colaboradores
+            const colaboradorSelect = document.getElementById('colaborador');
+            if (colaboradorSelect) {
+                colaboradorSelect.innerHTML = '<option value="">Selecione um colaborador</option>';
+                colaboradoresData.forEach(colab => {
+                    const option = document.createElement('option');
+                    option.value = colab.nome;
+                    option.textContent = colab.nome;
+                    colaboradorSelect.appendChild(option);
+                });
+            }
+            
+            if (mode === 'edit' && id) {
+                fillFormWithData('danos', id);
+            }
+        }
+
+        // Formulário para faltas
+        function loadFaltaForm(mode = 'add', id = null) {
+            let formHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="colaborador">Colaborador *</label>
+                        <select id="colaborador" class="form-control" required>
+                            <option value="">Selecione um colaborador</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="data">Data *</label>
+                        <input type="date" id="data" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tipo">Tipo *</label>
+                        <select id="tipo" class="form-control" required>
+                            <option value="Justificada">Justificada</option>
+                            <option value="Não Justificada">Não Justificada</option>
+                            <option value="Atestado">Atestado</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 100%;">
+                        <label for="justificativa">Justificativa</label>
+                        <textarea id="justificativa" class="form-control" placeholder="Justificativa da falta..."></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status" class="form-control">
+                            <option value="Pendente">Pendente</option>
+                            <option value="Aprovada">Aprovada</option>
+                            <option value="Rejeitada">Rejeitada</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modal-form').innerHTML = formHTML;
+            
+            // Popular select de colaboradores
+            const colaboradorSelect = document.getElementById('colaborador');
+            if (colaboradorSelect) {
+                colaboradorSelect.innerHTML = '<option value="">Selecione um colaborador</option>';
+                colaboradoresData.forEach(colab => {
+                    const option = document.createElement('option');
+                    option.value = colab.nome;
+                    option.textContent = colab.nome;
+                    colaboradorSelect.appendChild(option);
+                });
+            }
+            
+            if (mode === 'edit' && id) {
+                fillFormWithData('faltas', id);
+            }
+        }
+
+        // Formulário para feedbacks
+        function loadFeedbackForm(mode = 'add', id = null) {
+            let formHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="colaborador">Colaborador *</label>
+                        <select id="colaborador" class="form-control" required>
+                            <option value="">Selecione um colaborador</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="data">Data *</label>
+                        <input type="date" id="data" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tipo">Tipo *</label>
+                        <select id="tipo" class="form-control" required>
+                            <option value="Positivo">Positivo</option>
+                            <option value="Construtivo">Construtivo</option>
+                            <option value="Negativo">Negativo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="avaliacao">Avaliação *</label>
+                        <select id="avaliacao" class="form-control" required>
+                            <option value="1">1 - Muito Insatisfeito</option>
+                            <option value="2">2 - Insatisfeito</option>
+                            <option value="3">3 - Neutro</option>
+                            <option value="4">4 - Satisfeito</option>
+                            <option value="5">5 - Muito Satisfeito</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 100%;">
+                        <label for="descricao">Descrição *</label>
+                        <textarea id="descricao" class="form-control" placeholder="Descreva o feedback..." required></textarea>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modal-form').innerHTML = formHTML;
+            
+            // Popular select de colaboradores
+            const colaboradorSelect = document.getElementById('colaborador');
+            if (colaboradorSelect) {
+                colaboradorSelect.innerHTML = '<option value="">Selecione um colaborador</option>';
+                colaboradoresData.forEach(colab => {
+                    const option = document.createElement('option');
+                    option.value = colab.nome;
+                    option.textContent = colab.nome;
+                    colaboradorSelect.appendChild(option);
+                });
+            }
+            
+            if (mode === 'edit' && id) {
+                fillFormWithData('feedbacks', id);
+            }
+        }
+
+        // Formulário para multas
+        function loadMultaForm(mode = 'add', id = null) {
+            let formHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="colaborador">Colaborador *</label>
+                        <select id="colaborador" class="form-control" required>
+                            <option value="">Selecione um colaborador</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="data">Data *</label>
+                        <input type="date" id="data" class="form-control" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="valor">Valor (R$) *</label>
+                        <input type="number" id="valor" class="form-control" placeholder="0.00" step="0.01" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 100%;">
+                        <label for="motivo">Motivo *</label>
+                        <textarea id="motivo" class="form-control" placeholder="Descreva o motivo da multa..." required></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status" class="form-control">
+                            <option value="Pendente">Pendente</option>
+                            <option value="Paga">Paga</option>
+                            <option value="Cancelada">Cancelada</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modal-form').innerHTML = formHTML;
+            
+            // Popular select de colaboradores
+            const colaboradorSelect = document.getElementById('colaborador');
+            if (colaboradorSelect) {
+                colaboradorSelect.innerHTML = '<option value="">Selecione um colaborador</option>';
+                colaboradoresData.forEach(colab => {
+                    const option = document.createElement('option');
+                    option.value = colab.nome;
+                    option.textContent = colab.nome;
+                    colaboradorSelect.appendChild(option);
+                });
+            }
+            
+            if (mode === 'edit' && id) {
+                fillFormWithData('multas', id);
+            }
         }
 
         // Formulário básico para outras seções
@@ -1749,11 +2171,6 @@
             });
             
             // Validar
-            if (!formData.nome && currentSection !== 'advertencias' && currentSection !== 'danos' && currentSection !== 'faltas' && currentSection !== 'feedbacks' && currentSection !== 'multas') {
-                alert('Por favor, preencha o nome.');
-                return;
-            }
-            
             if (currentSection === 'colaboradores') {
                 if (!formData.departamento || formData.departamento === '') {
                     alert('Por favor, selecione um departamento.');
@@ -1778,16 +2195,22 @@
                     success = await saveColaborador(formData, currentAction, currentItemId);
                 } else if (currentSection === 'advertencias') {
                     success = await saveAdvertencia(formData, currentAction, currentItemId);
-                } else {
-                    success = await saveGenericItem(currentSection, formData, currentAction, currentItemId);
+                } else if (currentSection === 'danos') {
+                    success = await saveDano(formData, currentAction, currentItemId);
+                } else if (currentSection === 'faltas') {
+                    success = await saveFalta(formData, currentAction, currentItemId);
+                } else if (currentSection === 'feedbacks') {
+                    success = await saveFeedback(formData, currentAction, currentItemId);
+                } else if (currentSection === 'multas') {
+                    success = await saveMulta(formData, currentAction, currentItemId);
                 }
                 
                 if (success) {
                     showAlert(`${currentSection} salvo com sucesso!`, 'success', `${currentSection}-alert`);
                     closeModal();
                     
-                    // Atualizar dashboard se for colaborador
-                    if (currentSection === 'colaboradores') {
+                    // Atualizar dashboard se for colaborador, advertência, falta ou multa
+                    if (['colaboradores', 'advertencias', 'faltas', 'multas'].includes(currentSection)) {
                         await updateDashboardCounts();
                     }
                 } else {
@@ -1796,67 +2219,6 @@
             } catch (error) {
                 console.error(`❌ Erro no submit: ${error.message}`);
                 showAlert(`Erro: ${error.message}`, 'error');
-            }
-        }
-
-        // Salvar advertência
-        async function saveAdvertencia(formData, mode, id) {
-            try {
-                const collectionName = 'advertencias';
-                const advertenciaData = {
-                    colaborador: formData.colaborador,
-                    data: formData.data,
-                    tipo: formData.tipo,
-                    gravidade: formData.gravidade,
-                    descricao: formData.descricao,
-                    status: formData.status || 'Ativa',
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
-                };
-                
-                console.log(`Salvando advertência: ${JSON.stringify(advertenciaData)}`);
-                
-                if (mode === 'add') {
-                    const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
-                    const docRef = await firebaseApp.firestore.addDoc(collectionRef, advertenciaData);
-                    console.log(`✅ Advertência adicionada com ID: ${docRef.id}`);
-                    return true;
-                } else if (mode === 'edit' && id) {
-                    const docRef = firebaseApp.firestore.doc(firebaseApp.db, collectionName, id);
-                    await firebaseApp.firestore.updateDoc(docRef, advertenciaData);
-                    console.log(`✅ Advertência atualizada: ${id}`);
-                    return true;
-                }
-            } catch (error) {
-                console.error(`❌ Erro ao salvar advertência: ${error.message}`);
-                return false;
-            }
-        }
-
-        // Salvar item genérico
-        async function saveGenericItem(section, formData, mode, id) {
-            try {
-                const collectionName = collections[section];
-                const itemData = {
-                    ...formData,
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
-                };
-                
-                if (mode === 'add') {
-                    const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
-                    const docRef = await firebaseApp.firestore.addDoc(collectionRef, itemData);
-                    console.log(`✅ ${section} adicionado com ID: ${docRef.id}`);
-                    return true;
-                } else if (mode === 'edit' && id) {
-                    const docRef = firebaseApp.firestore.doc(firebaseApp.db, collectionName, id);
-                    await firebaseApp.firestore.updateDoc(docRef, itemData);
-                    console.log(`✅ ${section} atualizado: ${id}`);
-                    return true;
-                }
-            } catch (error) {
-                console.error(`❌ Erro ao salvar ${section}: ${error.message}`);
-                return false;
             }
         }
 
@@ -1929,8 +2291,8 @@
                 console.log(`✅ ${section} excluído: ${id}`);
                 showAlert('Item excluído com sucesso!', 'success', `${section}-alert`);
                 
-                // Atualizar dashboard se for colaborador
-                if (section === 'colaboradores') {
+                // Atualizar dashboard se for colaborador, advertência, falta ou multa
+                if (['colaboradores', 'advertencias', 'faltas', 'multas'].includes(section)) {
                     await updateDashboardCounts();
                 }
             } catch (error) {
