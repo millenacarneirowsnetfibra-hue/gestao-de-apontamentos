@@ -390,6 +390,15 @@
             background-color: #c0392b;
         }
 
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #219a52;
+        }
+
         /* Loading */
         .loading {
             display: flex;
@@ -622,6 +631,18 @@
             border: 1px solid rgba(231, 76, 60, 0.2);
         }
 
+        .alert-warning {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+            border: 1px solid rgba(243, 156, 18, 0.2);
+        }
+
+        .alert-info {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--secondary-color);
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+
         /* Badges para tipos de feedback */
         .badge {
             display: inline-block;
@@ -644,11 +665,6 @@
         .badge-melhorar {
             background-color: rgba(243, 156, 18, 0.1);
             color: var(--warning-color);
-        }
-
-        .badge-negativo {
-            background-color: rgba(231, 76, 60, 0.1);
-            color: var(--accent-color);
         }
 
         /* Estatísticas de feedbacks */
@@ -685,6 +701,43 @@
             font-size: 0.8rem;
             color: var(--gray-color);
             margin-top: 5px;
+        }
+
+        /* Estatísticas de multas */
+        .multas-stats-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .multa-stat-card {
+            flex: 1;
+            min-width: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            color: white;
+        }
+
+        .multa-stat-card .stat-title {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .multa-stat-card .stat-value {
+            color: white;
+        }
+
+        .multa-stat-card .stat-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .multa-stat-card.warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .multa-stat-card.success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         }
 
         /* Responsive */
@@ -747,7 +800,7 @@
                 min-width: 100%;
             }
 
-            .stats-container {
+            .stats-container, .multas-stats-container {
                 flex-direction: column;
             }
         }
@@ -830,7 +883,7 @@
                                 <i class="fas fa-money-bill-wave"></i>
                             </div>
                         </div>
-                        <div class="card-value" id="total-multas">R$ 0</div>
+                        <div class="card-value" id="total-multas">R$ 0,00</div>
                         <div class="card-change positive"><i class="fas fa-sync"></i> Em tempo real</div>
                     </div>
                 </div>
@@ -838,7 +891,7 @@
                 <div class="section">
                     <div class="section-header">
                         <h3 class="section-title">Atividades Recentes</h3>
-                        <button class="btn btn-secondary">Ver Todas</button>
+                        <button class="btn btn-secondary" id="ver-todas-atividades">Ver Todas</button>
                     </div>
                     <div class="table-container">
                         <table id="atividades-table">
@@ -876,12 +929,13 @@
                             <thead>
                                 <tr>
                                     <th>Nome</th>
+                                    <th>Data de Criação</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="empresas-table-body">
                                 <tr>
-                                    <td colspan="2" class="loading">
+                                    <td colspan="3" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -904,12 +958,13 @@
                             <thead>
                                 <tr>
                                     <th>Nome</th>
+                                    <th>Data de Criação</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="departamentos-table-body">
                                 <tr>
-                                    <td colspan="2" class="loading">
+                                    <td colspan="3" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -1002,13 +1057,12 @@
                                     <th>Departamento</th>
                                     <th>Data</th>
                                     <th>Motivo</th>
-                                    <th>Observação</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="advertencias-table-body">
                                 <tr>
-                                    <td colspan="6" class="loading">
+                                    <td colspan="5" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -1025,12 +1079,48 @@
                         <h3 class="section-title">Danos e Avarias</h3>
                         <button class="btn btn-primary" id="add-dano-btn">Registrar Dano/Avaria</button>
                     </div>
+                    
+                    <div class="filters-container">
+                        <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-nome-dano">Nome do Colaborador</label>
+                                <input type="text" id="filtro-nome-dano" class="filter-input" placeholder="Digite o nome...">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-departamento-dano">Departamento</label>
+                                <select id="filtro-departamento-dano" class="filter-input">
+                                    <option value="">Todos os departamentos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-data-inicio-dano">Data Início</label>
+                                <input type="date" id="filtro-data-inicio-dano" class="filter-input">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-data-fim-dano">Data Fim</label>
+                                <input type="date" id="filtro-data-fim-dano" class="filter-input">
+                            </div>
+                        </div>
+                        <div class="filter-buttons">
+                            <button class="btn btn-primary" id="aplicar-filtros-dano">
+                                <i class="fas fa-search"></i> Aplicar Filtros
+                            </button>
+                            <button class="btn btn-secondary" id="limpar-filtros-dano">
+                                <i class="fas fa-times"></i> Limpar Filtros
+                            </button>
+                        </div>
+                    </div>
+                    
                     <div id="danos-alert"></div>
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Colaborador</th>
+                                    <th>Departamento</th>
                                     <th>Data</th>
                                     <th>Motivo</th>
                                     <th>Valor (R$)</th>
@@ -1039,7 +1129,7 @@
                             </thead>
                             <tbody id="danos-table-body">
                                 <tr>
-                                    <td colspan="5" class="loading">
+                                    <td colspan="6" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -1057,7 +1147,6 @@
                         <button class="btn btn-primary" id="add-falta-btn">Registrar Falta</button>
                     </div>
                     
-                    <!-- FILTROS PARA FALTAS -->
                     <div class="filters-container">
                         <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
                         <div class="filters-row">
@@ -1116,7 +1205,7 @@
                 </div>
             </div>
 
-            <!-- Feedbacks Section - ATUALIZADA -->
+            <!-- Feedbacks Section -->
             <div id="feedbacks" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1124,7 +1213,6 @@
                         <button class="btn btn-primary" id="add-feedback-btn">Adicionar Feedback</button>
                     </div>
                     
-                    <!-- Filtros para Feedbacks -->
                     <div class="filters-container">
                         <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
                         <div class="filters-row">
@@ -1153,18 +1241,6 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="filters-row">
-                            <div class="filter-group">
-                                <label for="filtro-tipo-feedback">Tipo de Feedback</label>
-                                <select id="filtro-tipo-feedback" class="filter-input">
-                                    <option value="">Todos os tipos</option>
-                                    <option value="Positivo">Positivo</option>
-                                    <option value="Neutro">Neutro</option>
-                                    <option value="Melhorar">A Melhorar</option>
-                                    <option value="Negativo">Negativo</option>
-                                </select>
-                            </div>
-                        </div>
                         <div class="filter-buttons">
                             <button class="btn btn-primary" id="aplicar-filtros-feedback">
                                 <i class="fas fa-search"></i> Aplicar Filtros
@@ -1175,7 +1251,6 @@
                         </div>
                     </div>
 
-                    <!-- Estatísticas de Feedbacks -->
                     <div class="stats-container">
                         <div class="stat-card">
                             <div class="stat-title">Positivos</div>
@@ -1225,29 +1300,105 @@
                 </div>
             </div>
 
-            <!-- Multas Section -->
+            <!-- Multas Section - DESENVOLVIDA -->
             <div id="multas" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
-                        <h3 class="section-title">Multas</h3>
-                        <button class="btn btn-primary" id="add-multa-btn">Adicionar Multa</button>
+                        <h3 class="section-title">Gestão de Multas</h3>
+                        <button class="btn btn-primary" id="add-multa-btn">
+                            <i class="fas fa-plus"></i> Registrar Multa
+                        </button>
                     </div>
+
+                    <!-- Filtros para Multas -->
+                    <div class="filters-container">
+                        <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-nome-multa">Nome do Colaborador</label>
+                                <input type="text" id="filtro-nome-multa" class="filter-input" placeholder="Digite o nome...">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-departamento-multa">Departamento</label>
+                                <select id="filtro-departamento-multa" class="filter-input">
+                                    <option value="">Todos os departamentos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-status-multa">Status</label>
+                                <select id="filtro-status-multa" class="filter-input">
+                                    <option value="">Todos os status</option>
+                                    <option value="Pendente">Pendente</option>
+                                    <option value="Paga">Paga</option>
+                                    <option value="Cancelada">Cancelada</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-data-inicio-multa">Data Início</label>
+                                <input type="date" id="filtro-data-inicio-multa" class="filter-input">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-data-fim-multa">Data Fim</label>
+                                <input type="date" id="filtro-data-fim-multa" class="filter-input">
+                            </div>
+                        </div>
+                        <div class="filter-buttons">
+                            <button class="btn btn-primary" id="aplicar-filtros-multa">
+                                <i class="fas fa-search"></i> Aplicar Filtros
+                            </button>
+                            <button class="btn btn-secondary" id="limpar-filtros-multa">
+                                <i class="fas fa-times"></i> Limpar Filtros
+                            </button>
+                            <button class="btn btn-success" id="gerar-relatorio-multas">
+                                <i class="fas fa-file-pdf"></i> Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Estatísticas de Multas -->
+                    <div class="multas-stats-container">
+                        <div class="multa-stat-card">
+                            <div class="stat-title">Total Pendente</div>
+                            <div class="stat-value" id="stat-multas-pendentes">0</div>
+                            <div class="stat-subtitle">multas em aberto</div>
+                        </div>
+                        <div class="multa-stat-card warning">
+                            <div class="stat-title">Valor Total Pendente</div>
+                            <div class="stat-value" id="stat-valor-pendente">R$ 0,00</div>
+                            <div class="stat-subtitle">a receber</div>
+                        </div>
+                        <div class="multa-stat-card success">
+                            <div class="stat-title">Total Pagas</div>
+                            <div class="stat-value" id="stat-multas-pagas">0</div>
+                            <div class="stat-subtitle">multas quitadas</div>
+                        </div>
+                        <div class="multa-stat-card">
+                            <div class="stat-title">Valor Total Recebido</div>
+                            <div class="stat-value" id="stat-valor-recebido">R$ 0,00</div>
+                            <div class="stat-subtitle">total arrecadado</div>
+                        </div>
+                    </div>
+
                     <div id="multas-alert"></div>
+                    
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Colaborador</th>
+                                    <th>Departamento</th>
                                     <th>Data</th>
-                                    <th>Valor</th>
                                     <th>Motivo</th>
+                                    <th>Valor (R$)</th>
                                     <th>Status</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="multas-table-body">
                                 <tr>
-                                    <td colspan="6" class="loading">
+                                    <td colspan="7" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -1301,7 +1452,7 @@
         let currentCollection = null;
         let unsubscribeListeners = {};
         
-        // Filtros atuais para advertências
+        // Filtros atuais
         let advertenciasFiltroAtual = {
             nome: '',
             departamento: '',
@@ -1309,7 +1460,6 @@
             dataFim: ''
         };
         
-        // Filtros atuais para faltas
         let faltasFiltroAtual = {
             nome: '',
             departamento: '',
@@ -1317,11 +1467,25 @@
             dataFim: ''
         };
         
-        // Filtros atuais para feedbacks
+        let danosFiltroAtual = {
+            nome: '',
+            departamento: '',
+            dataInicio: '',
+            dataFim: ''
+        };
+        
         let feedbacksFiltroAtual = {
             mesAno: '',
+            departamento: ''
+        };
+        
+        // Filtros para Multas
+        let multasFiltroAtual = {
+            nome: '',
             departamento: '',
-            tipo: ''
+            status: '',
+            dataInicio: '',
+            dataFim: ''
         };
 
         // Elementos DOM
@@ -1394,8 +1558,17 @@
                             updateTableFromSnapshot(section, snapshot);
                             updateCache(section, snapshot);
                             
-                            if (section === 'colaboradores' || section === 'advertencias' || section === 'faltas' || section === 'multas' || section === 'feedbacks') {
+                            if (section === 'colaboradores' || section === 'advertencias' || 
+                                section === 'faltas' || section === 'multas' || section === 'feedbacks' ||
+                                section === 'danos') {
                                 updateDashboardCounts();
+                                if (section === 'multas') {
+                                    updateMultasStats();
+                                }
+                                if (section === 'feedbacks') {
+                                    const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                                    updateFeedbackStats(docs);
+                                }
                             }
                         },
                         (error) => {
@@ -1432,6 +1605,7 @@
                 }
                 
                 await updateDashboardCounts();
+                updateMultasStats();
                 
                 console.log('✅ Dados iniciais carregados');
             } catch (error) {
@@ -1442,17 +1616,17 @@
         // Atualizar dashboard
         async function updateDashboardCounts() {
             try {
+                // Colaboradores
                 const colaboradoresRef = firebaseApp.firestore.collection(firebaseApp.db, 'colaboradores');
                 const colaboradoresSnapshot = await firebaseApp.firestore.getDocs(colaboradoresRef);
                 document.getElementById('total-colaboradores').textContent = colaboradoresSnapshot.size;
                 
+                // Advertências ativas
                 const advertenciasRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
                 const advertenciasSnapshot = await firebaseApp.firestore.getDocs(advertenciasRef);
-                const advertenciasAtivas = advertenciasSnapshot.docs.filter(doc => 
-                    doc.data().status === 'Ativa'
-                ).length;
-                document.getElementById('total-advertencias').textContent = advertenciasAtivas;
+                document.getElementById('total-advertencias').textContent = advertenciasSnapshot.size;
                 
+                // Faltas este mês
                 const faltasRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
                 const faltasSnapshot = await firebaseApp.firestore.getDocs(faltasRef);
                 const hoje = new Date();
@@ -1465,6 +1639,7 @@
                 }).length;
                 document.getElementById('total-faltas').textContent = faltasEsteMes;
                 
+                // Multas pendentes
                 const multasRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
                 const multasSnapshot = await firebaseApp.firestore.getDocs(multasRef);
                 let totalMultas = 0;
@@ -1475,9 +1650,123 @@
                 });
                 document.getElementById('total-multas').textContent = `R$ ${totalMultas.toFixed(2)}`;
                 
+                // Atualizar atividades recentes
+                await updateAtividadesRecentes();
+                
                 console.log(`Dashboard atualizado`);
             } catch (error) {
                 console.error(`Erro ao atualizar dashboard: ${error.message}`);
+            }
+        }
+
+        // Atualizar atividades recentes
+        async function updateAtividadesRecentes() {
+            try {
+                const atividades = [];
+                
+                // Buscar últimas 5 faltas
+                const faltasRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
+                const faltasSnapshot = await firebaseApp.firestore.getDocs(faltasRef);
+                faltasSnapshot.docs.slice(0, 2).forEach(doc => {
+                    atividades.push({
+                        data: doc.data().data,
+                        tipo: 'Falta',
+                        colaborador: doc.data().colaborador,
+                        descricao: doc.data().justificativa || 'Sem justificativa',
+                        status: 'Registrada'
+                    });
+                });
+                
+                // Buscar últimas 5 multas
+                const multasRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
+                const multasSnapshot = await firebaseApp.firestore.getDocs(multasRef);
+                multasSnapshot.docs.slice(0, 2).forEach(doc => {
+                    atividades.push({
+                        data: doc.data().data,
+                        tipo: 'Multa',
+                        colaborador: doc.data().colaborador,
+                        descricao: doc.data().motivo,
+                        status: doc.data().status
+                    });
+                });
+                
+                // Buscar últimas 5 advertências
+                const advertenciasRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
+                const advertenciasSnapshot = await firebaseApp.firestore.getDocs(advertenciasRef);
+                advertenciasSnapshot.docs.slice(0, 2).forEach(doc => {
+                    atividades.push({
+                        data: doc.data().data,
+                        tipo: 'Advertência',
+                        colaborador: doc.data().colaborador,
+                        descricao: doc.data().motivo,
+                        status: 'Ativa'
+                    });
+                });
+                
+                // Ordenar por data (mais recente primeiro)
+                atividades.sort((a, b) => {
+                    const dataA = parseDateExactly(a.data);
+                    const dataB = parseDateExactly(b.data);
+                    return dataB - dataA;
+                });
+                
+                // Pegar apenas as 5 mais recentes
+                const recentes = atividades.slice(0, 5);
+                
+                const tbody = document.getElementById('atividades-table-body');
+                if (recentes.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5">Nenhuma atividade recente.</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = '';
+                recentes.forEach(atividade => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${formatDateExactly(atividade.data)}</td>
+                        <td><span class="badge badge-${atividade.tipo === 'Multa' ? 'melhorar' : 'neutro'}">${atividade.tipo}</span></td>
+                        <td>${atividade.colaborador || 'N/A'}</td>
+                        <td>${atividade.descricao.substring(0, 30)}${atividade.descricao.length > 30 ? '...' : ''}</td>
+                        <td><span class="status ${atividade.status === 'Pendente' ? 'status-warning' : 'status-active'}">${atividade.status}</span></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error(`Erro ao atualizar atividades recentes: ${error.message}`);
+            }
+        }
+
+        // Atualizar estatísticas de multas
+        async function updateMultasStats() {
+            try {
+                const multasRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
+                const snapshot = await firebaseApp.firestore.getDocs(multasRef);
+                const multas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                let pendentes = 0;
+                let pagas = 0;
+                let valorPendente = 0;
+                let valorRecebido = 0;
+                
+                multas.forEach(multa => {
+                    const valor = parseFloat(multa.valor) || 0;
+                    if (multa.status === 'Pendente') {
+                        pendentes++;
+                        valorPendente += valor;
+                    } else if (multa.status === 'Paga') {
+                        pagas++;
+                        valorRecebido += valor;
+                    }
+                });
+                
+                document.getElementById('stat-multas-pendentes').textContent = pendentes;
+                document.getElementById('stat-valor-pendente').textContent = `R$ ${valorPendente.toFixed(2)}`;
+                document.getElementById('stat-multas-pagas').textContent = pagas;
+                document.getElementById('stat-valor-recebido').textContent = `R$ ${valorRecebido.toFixed(2)}`;
+                
+            } catch (error) {
+                console.error(`Erro ao atualizar estatísticas de multas: ${error.message}`);
             }
         }
 
@@ -1487,7 +1776,7 @@
             if (!tableBody) return;
             
             try {
-                tableBody.innerHTML = '<tr><td colspan="6" class="loading"><div class="loading-spinner"></div></td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="7" class="loading"><div class="loading-spinner"></div></td></tr>';
                 
                 const collectionName = collections[section];
                 let query = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
@@ -1502,7 +1791,7 @@
                 console.error(`Erro ao carregar ${section}: ${error.message}`);
                 const tableBody = document.getElementById(`${section}-table-body`);
                 if (tableBody) {
-                    tableBody.innerHTML = `<tr><td colspan="6">Erro: ${error.message}</td></tr>`;
+                    tableBody.innerHTML = `<tr><td colspan="7">Erro: ${error.message}</td></tr>`;
                 }
             }
         }
@@ -1513,7 +1802,13 @@
             if (!tableBody) return;
             
             if (snapshot.empty) {
-                tableBody.innerHTML = `<tr><td colspan="7">Nenhum registro encontrado.</td></tr>`;
+                const cols = section === 'multas' ? 7 : 
+                            section === 'danos' ? 6 :
+                            section === 'feedbacks' ? 7 :
+                            section === 'colaboradores' ? 6 :
+                            section === 'empresas' ? 3 :
+                            section === 'departamentos' ? 3 : 5;
+                tableBody.innerHTML = `<tr><td colspan="${cols}">Nenhum registro encontrado.</td></tr>`;
                 return;
             }
             
@@ -1525,13 +1820,22 @@
                 docs = applyAdvertenciasFilters(docs);
             } else if (section === 'faltas') {
                 docs = applyFaltasFilters(docs);
+            } else if (section === 'danos') {
+                docs = applyDanosFilters(docs);
             } else if (section === 'feedbacks') {
                 docs = applyFeedbacksFilters(docs);
                 updateFeedbackStats(docs);
+            } else if (section === 'multas') {
+                docs = applyMultasFilters(docs);
             }
             
             if (docs.length === 0) {
-                const cols = section === 'feedbacks' ? 7 : 6;
+                const cols = section === 'multas' ? 7 : 
+                            section === 'danos' ? 6 :
+                            section === 'feedbacks' ? 7 :
+                            section === 'colaboradores' ? 6 :
+                            section === 'empresas' ? 3 :
+                            section === 'departamentos' ? 3 : 5;
                 tableBody.innerHTML = `<tr><td colspan="${cols}">Nenhum registro encontrado com os filtros aplicados.</td></tr>`;
                 return;
             }
@@ -1542,6 +1846,7 @@
                 if (section === 'empresas') {
                     row.innerHTML = `
                         <td><strong>${data.nome || 'Sem nome'}</strong></td>
+                        <td>${formatDateExactly(data.createdAt) || 'N/A'}</td>
                         <td>
                             <div class="action-buttons">
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
@@ -1556,6 +1861,7 @@
                 } else if (section === 'departamentos') {
                     row.innerHTML = `
                         <td><strong>${data.nome || 'Sem nome'}</strong></td>
+                        <td>${formatDateExactly(data.createdAt) || 'N/A'}</td>
                         <td>
                             <div class="action-buttons">
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
@@ -1594,7 +1900,6 @@
                         <td>${departamento}</td>
                         <td>${formatDateExactly(data.data) || 'Não especificada'}</td>
                         <td>${data.motivo || 'Não especificado'}</td>
-                        <td>${data.observacao ? (data.observacao.substring(0, 30) + '...') : 'Sem observação'}</td>
                         <td>
                             <div class="action-buttons">
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
@@ -1607,11 +1912,15 @@
                         </td>
                     `;
                 } else if (section === 'danos') {
+                    const colaboradorInfo = colaboradoresData.find(c => c.nome === data.colaborador);
+                    const departamento = colaboradorInfo ? colaboradorInfo.departamento : 'Não especificado';
+                    
                     row.innerHTML = `
                         <td>${data.colaborador || 'Não especificado'}</td>
+                        <td>${departamento}</td>
                         <td>${formatDateExactly(data.data) || 'Não especificada'}</td>
                         <td>${data.motivo || 'Não especificado'}</td>
-                        <td>${data.valor ? 'R$ ' + parseFloat(data.valor).toFixed(2) : 'R$ 0,00'}</td>
+                        <td>R$ ${parseFloat(data.valor || 0).toFixed(2)}</td>
                         <td>
                             <div class="action-buttons">
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
@@ -1644,12 +1953,11 @@
                         </td>
                     `;
                 } else if (section === 'feedbacks') {
-                    // Formatando mês/ano para exibição
-                    const mesAno = data.mesAno || 'Não especificado';
-                    const [mes, ano] = mesAno.split('-');
+                    const [mes, ano] = (data.mesAno || '01-2024').split('-');
                     const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
                                   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
                     const mesFormatado = meses[parseInt(mes) - 1] || 'Mês inválido';
+                    const total = (parseInt(data.positivos || 0) + parseInt(data.neutros || 0) + parseInt(data.melhorar || 0));
                     
                     row.innerHTML = `
                         <td><strong>${mesFormatado}/${ano}</strong></td>
@@ -1657,7 +1965,7 @@
                         <td><span class="badge badge-positivo">${data.positivos || 0}</span></td>
                         <td><span class="badge badge-neutro">${data.neutros || 0}</span></td>
                         <td><span class="badge badge-melhorar">${data.melhorar || 0}</span></td>
-                        <td><strong>${parseInt(data.positivos || 0) + parseInt(data.neutros || 0) + parseInt(data.melhorar || 0)}</strong></td>
+                        <td><strong>${total}</strong></td>
                         <td>
                             <div class="action-buttons">
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
@@ -1670,14 +1978,29 @@
                         </td>
                     `;
                 } else if (section === 'multas') {
+                    const colaboradorInfo = colaboradoresData.find(c => c.nome === data.colaborador);
+                    const departamento = colaboradorInfo ? colaboradorInfo.departamento : 'Não especificado';
+                    
                     row.innerHTML = `
                         <td>${data.colaborador || 'Não especificado'}</td>
+                        <td>${departamento}</td>
                         <td>${formatDateExactly(data.data) || 'Não especificada'}</td>
-                        <td>${data.valor ? 'R$ ' + parseFloat(data.valor).toFixed(2) : 'R$ 0,00'}</td>
                         <td>${data.motivo ? (data.motivo.substring(0, 30) + '...') : 'Sem motivo'}</td>
-                        <td><span class="status ${data.status === 'Paga' ? 'status-active' : 'status-inactive'}">${data.status || 'N/A'}</span></td>
+                        <td><strong>R$ ${parseFloat(data.valor || 0).toFixed(2)}</strong></td>
+                        <td>
+                            <span class="status ${data.status === 'Paga' ? 'status-active' : 
+                                                  data.status === 'Cancelada' ? 'status-inactive' : 'status-warning'}">
+                                ${data.status || 'Pendente'}
+                            </span>
+                        </td>
                         <td>
                             <div class="action-buttons">
+                                ${data.status !== 'Paga' ? `
+                                    <button class="action-btn" style="background-color: var(--success-color);" 
+                                            onclick="marcarMultaComoPaga('${data.id}')" title="Marcar como Paga">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                ` : ''}
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -1692,6 +2015,28 @@
                 tableBody.appendChild(row);
             });
         }
+
+        // Função para marcar multa como paga
+        window.marcarMultaComoPaga = async function(id) {
+            if (!confirm('Deseja marcar esta multa como PAGA?')) return;
+            
+            try {
+                const docRef = firebaseApp.firestore.doc(firebaseApp.db, 'multas', id);
+                await firebaseApp.firestore.updateDoc(docRef, {
+                    status: 'Paga',
+                    updatedAt: new Date().toISOString(),
+                    dataPagamento: new Date().toISOString()
+                });
+                
+                showAlert('Multa marcada como paga com sucesso!', 'success', 'multas-alert');
+                updateMultasStats();
+                updateDashboardCounts();
+                
+            } catch (error) {
+                console.error(`Erro ao marcar multa como paga: ${error.message}`);
+                showAlert(`Erro ao marcar multa como paga: ${error.message}`, 'error', 'multas-alert');
+            }
+        };
 
         // Atualizar estatísticas de feedbacks
         function updateFeedbackStats(feedbacks) {
@@ -1804,6 +2149,48 @@
             return filtered;
         }
 
+        // Aplicar filtros aos danos
+        function applyDanosFilters(docs) {
+            let filtered = [...docs];
+            
+            if (danosFiltroAtual.nome) {
+                const termo = danosFiltroAtual.nome.toLowerCase();
+                filtered = filtered.filter(item => 
+                    item.colaborador && item.colaborador.toLowerCase().includes(termo)
+                );
+            }
+            
+            if (danosFiltroAtual.departamento) {
+                filtered = filtered.filter(item => {
+                    const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
+                    return colaboradorInfo && colaboradorInfo.departamento === danosFiltroAtual.departamento;
+                });
+            }
+            
+            if (danosFiltroAtual.dataInicio || danosFiltroAtual.dataFim) {
+                filtered = filtered.filter(item => {
+                    if (!item.data) return false;
+                    
+                    const dataDano = parseDateExactly(item.data);
+                    
+                    if (danosFiltroAtual.dataInicio) {
+                        const dataInicio = new Date(danosFiltroAtual.dataInicio);
+                        if (dataDano < dataInicio) return false;
+                    }
+                    
+                    if (danosFiltroAtual.dataFim) {
+                        const dataFim = new Date(danosFiltroAtual.dataFim);
+                        dataFim.setHours(23, 59, 59, 999);
+                        if (dataDano > dataFim) return false;
+                    }
+                    
+                    return true;
+                });
+            }
+            
+            return filtered;
+        }
+
         // Aplicar filtros aos feedbacks
         function applyFeedbacksFilters(docs) {
             let filtered = [...docs];
@@ -1814,6 +2201,52 @@
             
             if (feedbacksFiltroAtual.departamento) {
                 filtered = filtered.filter(item => item.departamento === feedbacksFiltroAtual.departamento);
+            }
+            
+            return filtered;
+        }
+
+        // Aplicar filtros às multas
+        function applyMultasFilters(docs) {
+            let filtered = [...docs];
+            
+            if (multasFiltroAtual.nome) {
+                const termo = multasFiltroAtual.nome.toLowerCase();
+                filtered = filtered.filter(item => 
+                    item.colaborador && item.colaborador.toLowerCase().includes(termo)
+                );
+            }
+            
+            if (multasFiltroAtual.departamento) {
+                filtered = filtered.filter(item => {
+                    const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
+                    return colaboradorInfo && colaboradorInfo.departamento === multasFiltroAtual.departamento;
+                });
+            }
+            
+            if (multasFiltroAtual.status) {
+                filtered = filtered.filter(item => item.status === multasFiltroAtual.status);
+            }
+            
+            if (multasFiltroAtual.dataInicio || multasFiltroAtual.dataFim) {
+                filtered = filtered.filter(item => {
+                    if (!item.data) return false;
+                    
+                    const dataMulta = parseDateExactly(item.data);
+                    
+                    if (multasFiltroAtual.dataInicio) {
+                        const dataInicio = new Date(multasFiltroAtual.dataInicio);
+                        if (dataMulta < dataInicio) return false;
+                    }
+                    
+                    if (multasFiltroAtual.dataFim) {
+                        const dataFim = new Date(multasFiltroAtual.dataFim);
+                        dataFim.setHours(23, 59, 59, 999);
+                        if (dataMulta > dataFim) return false;
+                    }
+                    
+                    return true;
+                });
             }
             
             return filtered;
@@ -1919,12 +2352,6 @@
                         <input type="text" id="motivo" class="form-control" placeholder="Ex: Atraso frequente" required>
                     </div>
                 </div>
-                <div class="form-row">
-                    <div class="form-group" style="flex: 100%;">
-                        <label for="observacao">Observação</label>
-                        <textarea id="observacao" class="form-control" placeholder="Anotações adicionais..."></textarea>
-                    </div>
-                </div>
             `;
             
             document.getElementById('modal-form').innerHTML = formHTML;
@@ -1933,11 +2360,19 @@
             if (colaboradorSelect) {
                 colaboradorSelect.innerHTML = '<option value="">Selecione um colaborador</option>';
                 colaboradoresData.forEach(colab => {
-                    const option = document.createElement('option');
-                    option.value = colab.nome;
-                    option.textContent = colab.nome;
-                    colaboradorSelect.appendChild(option);
+                    if (colab.nome && colab.status === 'Ativo') {
+                        const option = document.createElement('option');
+                        option.value = colab.nome;
+                        option.textContent = colab.nome;
+                        colaboradorSelect.appendChild(option);
+                    }
                 });
+            }
+            
+            const today = new Date().toISOString().split('T')[0];
+            const dataInput = document.getElementById('data');
+            if (dataInput) {
+                dataInput.value = today;
             }
             
             if (mode === 'edit' && id) {
@@ -1945,7 +2380,7 @@
             }
         }
 
-        // FORMULÁRIO PARA DANOS E AVARIAS - ATUALIZADO
+        // Formulário para danos e avarias
         function loadDanoForm(mode = 'add', id = null) {
             let formHTML = `
                 <div class="form-row">
@@ -1989,19 +2424,19 @@
             
             document.getElementById('modal-form').innerHTML = formHTML;
             
-            // Popular select de colaboradores
             const colaboradorSelect = document.getElementById('colaborador');
             if (colaboradorSelect) {
                 colaboradorSelect.innerHTML = '<option value="">Selecione um colaborador</option>';
                 colaboradoresData.forEach(colab => {
-                    const option = document.createElement('option');
-                    option.value = colab.nome;
-                    option.textContent = colab.nome;
-                    colaboradorSelect.appendChild(option);
+                    if (colab.nome && colab.status === 'Ativo') {
+                        const option = document.createElement('option');
+                        option.value = colab.nome;
+                        option.textContent = colab.nome;
+                        colaboradorSelect.appendChild(option);
+                    }
                 });
             }
             
-            // Adicionar evento para mostrar campo "Outro"
             const motivoSelect = document.getElementById('motivo');
             if (motivoSelect) {
                 motivoSelect.addEventListener('change', function() {
@@ -2015,10 +2450,15 @@
                 });
             }
             
+            const today = new Date().toISOString().split('T')[0];
+            const dataInput = document.getElementById('data');
+            if (dataInput) {
+                dataInput.value = today;
+            }
+            
             if (mode === 'edit' && id) {
                 fillFormWithData('danos', id);
                 
-                // Ajustar motivo se for "Outro"
                 setTimeout(() => {
                     const motivoSelect = document.getElementById('motivo');
                     const outroInput = document.getElementById('outroMotivo');
@@ -2029,7 +2469,7 @@
             }
         }
 
-        // FORMULÁRIO PARA FALTAS - ATUALIZADO (SIMPLIFICADO)
+        // Formulário para faltas
         function loadFaltaForm(mode = 'add', id = null) {
             let formHTML = `
                 <div class="form-row">
@@ -2054,26 +2494,22 @@
             
             document.getElementById('modal-form').innerHTML = formHTML;
             
-            // Popular select de colaboradores COM OS DADOS DO CACHE
             const colaboradorSelect = document.getElementById('colaborador');
             if (colaboradorSelect) {
                 colaboradorSelect.innerHTML = '<option value="">Selecione um colaborador</option>';
                 
                 if (colaboradoresData && colaboradoresData.length > 0) {
                     colaboradoresData.forEach(colab => {
-                        if (colab.nome) {
+                        if (colab.nome && colab.status === 'Ativo') {
                             const option = document.createElement('option');
                             option.value = colab.nome;
                             option.textContent = colab.nome;
                             colaboradorSelect.appendChild(option);
                         }
                     });
-                } else {
-                    console.log('⚠️ Nenhum colaborador encontrado no cache');
                 }
             }
             
-            // Definir data atual como padrão
             const today = new Date().toISOString().split('T')[0];
             const dataInput = document.getElementById('data');
             if (dataInput) {
@@ -2085,7 +2521,7 @@
             }
         }
 
-        // FORMULÁRIO PARA FEEDBACKS - ATUALIZADO (CONTROLE POR MÊS/DEPARTAMENTO)
+        // Formulário para feedbacks
         function loadFeedbackForm(mode = 'add', id = null) {
             const hoje = new Date();
             const mesAtual = String(hoje.getMonth() + 1).padStart(2, '0');
@@ -2121,15 +2557,15 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="positivos">Feedbacks Positivos *</label>
-                        <input type="number" id="positivos" class="form-control" placeholder="0" min="0" required>
+                        <input type="number" id="positivos" class="form-control" placeholder="0" min="0" value="0" required>
                     </div>
                     <div class="form-group">
                         <label for="neutros">Feedbacks Neutros *</label>
-                        <input type="number" id="neutros" class="form-control" placeholder="0" min="0" required>
+                        <input type="number" id="neutros" class="form-control" placeholder="0" min="0" value="0" required>
                     </div>
                     <div class="form-group">
                         <label for="melhorar">A Melhorar *</label>
-                        <input type="number" id="melhorar" class="form-control" placeholder="0" min="0" required>
+                        <input type="number" id="melhorar" class="form-control" placeholder="0" min="0" value="0" required>
                     </div>
                 </div>
                 <div class="form-row">
@@ -2142,15 +2578,16 @@
             
             document.getElementById('modal-form').innerHTML = formHTML;
             
-            // Popular select de departamentos
             const departamentoSelect = document.getElementById('departamento');
             if (departamentoSelect) {
                 departamentoSelect.innerHTML = '<option value="">Selecione um departamento</option>';
                 departamentosData.forEach(depto => {
-                    const option = document.createElement('option');
-                    option.value = depto.nome;
-                    option.textContent = depto.nome;
-                    departamentoSelect.appendChild(option);
+                    if (depto.nome) {
+                        const option = document.createElement('option');
+                        option.value = depto.nome;
+                        option.textContent = depto.nome;
+                        departamentoSelect.appendChild(option);
+                    }
                 });
             }
             
@@ -2159,14 +2596,7 @@
             }
         }
 
-        // Função auxiliar para obter nome do mês
-        function getNomeMes(mesNumero) {
-            const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
-                          'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-            return meses[parseInt(mesNumero) - 1] || 'Mês inválido';
-        }
-
-        // Formulário para multas
+        // Formulário para multas - ATUALIZADO E MELHORADO
         function loadMultaForm(mode = 'add', id = null) {
             let formHTML = `
                 <div class="form-row">
@@ -2177,7 +2607,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="data">Data *</label>
+                        <label for="data">Data da Multa *</label>
                         <input type="date" id="data" class="form-control" required>
                     </div>
                 </div>
@@ -2189,7 +2619,6 @@
                     <div class="form-group">
                         <label for="status">Status *</label>
                         <select id="status" class="form-control" required>
-                            <option value="">Selecione o status</option>
                             <option value="Pendente">Pendente</option>
                             <option value="Paga">Paga</option>
                             <option value="Cancelada">Cancelada</option>
@@ -2198,8 +2627,29 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group" style="flex: 100%;">
-                        <label for="motivo">Motivo *</label>
-                        <textarea id="motivo" class="form-control" placeholder="Descreva o motivo da multa..." rows="3" required></textarea>
+                        <label for="motivo">Motivo da Multa *</label>
+                        <select id="motivo" class="form-control" required>
+                            <option value="">Selecione um motivo</option>
+                            <option value="Atraso">Atraso</option>
+                            <option value="Falta não justificada">Falta não justificada</option>
+                            <option value="Dano a equipamento">Dano a equipamento</option>
+                            <option value="Descumprimento de normas">Descumprimento de normas</option>
+                            <option value="Uso indevido de celular">Uso indevido de celular</option>
+                            <option value="Saída antecipada">Saída antecipada</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row" id="outro-motivo-multa-container" style="display: none;">
+                    <div class="form-group" style="flex: 100%;">
+                        <label for="outroMotivo">Especificar outro motivo</label>
+                        <input type="text" id="outroMotivo" class="form-control" placeholder="Digite o motivo da multa...">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 100%;">
+                        <label for="observacoes">Observações</label>
+                        <textarea id="observacoes" class="form-control" rows="3" placeholder="Observações adicionais sobre a multa..."></textarea>
                     </div>
                 </div>
             `;
@@ -2210,16 +2660,52 @@
             if (colaboradorSelect) {
                 colaboradorSelect.innerHTML = '<option value="">Selecione um colaborador</option>';
                 colaboradoresData.forEach(colab => {
-                    const option = document.createElement('option');
-                    option.value = colab.nome;
-                    option.textContent = colab.nome;
-                    colaboradorSelect.appendChild(option);
+                    if (colab.nome && colab.status === 'Ativo') {
+                        const option = document.createElement('option');
+                        option.value = colab.nome;
+                        option.textContent = colab.nome;
+                        colaboradorSelect.appendChild(option);
+                    }
                 });
+            }
+            
+            const motivoSelect = document.getElementById('motivo');
+            if (motivoSelect) {
+                motivoSelect.addEventListener('change', function() {
+                    const outroContainer = document.getElementById('outro-motivo-multa-container');
+                    if (this.value === 'Outro') {
+                        outroContainer.style.display = 'block';
+                    } else {
+                        outroContainer.style.display = 'none';
+                        document.getElementById('outroMotivo').value = '';
+                    }
+                });
+            }
+            
+            const today = new Date().toISOString().split('T')[0];
+            const dataInput = document.getElementById('data');
+            if (dataInput) {
+                dataInput.value = today;
             }
             
             if (mode === 'edit' && id) {
                 fillFormWithData('multas', id);
+                
+                setTimeout(() => {
+                    const motivoSelect = document.getElementById('motivo');
+                    const outroInput = document.getElementById('outroMotivo');
+                    if (motivoSelect && outroInput && motivoSelect.value === 'Outro' && outroInput.value) {
+                        document.getElementById('outro-motivo-multa-container').style.display = 'block';
+                    }
+                }, 100);
             }
+        }
+
+        // Função auxiliar para obter nome do mês
+        function getNomeMes(mesNumero) {
+            const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+                          'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            return meses[parseInt(mesNumero) - 1] || 'Mês inválido';
         }
 
         // Popular opções dos selects
@@ -2230,20 +2716,24 @@
             if (departamentoSelect) {
                 departamentoSelect.innerHTML = '<option value="">Selecione um departamento</option>';
                 departamentosData.forEach(depto => {
-                    const option = document.createElement('option');
-                    option.value = depto.nome;
-                    option.textContent = depto.nome;
-                    departamentoSelect.appendChild(option);
+                    if (depto.nome) {
+                        const option = document.createElement('option');
+                        option.value = depto.nome;
+                        option.textContent = depto.nome;
+                        departamentoSelect.appendChild(option);
+                    }
                 });
             }
             
             if (empresaSelect) {
                 empresaSelect.innerHTML = '<option value="">Selecione uma empresa</option>';
                 empresasData.forEach(empresa => {
-                    const option = document.createElement('option');
-                    option.value = empresa.nome;
-                    option.textContent = empresa.nome;
-                    empresaSelect.appendChild(option);
+                    if (empresa.nome) {
+                        const option = document.createElement('option');
+                        option.value = empresa.nome;
+                        option.textContent = empresa.nome;
+                        empresaSelect.appendChild(option);
+                    }
                 });
             }
         }
@@ -2263,28 +2753,22 @@
                         const field = document.getElementById(key);
                         if (field) {
                             if (field.type === 'date' && data[key]) {
-                                // Usar a data exata como string YYYY-MM-DD
                                 const dateStr = data[key];
                                 if (dateStr.includes('T')) {
-                                    // Se for ISO string, converter para YYYY-MM-DD
                                     const date = new Date(dateStr);
                                     const year = date.getFullYear();
                                     const month = String(date.getMonth() + 1).padStart(2, '0');
                                     const day = String(date.getDate()).padStart(2, '0');
                                     field.value = `${year}-${month}-${day}`;
                                 } else {
-                                    // Se já estiver em formato YYYY-MM-DD
                                     field.value = dateStr.substring(0, 10);
                                 }
-                            } else if (field.type === 'select-one') {
-                                field.value = data[key];
                             } else {
                                 field.value = data[key];
                             }
                         }
                     });
                     
-                    // Tratamento especial para danos
                     if (section === 'danos') {
                         const motivoSelect = document.getElementById('motivo');
                         const outroInput = document.getElementById('outroMotivo');
@@ -2299,6 +2783,25 @@
                                 if (motivoSelect) motivoSelect.value = 'Outro';
                                 if (outroInput) outroInput.value = data.motivo;
                                 const outroContainer = document.getElementById('outro-motivo-container');
+                                if (outroContainer) outroContainer.style.display = 'block';
+                            }
+                        }
+                    }
+                    
+                    if (section === 'multas') {
+                        const motivoSelect = document.getElementById('motivo');
+                        const outroInput = document.getElementById('outroMotivo');
+                        
+                        if (data.motivo) {
+                            const opcoes = ['Atraso', 'Falta não justificada', 'Dano a equipamento', 
+                                          'Descumprimento de normas', 'Uso indevido de celular', 'Saída antecipada', 'Outro'];
+                            
+                            if (opcoes.includes(data.motivo)) {
+                                if (motivoSelect) motivoSelect.value = data.motivo;
+                            } else {
+                                if (motivoSelect) motivoSelect.value = 'Outro';
+                                if (outroInput) outroInput.value = data.motivo;
+                                const outroContainer = document.getElementById('outro-motivo-multa-container');
                                 if (outroContainer) outroContainer.style.display = 'block';
                             }
                         }
@@ -2318,8 +2821,6 @@
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
                 };
-                
-                console.log(`Salvando empresa: ${JSON.stringify(empresaData)}`);
                 
                 if (mode === 'add') {
                     const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
@@ -2348,8 +2849,6 @@
                     updatedAt: new Date().toISOString()
                 };
                 
-                console.log(`Salvando departamento: ${JSON.stringify(departamentoData)}`);
-                
                 if (mode === 'add') {
                     const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
                     const docRef = await firebaseApp.firestore.addDoc(collectionRef, departamentoData);
@@ -2367,21 +2866,19 @@
             }
         }
 
-        // Salvar colaborador - DATAS PRESERVADAS
+        // Salvar colaborador
         async function saveColaborador(formData, mode, id) {
             try {
                 const collectionName = 'colaboradores';
                 const colaboradorData = {
                     nome: formData.nome,
-                    dataAdmissao: formData.dataAdmissao, // Data exata como foi digitada
+                    dataAdmissao: formData.dataAdmissao,
                     departamento: formData.departamento,
                     empresa: formData.empresa,
                     status: formData.status || 'Ativo',
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
                 };
-                
-                console.log(`Salvando colaborador: ${JSON.stringify(colaboradorData)}`);
                 
                 if (mode === 'add') {
                     const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
@@ -2400,21 +2897,18 @@
             }
         }
 
-        // Salvar advertência - DATAS PRESERVADAS
+        // Salvar advertência
         async function saveAdvertencia(formData, mode, id) {
             try {
                 const collectionName = 'advertencias';
                 const advertenciaData = {
                     colaborador: formData.colaborador,
-                    data: formData.data, // Data exata como foi selecionada
+                    data: formData.data,
                     motivo: formData.motivo,
-                    observacao: formData.observacao,
                     status: 'Ativa',
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
                 };
-                
-                console.log(`Salvando advertência: ${JSON.stringify(advertenciaData)}`);
                 
                 if (mode === 'add') {
                     const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
@@ -2433,12 +2927,11 @@
             }
         }
 
-        // SALVAR DANO/AVARIA - DATAS PRESERVADAS
+        // Salvar dano/avaria
         async function saveDano(formData, mode, id) {
             try {
                 const collectionName = 'danos';
                 
-                // Processar motivo
                 let motivoFinal = formData.motivo;
                 if (formData.motivo === 'Outro' && formData.outroMotivo) {
                     motivoFinal = formData.outroMotivo;
@@ -2446,14 +2939,12 @@
                 
                 const danoData = {
                     colaborador: formData.colaborador,
-                    data: formData.data, // Data exata como foi selecionada
+                    data: formData.data,
                     motivo: motivoFinal,
-                    valor: formData.valor,
+                    valor: parseFloat(formData.valor) || 0,
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
                 };
-                
-                console.log(`Salvando dano: ${JSON.stringify(danoData)}`);
                 
                 if (mode === 'add') {
                     const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
@@ -2472,29 +2963,26 @@
             }
         }
 
-        // SALVAR FALTA - ATUALIZADO (SIMPLIFICADO)
+        // Salvar falta
         async function saveFalta(formData, mode, id) {
             try {
                 const collectionName = 'faltas';
                 
-                // Validações
-                if (!formData.colaborador || formData.colaborador === '') {
+                if (!formData.colaborador) {
                     throw new Error('Selecione um colaborador');
                 }
                 
-                if (!formData.data || formData.data === '') {
+                if (!formData.data) {
                     throw new Error('Selecione a data da falta');
                 }
                 
                 const faltaData = {
                     colaborador: formData.colaborador,
-                    data: formData.data, // Data exata como foi selecionada
+                    data: formData.data,
                     justificativa: formData.justificativa || '',
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
                 };
-                
-                console.log(`Salvando falta: ${JSON.stringify(faltaData)}`);
                 
                 if (mode === 'add') {
                     const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
@@ -2509,11 +2997,11 @@
                 }
             } catch (error) {
                 console.error(`❌ Erro ao salvar falta: ${error.message}`);
-                throw error; // Re-throw para tratamento no handleFormSubmit
+                throw error;
             }
         }
 
-        // SALVAR FEEDBACK - ATUALIZADO (CONTROLE POR MÊS/DEPARTAMENTO)
+        // Salvar feedback
         async function saveFeedback(formData, mode, id) {
             try {
                 const collectionName = 'feedbacks';
@@ -2528,7 +3016,6 @@
                     updatedAt: new Date().toISOString()
                 };
                 
-                // Validação: Verificar se já existe feedback para este mês/departamento
                 if (mode === 'add') {
                     const feedbacksRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
                     const q = firebaseApp.firestore.query(
@@ -2540,11 +3027,9 @@
                     const existingSnapshot = await firebaseApp.firestore.getDocs(q);
                     
                     if (!existingSnapshot.empty) {
-                        throw new Error(`Já existe um registro de feedbacks para ${formData.departamento} em ${getNomeMes(formData.mesAno.split('-')[0])}/${formData.mesAno.split('-')[1]}. Por favor, edite o registro existente.`);
+                        throw new Error(`Já existe um registro de feedbacks para ${formData.departamento} em ${getNomeMes(formData.mesAno.split('-')[0])}/${formData.mesAno.split('-')[1]}.`);
                     }
                 }
-                
-                console.log(`Salvando feedback: ${JSON.stringify(feedbackData)}`);
                 
                 if (mode === 'add') {
                     const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
@@ -2563,16 +3048,23 @@
             }
         }
 
-        // Salvar multa - DATAS PRESERVADAS
+        // Salvar multa - ATUALIZADO
         async function saveMulta(formData, mode, id) {
             try {
                 const collectionName = 'multas';
+                
+                let motivoFinal = formData.motivo;
+                if (formData.motivo === 'Outro' && formData.outroMotivo) {
+                    motivoFinal = formData.outroMotivo;
+                }
+                
                 const multaData = {
                     colaborador: formData.colaborador,
-                    data: formData.data, // Data exata como foi selecionada
-                    valor: formData.valor,
-                    motivo: formData.motivo,
+                    data: formData.data,
+                    valor: parseFloat(formData.valor) || 0,
+                    motivo: motivoFinal,
                     status: formData.status || 'Pendente',
+                    observacoes: formData.observacoes || '',
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
                 };
@@ -2631,8 +3123,6 @@
                 loadFeedbackForm(mode, id);
             } else if (section === 'multas') {
                 loadMultaForm(mode, id);
-            } else {
-                loadBasicForm(section, mode, id);
             }
             
             document.getElementById('modal').style.display = 'flex';
@@ -2657,44 +3147,40 @@
                 }
             });
             
-            // Validações gerais
             const requiredFields = form.querySelectorAll('[required]');
             let isValid = true;
-            let errorMessage = '';
             
             requiredFields.forEach(field => {
                 if (!field.value.trim()) {
                     isValid = false;
                     field.style.borderColor = 'var(--accent-color)';
-                    errorMessage = 'Por favor, preencha todos os campos obrigatórios (*).';
                 } else {
                     field.style.borderColor = '#ddd';
                 }
             });
             
             if (!isValid) {
-                alert(errorMessage);
+                alert('Por favor, preencha todos os campos obrigatórios (*).');
                 return;
             }
             
-            // Validações específicas
             if (currentSection === 'colaboradores') {
-                if (!formData.departamento || formData.departamento === '') {
+                if (!formData.departamento) {
                     alert('Por favor, selecione um departamento.');
                     return;
                 }
-                if (!formData.empresa || formData.empresa === '') {
+                if (!formData.empresa) {
                     alert('Por favor, selecione uma empresa.');
                     return;
                 }
             }
             
             if (currentSection === 'danos') {
-                if (!formData.motivo || formData.motivo === '') {
+                if (!formData.motivo) {
                     alert('Por favor, selecione um motivo.');
                     return;
                 }
-                if (formData.motivo === 'Outro' && (!formData.outroMotivo || formData.outroMotivo.trim() === '')) {
+                if (formData.motivo === 'Outro' && (!formData.outroMotivo || !formData.outroMotivo.trim())) {
                     alert('Por favor, especifique o motivo.');
                     return;
                 }
@@ -2705,28 +3191,36 @@
             }
             
             if (currentSection === 'faltas') {
-                if (!formData.colaborador || formData.colaborador === '') {
+                if (!formData.colaborador) {
                     alert('Por favor, selecione um colaborador.');
                     return;
                 }
-                if (!formData.data || formData.data === '') {
+                if (!formData.data) {
                     alert('Por favor, selecione a data da falta.');
                     return;
                 }
             }
             
             if (currentSection === 'feedbacks') {
-                if (!formData.departamento || formData.departamento === '') {
+                if (!formData.departamento) {
                     alert('Por favor, selecione um departamento.');
-                    return;
-                }
-                if (parseInt(formData.positivos) < 0 || parseInt(formData.neutros) < 0 || parseInt(formData.melhorar) < 0) {
-                    alert('Por favor, informe valores positivos para os feedbacks.');
                     return;
                 }
             }
             
             if (currentSection === 'multas') {
+                if (!formData.colaborador) {
+                    alert('Por favor, selecione um colaborador.');
+                    return;
+                }
+                if (!formData.motivo) {
+                    alert('Por favor, selecione um motivo.');
+                    return;
+                }
+                if (formData.motivo === 'Outro' && (!formData.outroMotivo || !formData.outroMotivo.trim())) {
+                    alert('Por favor, especifique o motivo da multa.');
+                    return;
+                }
                 if (!formData.valor || parseFloat(formData.valor) <= 0) {
                     alert('Por favor, informe um valor válido para a multa.');
                     return;
@@ -2734,8 +3228,6 @@
             }
             
             try {
-                console.log(`Salvando ${currentSection}...`);
-                
                 let success = false;
                 
                 if (currentSection === 'empresas') {
@@ -2757,18 +3249,18 @@
                 }
                 
                 if (success) {
-                    showAlert(`${currentSection} salvo com sucesso!`, 'success', `${currentSection}-alert`);
+                    showAlert(`${currentSection.charAt(0).toUpperCase() + currentSection.slice(1)} salvo com sucesso!`, 'success', `${currentSection}-alert`);
                     closeModal();
-                    
-                    if (['colaboradores', 'advertencias', 'faltas', 'multas', 'feedbacks'].includes(currentSection)) {
-                        await updateDashboardCounts();
+                    await updateDashboardCounts();
+                    if (currentSection === 'multas') {
+                        await updateMultasStats();
                     }
                 } else {
-                    showAlert('Erro ao salvar. Verifique o console (F12).', 'error');
+                    showAlert('Erro ao salvar. Verifique o console (F12).', 'error', `${currentSection}-alert`);
                 }
             } catch (error) {
                 console.error(`❌ Erro no submit: ${error.message}`);
-                showAlert(`Erro: ${error.message}`, 'error');
+                showAlert(`Erro: ${error.message}`, 'error', `${currentSection}-alert`);
             }
         }
 
@@ -2858,11 +3350,53 @@
             showAlert('Filtros limpos com sucesso!', 'success', 'faltas-alert');
         }
 
+        // Aplicar filtros de danos
+        function aplicarFiltrosDanos() {
+            danosFiltroAtual.nome = document.getElementById('filtro-nome-dano').value;
+            danosFiltroAtual.departamento = document.getElementById('filtro-departamento-dano').value;
+            danosFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio-dano').value;
+            danosFiltroAtual.dataFim = document.getElementById('filtro-data-fim-dano').value;
+            
+            if (unsubscribeListeners.danos) {
+                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'danos');
+                const snapshot = unsubscribeListeners.danos._snapshot;
+                if (snapshot) {
+                    updateTableFromSnapshot('danos', snapshot);
+                }
+            }
+            
+            showAlert('Filtros aplicados com sucesso!', 'success', 'danos-alert');
+        }
+
+        // Limpar filtros de danos
+        function limparFiltrosDanos() {
+            document.getElementById('filtro-nome-dano').value = '';
+            document.getElementById('filtro-departamento-dano').value = '';
+            document.getElementById('filtro-data-inicio-dano').value = '';
+            document.getElementById('filtro-data-fim-dano').value = '';
+            
+            danosFiltroAtual = {
+                nome: '',
+                departamento: '',
+                dataInicio: '',
+                dataFim: ''
+            };
+            
+            if (unsubscribeListeners.danos) {
+                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'danos');
+                const snapshot = unsubscribeListeners.danos._snapshot;
+                if (snapshot) {
+                    updateTableFromSnapshot('danos', snapshot);
+                }
+            }
+            
+            showAlert('Filtros limpos com sucesso!', 'success', 'danos-alert');
+        }
+
         // Aplicar filtros de feedbacks
         function aplicarFiltrosFeedbacks() {
             feedbacksFiltroAtual.mesAno = document.getElementById('filtro-mes-feedback').value;
             feedbacksFiltroAtual.departamento = document.getElementById('filtro-departamento-feedback').value;
-            feedbacksFiltroAtual.tipo = document.getElementById('filtro-tipo-feedback').value;
             
             if (unsubscribeListeners.feedbacks) {
                 const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
@@ -2879,12 +3413,10 @@
         function limparFiltrosFeedbacks() {
             document.getElementById('filtro-mes-feedback').value = '';
             document.getElementById('filtro-departamento-feedback').value = '';
-            document.getElementById('filtro-tipo-feedback').value = '';
             
             feedbacksFiltroAtual = {
                 mesAno: '',
-                departamento: '',
-                tipo: ''
+                departamento: ''
             };
             
             if (unsubscribeListeners.feedbacks) {
@@ -2896,6 +3428,126 @@
             }
             
             showAlert('Filtros limpos com sucesso!', 'success', 'feedbacks-alert');
+        }
+
+        // Aplicar filtros de multas
+        function aplicarFiltrosMultas() {
+            multasFiltroAtual.nome = document.getElementById('filtro-nome-multa').value;
+            multasFiltroAtual.departamento = document.getElementById('filtro-departamento-multa').value;
+            multasFiltroAtual.status = document.getElementById('filtro-status-multa').value;
+            multasFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio-multa').value;
+            multasFiltroAtual.dataFim = document.getElementById('filtro-data-fim-multa').value;
+            
+            if (unsubscribeListeners.multas) {
+                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
+                const snapshot = unsubscribeListeners.multas._snapshot;
+                if (snapshot) {
+                    updateTableFromSnapshot('multas', snapshot);
+                }
+            }
+            
+            showAlert('Filtros aplicados com sucesso!', 'success', 'multas-alert');
+        }
+
+        // Limpar filtros de multas
+        function limparFiltrosMultas() {
+            document.getElementById('filtro-nome-multa').value = '';
+            document.getElementById('filtro-departamento-multa').value = '';
+            document.getElementById('filtro-status-multa').value = '';
+            document.getElementById('filtro-data-inicio-multa').value = '';
+            document.getElementById('filtro-data-fim-multa').value = '';
+            
+            multasFiltroAtual = {
+                nome: '',
+                departamento: '',
+                status: '',
+                dataInicio: '',
+                dataFim: ''
+            };
+            
+            if (unsubscribeListeners.multas) {
+                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
+                const snapshot = unsubscribeListeners.multas._snapshot;
+                if (snapshot) {
+                    updateTableFromSnapshot('multas', snapshot);
+                }
+            }
+            
+            showAlert('Filtros limpos com sucesso!', 'success', 'multas-alert');
+        }
+
+        // Gerar relatório de multas
+        function gerarRelatorioMultas() {
+            try {
+                // Coletar dados dos filtros atuais
+                const filtros = {
+                    colaborador: multasFiltroAtual.nome || 'Todos',
+                    departamento: multasFiltroAtual.departamento || 'Todos',
+                    status: multasFiltroAtual.status || 'Todos',
+                    periodo: multasFiltroAtual.dataInicio || multasFiltroAtual.dataFim ? 
+                             `${multasFiltroAtual.dataInicio || 'Início'} até ${multasFiltroAtual.dataFim || 'Fim'}` : 'Todo período'
+                };
+                
+                // Criar conteúdo do relatório
+                let relatorio = 'RELATÓRIO DE MULTAS\n';
+                relatorio += '=====================\n\n';
+                relatorio += `Data: ${new Date().toLocaleDateString('pt-BR')}\n`;
+                relatorio += `Filtros: Colaborador: ${filtros.colaborador} | Departamento: ${filtros.departamento} | Status: ${filtros.status} | Período: ${filtros.periodo}\n\n`;
+                
+                // Obter dados da tabela atual
+                const tableBody = document.getElementById('multas-table-body');
+                const rows = tableBody.querySelectorAll('tr');
+                
+                if (rows.length === 1 && rows[0].querySelector('td[colspan]')) {
+                    relatorio += 'Nenhum registro encontrado com os filtros aplicados.\n';
+                } else {
+                    relatorio += 'Registros:\n';
+                    relatorio += '----------\n\n';
+                    
+                    rows.forEach(row => {
+                        const cols = row.querySelectorAll('td');
+                        if (cols.length >= 6) {
+                            relatorio += `Colaborador: ${cols[0].textContent}\n`;
+                            relatorio += `Departamento: ${cols[1].textContent}\n`;
+                            relatorio += `Data: ${cols[2].textContent}\n`;
+                            relatorio += `Motivo: ${cols[3].textContent}\n`;
+                            relatorio += `Valor: ${cols[4].textContent}\n`;
+                            relatorio += `Status: ${cols[5].textContent}\n`;
+                            relatorio += '---\n\n';
+                        }
+                    });
+                }
+                
+                // Adicionar estatísticas
+                const pendentes = document.getElementById('stat-multas-pendentes').textContent;
+                const valorPendente = document.getElementById('stat-valor-pendente').textContent;
+                const pagas = document.getElementById('stat-multas-pagas').textContent;
+                const valorRecebido = document.getElementById('stat-valor-recebido').textContent;
+                
+                relatorio += '\nESTATÍSTICAS:\n';
+                relatorio += '==============\n';
+                relatorio += `Multas Pendentes: ${pendentes}\n`;
+                relatorio += `Valor Total Pendente: ${valorPendente}\n`;
+                relatorio += `Multas Pagas: ${pagas}\n`;
+                relatorio += `Valor Total Recebido: ${valorRecebido}\n`;
+                
+                // Criar arquivo para download
+                const blob = new Blob([relatorio], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `relatorio_multas_${new Date().toISOString().split('T')[0]}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showAlert('Relatório gerado com sucesso!', 'success', 'multas-alert');
+                
+            } catch (error) {
+                console.error(`Erro ao gerar relatório: ${error.message}`);
+                showAlert('Erro ao gerar relatório.', 'error', 'multas-alert');
+            }
         }
 
         // Configurar eventos
@@ -2931,7 +3583,7 @@
                         const departamentoSelect = document.getElementById('filtro-departamento');
                         if (departamentoSelect) {
                             departamentoSelect.innerHTML = '<option value="">Todos os departamentos</option>';
-                            const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome))];
+                            const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
                             departamentosUnicos.forEach(depto => {
                                 const option = document.createElement('option');
                                 option.value = depto;
@@ -2945,7 +3597,21 @@
                         const departamentoSelect = document.getElementById('filtro-departamento-falta');
                         if (departamentoSelect) {
                             departamentoSelect.innerHTML = '<option value="">Todos os departamentos</option>';
-                            const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome))];
+                            const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
+                            departamentosUnicos.forEach(depto => {
+                                const option = document.createElement('option');
+                                option.value = depto;
+                                option.textContent = depto;
+                                departamentoSelect.appendChild(option);
+                            });
+                        }
+                    }
+                    
+                    if (targetSection === 'danos') {
+                        const departamentoSelect = document.getElementById('filtro-departamento-dano');
+                        if (departamentoSelect) {
+                            departamentoSelect.innerHTML = '<option value="">Todos os departamentos</option>';
+                            const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
                             departamentosUnicos.forEach(depto => {
                                 const option = document.createElement('option');
                                 option.value = depto;
@@ -2959,16 +3625,15 @@
                         const departamentoSelect = document.getElementById('filtro-departamento-feedback');
                         if (departamentoSelect) {
                             departamentoSelect.innerHTML = '<option value="">Todos os departamentos</option>';
-                            const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome))];
+                            const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
                             departamentosUnicos.forEach(depto => {
-                                const option =document.createElement('option');
+                                const option = document.createElement('option');
                                 option.value = depto;
                                 option.textContent = depto;
                                 departamentoSelect.appendChild(option);
                             });
                         }
                         
-                        // Atualizar estatísticas ao carregar a seção
                         if (unsubscribeListeners.feedbacks) {
                             const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
                             const snapshot = unsubscribeListeners.feedbacks._snapshot;
@@ -2977,6 +3642,22 @@
                                 updateFeedbackStats(docs);
                             }
                         }
+                    }
+                    
+                    if (targetSection === 'multas') {
+                        const departamentoSelect = document.getElementById('filtro-departamento-multa');
+                        if (departamentoSelect) {
+                            departamentoSelect.innerHTML = '<option value="">Todos os departamentos</option>';
+                            const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
+                            departamentosUnicos.forEach(depto => {
+                                const option = document.createElement('option');
+                                option.value = depto;
+                                option.textContent = depto;
+                                departamentoSelect.appendChild(option);
+                            });
+                        }
+                        
+                        updateMultasStats();
                     }
                 });
             });
@@ -3004,9 +3685,31 @@
             document.getElementById('aplicar-filtros-falta').addEventListener('click', aplicarFiltrosFaltas);
             document.getElementById('limpar-filtros-falta').addEventListener('click', limparFiltrosFaltas);
             
+            // Filtros de danos
+            document.getElementById('aplicar-filtros-dano').addEventListener('click', aplicarFiltrosDanos);
+            document.getElementById('limpar-filtros-dano').addEventListener('click', limparFiltrosDanos);
+            
             // Filtros de feedbacks
             document.getElementById('aplicar-filtros-feedback').addEventListener('click', aplicarFiltrosFeedbacks);
             document.getElementById('limpar-filtros-feedback').addEventListener('click', limparFiltrosFeedbacks);
+            
+            // Filtros de multas
+            document.getElementById('aplicar-filtros-multa').addEventListener('click', aplicarFiltrosMultas);
+            document.getElementById('limpar-filtros-multa').addEventListener('click', limparFiltrosMultas);
+            document.getElementById('gerar-relatorio-multas').addEventListener('click', gerarRelatorioMultas);
+            
+            // Ver todas atividades
+            document.getElementById('ver-todas-atividades').addEventListener('click', function() {
+                document.querySelectorAll('.sidebar-menu a').forEach(l => l.classList.remove('active'));
+                const link = Array.from(document.querySelectorAll('.sidebar-menu a')).find(l => l.getAttribute('data-section') === 'dashboard');
+                if (link) link.classList.add('active');
+                
+                currentSection = 'dashboard';
+                document.querySelectorAll('.section-content').forEach(s => s.style.display = 'none');
+                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('page-title').textContent = 'Dashboard';
+                updateDashboardCounts();
+            });
             
             // Fechar modal ao clicar fora
             document.getElementById('modal').addEventListener('click', function(e) {
@@ -3030,26 +3733,27 @@
                 console.log(`✅ ${section} excluído: ${id}`);
                 showAlert('Item excluído com sucesso!', 'success', `${section}-alert`);
                 
-                if (['colaboradores', 'advertencias', 'faltas', 'multas', 'feedbacks'].includes(section)) {
+                if (['colaboradores', 'advertencias', 'faltas', 'multas', 'feedbacks', 'danos'].includes(section)) {
                     await updateDashboardCounts();
+                    if (section === 'multas') {
+                        await updateMultasStats();
+                    }
                 }
             } catch (error) {
                 console.error(`❌ Erro ao excluir: ${error.message}`);
-                showAlert(`Erro ao excluir: ${error.message}`, 'error');
+                showAlert(`Erro ao excluir: ${error.message}`, 'error', `${section}-alert`);
             }
         };
 
-        // FUNÇÕES AUXILIARES PARA DATAS EXATAS
+        // FUNÇÕES AUXILIARES PARA DATAS
         function parseDateExactly(dateString) {
             if (!dateString) return null;
             try {
-                // Se já for uma string de data no formato YYYY-MM-DD
                 if (dateString.includes('-') && dateString.length === 10) {
                     const [year, month, day] = dateString.split('-');
                     return new Date(year, month - 1, day);
                 }
                 
-                // Se for uma string ISO
                 if (dateString.includes('T')) {
                     return new Date(dateString);
                 }
@@ -3063,13 +3767,11 @@
         function formatDateExactly(dateString) {
             if (!dateString) return 'N/A';
             try {
-                // Se já for uma string de data no formato YYYY-MM-DD
                 if (dateString.includes('-') && dateString.length === 10) {
                     const [year, month, day] = dateString.split('-');
                     return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
                 }
                 
-                // Se for uma string ISO
                 if (dateString.includes('T')) {
                     const date = new Date(dateString);
                     const day = String(date.getDate()).padStart(2, '0');
