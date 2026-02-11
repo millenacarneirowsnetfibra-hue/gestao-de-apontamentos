@@ -1755,22 +1755,22 @@
                         <div class="stat-card">
                             <div class="stat-title">Positivos</div>
                             <div class="stat-value" id="stat-positivos">0</div>
-                            <div class="stat-subtitle">Este mês</div>
+                            <div class="stat-subtitle" id="stat-positivos-subtitle">Total geral</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-title">Neutros</div>
                             <div class="stat-value" id="stat-neutros">0</div>
-                            <div class="stat-subtitle">Este mês</div>
+                            <div class="stat-subtitle" id="stat-neutros-subtitle">Total geral</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-title">A Melhorar</div>
                             <div class="stat-value" id="stat-melhorar">0</div>
-                            <div class="stat-subtitle">Este mês</div>
+                            <div class="stat-subtitle" id="stat-melhorar-subtitle">Total geral</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-title">Total</div>
                             <div class="stat-value" id="stat-total-feedbacks">0</div>
-                            <div class="stat-subtitle">Este mês</div>
+                            <div class="stat-subtitle" id="stat-total-subtitle">Total geral</div>
                         </div>
                     </div>
                     
@@ -2134,7 +2134,7 @@
                                 } else if (section === 'feedbacks') {
                                     const filteredDocs = applyFeedbacksFilters(docs);
                                     updateTableFromSnapshot(section, snapshot, filteredDocs);
-                                    updateFeedbackStats(filteredDocs);
+                                    updateFeedbackStats(filteredDocs, false);
                                 } else if (section === 'multas') {
                                     const filteredDocs = applyMultasFilters(docs);
                                     updateTableFromSnapshot(section, snapshot, filteredDocs);
@@ -2276,6 +2276,12 @@
                 updateMultasStats();
                 updateDashboardFilters();
                 updateFeedbackSelects();
+                
+                // Carregar feedbacks sem filtros para mostrar total geral
+                const feedbacksRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
+                const feedbacksSnapshot = await firebaseApp.firestore.getDocs(feedbacksRef);
+                const feedbacksDocs = feedbacksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                updateFeedbackStats(feedbacksDocs, true);
                 
                 console.log('✅ Dados iniciais carregados');
             } catch (error) {
@@ -2948,7 +2954,7 @@
                 } else if (section === 'feedbacks') {
                     const filteredDocs = applyFeedbacksFilters(docs);
                     updateTableFromSnapshot(section, snapshot, filteredDocs);
-                    updateFeedbackStats(filteredDocs);
+                    updateFeedbackStats(filteredDocs, false);
                 } else if (section === 'multas') {
                     const filteredDocs = applyMultasFilters(docs);
                     updateTableFromSnapshot(section, snapshot, filteredDocs);
@@ -3295,12 +3301,7 @@
         };
 
         // Função corrigida para atualizar estatísticas de feedbacks
-        function updateFeedbackStats(feedbacks) {
-            const hoje = new Date();
-            const mesAtual = String(hoje.getMonth() + 1).padStart(2, '0');
-            const anoAtual = hoje.getFullYear();
-            const mesAnoAtual = `${anoAtual}-${mesAtual}`;
-            
+        function updateFeedbackStats(feedbacks, isInitialLoad = false) {
             // Se não houver feedbacks, mostrar 0
             if (!feedbacks || feedbacks.length === 0) {
                 document.getElementById('stat-positivos').textContent = '0';
@@ -3311,19 +3312,31 @@
             }
             
             // Aplicar filtros atuais aos feedbacks
-            let filteredFeedbacks = feedbacks;
+            let filteredFeedbacks = [...feedbacks];
+            let subtitleText = 'Total geral';
             
-            if (feedbacksFiltroAtual.mesAno) {
+            // Verificar se há filtros ativos
+            const temFiltroMes = feedbacksFiltroAtual.mesAno && feedbacksFiltroAtual.mesAno !== '';
+            const temFiltroDepartamento = feedbacksFiltroAtual.departamento && feedbacksFiltroAtual.departamento !== '';
+            
+            if (temFiltroMes) {
                 filteredFeedbacks = filteredFeedbacks.filter(f => f.mesAno === feedbacksFiltroAtual.mesAno);
+                subtitleText = `Mês: ${formatarMesAno(feedbacksFiltroAtual.mesAno)}`;
             }
             
-            if (feedbacksFiltroAtual.departamento) {
+            if (temFiltroDepartamento) {
                 filteredFeedbacks = filteredFeedbacks.filter(f => f.departamento === feedbacksFiltroAtual.departamento);
+                if (temFiltroMes) {
+                    subtitleText = `${feedbacksFiltroAtual.departamento} - ${formatarMesAno(feedbacksFiltroAtual.mesAno)}`;
+                } else {
+                    subtitleText = `Departamento: ${feedbacksFiltroAtual.departamento}`;
+                }
             }
             
-            // Se não houver filtros, mostrar apenas o mês atual
-            if (!feedbacksFiltroAtual.mesAno && !feedbacksFiltroAtual.departamento) {
-                filteredFeedbacks = filteredFeedbacks.filter(f => f.mesAno === mesAnoAtual);
+            // Se não houver filtros, mostrar todos os feedbacks (total geral)
+            if (!temFiltroMes && !temFiltroDepartamento) {
+                filteredFeedbacks = feedbacks;
+                subtitleText = 'Total geral';
             }
             
             let positivos = 0;
@@ -3347,13 +3360,31 @@
             const statNeutros = document.getElementById('stat-neutros');
             const statMelhorar = document.getElementById('stat-melhorar');
             const statTotal = document.getElementById('stat-total-feedbacks');
+            const statPositivosSubtitle = document.getElementById('stat-positivos-subtitle');
+            const statNeutrosSubtitle = document.getElementById('stat-neutros-subtitle');
+            const statMelhorarSubtitle = document.getElementById('stat-melhorar-subtitle');
+            const statTotalSubtitle = document.getElementById('stat-total-subtitle');
             
             if (statPositivos) statPositivos.textContent = positivos;
             if (statNeutros) statNeutros.textContent = neutros;
             if (statMelhorar) statMelhorar.textContent = melhorar;
             if (statTotal) statTotal.textContent = total;
             
-            console.log(`📊 Feedbacks atualizados: Positivos=${positivos}, Neutros=${neutros}, Melhorar=${melhorar}, Total=${total}`);
+            if (statPositivosSubtitle) statPositivosSubtitle.textContent = subtitleText;
+            if (statNeutrosSubtitle) statNeutrosSubtitle.textContent = subtitleText;
+            if (statMelhorarSubtitle) statMelhorarSubtitle.textContent = subtitleText;
+            if (statTotalSubtitle) statTotalSubtitle.textContent = subtitleText;
+            
+            console.log(`📊 Feedbacks atualizados: ${subtitleText} - Positivos=${positivos}, Neutros=${neutros}, Melhorar=${melhorar}, Total=${total}`);
+        }
+
+        function formatarMesAno(mesAno) {
+            if (!mesAno) return '';
+            const [ano, mes] = mesAno.split('-');
+            const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+                          'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            const mesNome = meses[parseInt(mes) - 1] || mes;
+            return `${mesNome}/${ano}`;
         }
 
         function applyColaboradoresFilters(docs) {
@@ -4565,7 +4596,7 @@
                         const snapshot = await firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks'));
                         const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                         const filteredDocs = applyFeedbacksFilters(docs);
-                        updateFeedbackStats(filteredDocs);
+                        updateFeedbackStats(filteredDocs, false);
                     }
                 } else {
                     showAlert('Erro ao salvar. Verifique o console (F12).', 'error', `${currentSection}-alert`);
@@ -4618,6 +4649,14 @@
             
             // Recarregar os dados e atualizar os cards
             loadTableData('feedbacks');
+            
+            // Atualizar os stats com os filtros aplicados
+            setTimeout(async () => {
+                const feedbacksRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
+                const snapshot = await firebaseApp.firestore.getDocs(feedbacksRef);
+                const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                updateFeedbackStats(docs, false);
+            }, 100);
         }
 
         function aplicarFiltrosMultasAutomatico() {
@@ -4729,7 +4768,17 @@
                                 departamentoSelect.appendChild(option);
                             });
                         }
+                        
+                        // Carregar feedbacks e mostrar total geral
                         loadTableData('feedbacks');
+                        
+                        // Atualizar os stats com total geral
+                        setTimeout(async () => {
+                            const feedbacksRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
+                            const snapshot = await firebaseApp.firestore.getDocs(feedbacksRef);
+                            const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                            updateFeedbackStats(docs, true);
+                        }, 100);
                     }
                     
                     if (targetSection === 'multas') {
@@ -4877,7 +4926,7 @@
                         const snapshot = await firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks'));
                         const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                         const filteredDocs = applyFeedbacksFilters(docs);
-                        updateFeedbackStats(filteredDocs);
+                        updateFeedbackStats(filteredDocs, false);
                     }
                 }
             } catch (error) {
