@@ -622,6 +622,71 @@
             border: 1px solid rgba(231, 76, 60, 0.2);
         }
 
+        /* Badges para tipos de feedback */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-positivo {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+        }
+
+        .badge-neutro {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--secondary-color);
+        }
+
+        .badge-melhorar {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+        }
+
+        .badge-negativo {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--accent-color);
+        }
+
+        /* Estatísticas de feedbacks */
+        .stats-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            flex: 1;
+            min-width: 200px;
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            border: 1px solid #eee;
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: var(--gray-color);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-subtitle {
+            font-size: 0.8rem;
+            color: var(--gray-color);
+            margin-top: 5px;
+        }
+
         /* Responsive */
         @media (max-width: 992px) {
             .container {
@@ -680,6 +745,10 @@
             
             .filter-group {
                 min-width: 100%;
+            }
+
+            .stats-container {
+                flex-direction: column;
             }
         }
     </style>
@@ -1047,29 +1116,106 @@
                 </div>
             </div>
 
-            <!-- Feedbacks Section -->
+            <!-- Feedbacks Section - ATUALIZADA -->
             <div id="feedbacks" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
                         <h3 class="section-title">Feedbacks</h3>
                         <button class="btn btn-primary" id="add-feedback-btn">Adicionar Feedback</button>
                     </div>
+                    
+                    <!-- Filtros para Feedbacks -->
+                    <div class="filters-container">
+                        <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-mes-feedback">Mês/Ano</label>
+                                <select id="filtro-mes-feedback" class="filter-input">
+                                    <option value="">Todos os meses</option>
+                                    <option value="01-2024">Janeiro 2024</option>
+                                    <option value="02-2024">Fevereiro 2024</option>
+                                    <option value="03-2024">Março 2024</option>
+                                    <option value="04-2024">Abril 2024</option>
+                                    <option value="05-2024">Maio 2024</option>
+                                    <option value="06-2024">Junho 2024</option>
+                                    <option value="07-2024">Julho 2024</option>
+                                    <option value="08-2024">Agosto 2024</option>
+                                    <option value="09-2024">Setembro 2024</option>
+                                    <option value="10-2024">Outubro 2024</option>
+                                    <option value="11-2024">Novembro 2024</option>
+                                    <option value="12-2024">Dezembro 2024</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-departamento-feedback">Departamento</label>
+                                <select id="filtro-departamento-feedback" class="filter-input">
+                                    <option value="">Todos os departamentos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-tipo-feedback">Tipo de Feedback</label>
+                                <select id="filtro-tipo-feedback" class="filter-input">
+                                    <option value="">Todos os tipos</option>
+                                    <option value="Positivo">Positivo</option>
+                                    <option value="Neutro">Neutro</option>
+                                    <option value="Melhorar">A Melhorar</option>
+                                    <option value="Negativo">Negativo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filter-buttons">
+                            <button class="btn btn-primary" id="aplicar-filtros-feedback">
+                                <i class="fas fa-search"></i> Aplicar Filtros
+                            </button>
+                            <button class="btn btn-secondary" id="limpar-filtros-feedback">
+                                <i class="fas fa-times"></i> Limpar Filtros
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Estatísticas de Feedbacks -->
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-title">Positivos</div>
+                            <div class="stat-value" id="stat-positivos">0</div>
+                            <div class="stat-subtitle">Este mês</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-title">Neutros</div>
+                            <div class="stat-value" id="stat-neutros">0</div>
+                            <div class="stat-subtitle">Este mês</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-title">A Melhorar</div>
+                            <div class="stat-value" id="stat-melhorar">0</div>
+                            <div class="stat-subtitle">Este mês</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-title">Total</div>
+                            <div class="stat-value" id="stat-total-feedbacks">0</div>
+                            <div class="stat-subtitle">Este mês</div>
+                        </div>
+                    </div>
+                    
                     <div id="feedbacks-alert"></div>
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Colaborador</th>
-                                    <th>Data</th>
-                                    <th>Tipo</th>
-                                    <th>Avaliação</th>
-                                    <th>Descrição</th>
+                                    <th>Mês/Ano</th>
+                                    <th>Departamento</th>
+                                    <th>Positivos</th>
+                                    <th>Neutros</th>
+                                    <th>A Melhorar</th>
+                                    <th>Total</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="feedbacks-table-body">
                                 <tr>
-                                    <td colspan="6" class="loading">
+                                    <td colspan="7" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -1170,6 +1316,13 @@
             dataInicio: '',
             dataFim: ''
         };
+        
+        // Filtros atuais para feedbacks
+        let feedbacksFiltroAtual = {
+            mesAno: '',
+            departamento: '',
+            tipo: ''
+        };
 
         // Elementos DOM
         const firebaseStatus = document.getElementById('firebase-status');
@@ -1241,7 +1394,7 @@
                             updateTableFromSnapshot(section, snapshot);
                             updateCache(section, snapshot);
                             
-                            if (section === 'colaboradores' || section === 'advertencias' || section === 'faltas' || section === 'multas') {
+                            if (section === 'colaboradores' || section === 'advertencias' || section === 'faltas' || section === 'multas' || section === 'feedbacks') {
                                 updateDashboardCounts();
                             }
                         },
@@ -1360,7 +1513,7 @@
             if (!tableBody) return;
             
             if (snapshot.empty) {
-                tableBody.innerHTML = `<tr><td colspan="6">Nenhum registro encontrado.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="7">Nenhum registro encontrado.</td></tr>`;
                 return;
             }
             
@@ -1372,10 +1525,14 @@
                 docs = applyAdvertenciasFilters(docs);
             } else if (section === 'faltas') {
                 docs = applyFaltasFilters(docs);
+            } else if (section === 'feedbacks') {
+                docs = applyFeedbacksFilters(docs);
+                updateFeedbackStats(docs);
             }
             
             if (docs.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="6">Nenhum registro encontrado com os filtros aplicados.</td></tr>`;
+                const cols = section === 'feedbacks' ? 7 : 6;
+                tableBody.innerHTML = `<tr><td colspan="${cols}">Nenhum registro encontrado com os filtros aplicados.</td></tr>`;
                 return;
             }
             
@@ -1487,12 +1644,20 @@
                         </td>
                     `;
                 } else if (section === 'feedbacks') {
+                    // Formatando mês/ano para exibição
+                    const mesAno = data.mesAno || 'Não especificado';
+                    const [mes, ano] = mesAno.split('-');
+                    const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+                                  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                    const mesFormatado = meses[parseInt(mes) - 1] || 'Mês inválido';
+                    
                     row.innerHTML = `
-                        <td>${data.colaborador || 'Não especificado'}</td>
-                        <td>${formatDateExactly(data.data) || 'Não especificada'}</td>
-                        <td>${data.tipo || 'Não especificado'}</td>
-                        <td>${data.avaliacao || 'Não avaliado'}</td>
-                        <td>${data.descricao ? (data.descricao.substring(0, 30) + '...') : 'Sem descrição'}</td>
+                        <td><strong>${mesFormatado}/${ano}</strong></td>
+                        <td>${data.departamento || 'Não especificado'}</td>
+                        <td><span class="badge badge-positivo">${data.positivos || 0}</span></td>
+                        <td><span class="badge badge-neutro">${data.neutros || 0}</span></td>
+                        <td><span class="badge badge-melhorar">${data.melhorar || 0}</span></td>
+                        <td><strong>${parseInt(data.positivos || 0) + parseInt(data.neutros || 0) + parseInt(data.melhorar || 0)}</strong></td>
                         <td>
                             <div class="action-buttons">
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
@@ -1526,6 +1691,33 @@
                 
                 tableBody.appendChild(row);
             });
+        }
+
+        // Atualizar estatísticas de feedbacks
+        function updateFeedbackStats(feedbacks) {
+            const hoje = new Date();
+            const mesAtual = String(hoje.getMonth() + 1).padStart(2, '0');
+            const anoAtual = hoje.getFullYear();
+            const mesAnoAtual = `${mesAtual}-${anoAtual}`;
+            
+            let positivos = 0;
+            let neutros = 0;
+            let melhorar = 0;
+            let total = 0;
+            
+            feedbacks.forEach(feedback => {
+                if (feedback.mesAno === mesAnoAtual) {
+                    positivos += parseInt(feedback.positivos || 0);
+                    neutros += parseInt(feedback.neutros || 0);
+                    melhorar += parseInt(feedback.melhorar || 0);
+                    total += parseInt(feedback.positivos || 0) + parseInt(feedback.neutros || 0) + parseInt(feedback.melhorar || 0);
+                }
+            });
+            
+            document.getElementById('stat-positivos').textContent = positivos;
+            document.getElementById('stat-neutros').textContent = neutros;
+            document.getElementById('stat-melhorar').textContent = melhorar;
+            document.getElementById('stat-total-feedbacks').textContent = total;
         }
 
         // Aplicar filtros às advertências
@@ -1607,6 +1799,21 @@
                     
                     return true;
                 });
+            }
+            
+            return filtered;
+        }
+
+        // Aplicar filtros aos feedbacks
+        function applyFeedbacksFilters(docs) {
+            let filtered = [...docs];
+            
+            if (feedbacksFiltroAtual.mesAno) {
+                filtered = filtered.filter(item => item.mesAno === feedbacksFiltroAtual.mesAno);
+            }
+            
+            if (feedbacksFiltroAtual.departamento) {
+                filtered = filtered.filter(item => item.departamento === feedbacksFiltroAtual.departamento);
             }
             
             return filtered;
@@ -1878,67 +2085,85 @@
             }
         }
 
-        // Formulário para feedbacks
+        // FORMULÁRIO PARA FEEDBACKS - ATUALIZADO (CONTROLE POR MÊS/DEPARTAMENTO)
         function loadFeedbackForm(mode = 'add', id = null) {
+            const hoje = new Date();
+            const mesAtual = String(hoje.getMonth() + 1).padStart(2, '0');
+            const anoAtual = hoje.getFullYear();
+            
             let formHTML = `
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="colaborador">Colaborador *</label>
-                        <select id="colaborador" class="form-control" required>
-                            <option value="">Selecione um colaborador</option>
+                        <label for="mesAno">Mês/Ano *</label>
+                        <select id="mesAno" class="form-control" required>
+                            <option value="${mesAtual}-${anoAtual}">${getNomeMes(mesAtual)}/${anoAtual}</option>
+                            <option value="01-${anoAtual}">Janeiro/${anoAtual}</option>
+                            <option value="02-${anoAtual}">Fevereiro/${anoAtual}</option>
+                            <option value="03-${anoAtual}">Março/${anoAtual}</option>
+                            <option value="04-${anoAtual}">Abril/${anoAtual}</option>
+                            <option value="05-${anoAtual}">Maio/${anoAtual}</option>
+                            <option value="06-${anoAtual}">Junho/${anoAtual}</option>
+                            <option value="07-${anoAtual}">Julho/${anoAtual}</option>
+                            <option value="08-${anoAtual}">Agosto/${anoAtual}</option>
+                            <option value="09-${anoAtual}">Setembro/${anoAtual}</option>
+                            <option value="10-${anoAtual}">Outubro/${anoAtual}</option>
+                            <option value="11-${anoAtual}">Novembro/${anoAtual}</option>
+                            <option value="12-${anoAtual}">Dezembro/${anoAtual}</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="data">Data *</label>
-                        <input type="date" id="data" class="form-control" required>
+                        <label for="departamento">Departamento *</label>
+                        <select id="departamento" class="form-control" required>
+                            <option value="">Selecione um departamento</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="tipo">Tipo *</label>
-                        <select id="tipo" class="form-control" required>
-                            <option value="">Selecione o tipo</option>
-                            <option value="Positivo">Positivo</option>
-                            <option value="Construtivo">Construtivo</option>
-                            <option value="Negativo">Negativo</option>
-                        </select>
+                        <label for="positivos">Feedbacks Positivos *</label>
+                        <input type="number" id="positivos" class="form-control" placeholder="0" min="0" required>
                     </div>
                     <div class="form-group">
-                        <label for="avaliacao">Avaliação *</label>
-                        <select id="avaliacao" class="form-control" required>
-                            <option value="">Selecione a avaliação</option>
-                            <option value="1">1 - Muito Insatisfeito</option>
-                            <option value="2">2 - Insatisfeito</option>
-                            <option value="3">3 - Neutro</option>
-                            <option value="4">4 - Satisfeito</option>
-                            <option value="5">5 - Muito Satisfeito</option>
-                        </select>
+                        <label for="neutros">Feedbacks Neutros *</label>
+                        <input type="number" id="neutros" class="form-control" placeholder="0" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="melhorar">A Melhorar *</label>
+                        <input type="number" id="melhorar" class="form-control" placeholder="0" min="0" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group" style="flex: 100%;">
-                        <label for="descricao">Descrição *</label>
-                        <textarea id="descricao" class="form-control" placeholder="Descreva o feedback..." required></textarea>
+                        <label for="observacoes">Observações</label>
+                        <textarea id="observacoes" class="form-control" rows="3" placeholder="Anotações adicionais sobre os feedbacks deste mês..."></textarea>
                     </div>
                 </div>
             `;
             
             document.getElementById('modal-form').innerHTML = formHTML;
             
-            const colaboradorSelect = document.getElementById('colaborador');
-            if (colaboradorSelect) {
-                colaboradorSelect.innerHTML = '<option value="">Selecione um colaborador</option>';
-                colaboradoresData.forEach(colab => {
+            // Popular select de departamentos
+            const departamentoSelect = document.getElementById('departamento');
+            if (departamentoSelect) {
+                departamentoSelect.innerHTML = '<option value="">Selecione um departamento</option>';
+                departamentosData.forEach(depto => {
                     const option = document.createElement('option');
-                    option.value = colab.nome;
-                    option.textContent = colab.nome;
-                    colaboradorSelect.appendChild(option);
+                    option.value = depto.nome;
+                    option.textContent = depto.nome;
+                    departamentoSelect.appendChild(option);
                 });
             }
             
             if (mode === 'edit' && id) {
                 fillFormWithData('feedbacks', id);
             }
+        }
+
+        // Função auxiliar para obter nome do mês
+        function getNomeMes(mesNumero) {
+            const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+                          'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            return meses[parseInt(mesNumero) - 1] || 'Mês inválido';
         }
 
         // Formulário para multas
@@ -2288,19 +2513,38 @@
             }
         }
 
-        // Salvar feedback - DATAS PRESERVADAS
+        // SALVAR FEEDBACK - ATUALIZADO (CONTROLE POR MÊS/DEPARTAMENTO)
         async function saveFeedback(formData, mode, id) {
             try {
                 const collectionName = 'feedbacks';
                 const feedbackData = {
-                    colaborador: formData.colaborador,
-                    data: formData.data, // Data exata como foi selecionada
-                    tipo: formData.tipo,
-                    avaliacao: formData.avaliacao,
-                    descricao: formData.descricao,
+                    mesAno: formData.mesAno,
+                    departamento: formData.departamento,
+                    positivos: parseInt(formData.positivos) || 0,
+                    neutros: parseInt(formData.neutros) || 0,
+                    melhorar: parseInt(formData.melhorar) || 0,
+                    observacoes: formData.observacoes || '',
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
                 };
+                
+                // Validação: Verificar se já existe feedback para este mês/departamento
+                if (mode === 'add') {
+                    const feedbacksRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                    const q = firebaseApp.firestore.query(
+                        feedbacksRef,
+                        firebaseApp.firestore.where("mesAno", "==", formData.mesAno),
+                        firebaseApp.firestore.where("departamento", "==", formData.departamento)
+                    );
+                    
+                    const existingSnapshot = await firebaseApp.firestore.getDocs(q);
+                    
+                    if (!existingSnapshot.empty) {
+                        throw new Error(`Já existe um registro de feedbacks para ${formData.departamento} em ${getNomeMes(formData.mesAno.split('-')[0])}/${formData.mesAno.split('-')[1]}. Por favor, edite o registro existente.`);
+                    }
+                }
+                
+                console.log(`Salvando feedback: ${JSON.stringify(feedbackData)}`);
                 
                 if (mode === 'add') {
                     const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
@@ -2315,7 +2559,7 @@
                 }
             } catch (error) {
                 console.error(`❌ Erro ao salvar feedback: ${error.message}`);
-                return false;
+                throw error;
             }
         }
 
@@ -2364,7 +2608,7 @@
                 advertencias: 'Advertência',
                 danos: 'Dano/Avaria',
                 faltas: 'Falta',
-                feedbacks: 'Feedback',
+                feedbacks: 'Feedbacks',
                 multas: 'Multa'
             };
             
@@ -2471,6 +2715,17 @@
                 }
             }
             
+            if (currentSection === 'feedbacks') {
+                if (!formData.departamento || formData.departamento === '') {
+                    alert('Por favor, selecione um departamento.');
+                    return;
+                }
+                if (parseInt(formData.positivos) < 0 || parseInt(formData.neutros) < 0 || parseInt(formData.melhorar) < 0) {
+                    alert('Por favor, informe valores positivos para os feedbacks.');
+                    return;
+                }
+            }
+            
             if (currentSection === 'multas') {
                 if (!formData.valor || parseFloat(formData.valor) <= 0) {
                     alert('Por favor, informe um valor válido para a multa.');
@@ -2505,7 +2760,7 @@
                     showAlert(`${currentSection} salvo com sucesso!`, 'success', `${currentSection}-alert`);
                     closeModal();
                     
-                    if (['colaboradores', 'advertencias', 'faltas', 'multas'].includes(currentSection)) {
+                    if (['colaboradores', 'advertencias', 'faltas', 'multas', 'feedbacks'].includes(currentSection)) {
                         await updateDashboardCounts();
                     }
                 } else {
@@ -2603,6 +2858,46 @@
             showAlert('Filtros limpos com sucesso!', 'success', 'faltas-alert');
         }
 
+        // Aplicar filtros de feedbacks
+        function aplicarFiltrosFeedbacks() {
+            feedbacksFiltroAtual.mesAno = document.getElementById('filtro-mes-feedback').value;
+            feedbacksFiltroAtual.departamento = document.getElementById('filtro-departamento-feedback').value;
+            feedbacksFiltroAtual.tipo = document.getElementById('filtro-tipo-feedback').value;
+            
+            if (unsubscribeListeners.feedbacks) {
+                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
+                const snapshot = unsubscribeListeners.feedbacks._snapshot;
+                if (snapshot) {
+                    updateTableFromSnapshot('feedbacks', snapshot);
+                }
+            }
+            
+            showAlert('Filtros aplicados com sucesso!', 'success', 'feedbacks-alert');
+        }
+
+        // Limpar filtros de feedbacks
+        function limparFiltrosFeedbacks() {
+            document.getElementById('filtro-mes-feedback').value = '';
+            document.getElementById('filtro-departamento-feedback').value = '';
+            document.getElementById('filtro-tipo-feedback').value = '';
+            
+            feedbacksFiltroAtual = {
+                mesAno: '',
+                departamento: '',
+                tipo: ''
+            };
+            
+            if (unsubscribeListeners.feedbacks) {
+                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
+                const snapshot = unsubscribeListeners.feedbacks._snapshot;
+                if (snapshot) {
+                    updateTableFromSnapshot('feedbacks', snapshot);
+                }
+            }
+            
+            showAlert('Filtros limpos com sucesso!', 'success', 'feedbacks-alert');
+        }
+
         // Configurar eventos
         function setupEventListeners() {
             // Navegação
@@ -2659,6 +2954,30 @@
                             });
                         }
                     }
+                    
+                    if (targetSection === 'feedbacks') {
+                        const departamentoSelect = document.getElementById('filtro-departamento-feedback');
+                        if (departamentoSelect) {
+                            departamentoSelect.innerHTML = '<option value="">Todos os departamentos</option>';
+                            const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome))];
+                            departamentosUnicos.forEach(depto => {
+                                const option =document.createElement('option');
+                                option.value = depto;
+                                option.textContent = depto;
+                                departamentoSelect.appendChild(option);
+                            });
+                        }
+                        
+                        // Atualizar estatísticas ao carregar a seção
+                        if (unsubscribeListeners.feedbacks) {
+                            const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
+                            const snapshot = unsubscribeListeners.feedbacks._snapshot;
+                            if (snapshot) {
+                                const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                                updateFeedbackStats(docs);
+                            }
+                        }
+                    }
                 });
             });
 
@@ -2685,6 +3004,10 @@
             document.getElementById('aplicar-filtros-falta').addEventListener('click', aplicarFiltrosFaltas);
             document.getElementById('limpar-filtros-falta').addEventListener('click', limparFiltrosFaltas);
             
+            // Filtros de feedbacks
+            document.getElementById('aplicar-filtros-feedback').addEventListener('click', aplicarFiltrosFeedbacks);
+            document.getElementById('limpar-filtros-feedback').addEventListener('click', limparFiltrosFeedbacks);
+            
             // Fechar modal ao clicar fora
             document.getElementById('modal').addEventListener('click', function(e) {
                 if (e.target === this) closeModal();
@@ -2707,7 +3030,7 @@
                 console.log(`✅ ${section} excluído: ${id}`);
                 showAlert('Item excluído com sucesso!', 'success', `${section}-alert`);
                 
-                if (['colaboradores', 'advertencias', 'faltas', 'multas'].includes(section)) {
+                if (['colaboradores', 'advertencias', 'faltas', 'multas', 'feedbacks'].includes(section)) {
                     await updateDashboardCounts();
                 }
             } catch (error) {
