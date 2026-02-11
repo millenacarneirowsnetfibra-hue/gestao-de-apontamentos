@@ -2114,7 +2114,7 @@
                             updateCache(section, snapshot);
                             
                             // Depois atualizar a tabela com os filtros atuais
-                            if (section === currentSection || section === 'colaboradores' || section === 'departamentos') {
+                            if (section === currentSection || section === 'colaboradores' || section === 'departamentos' || section === 'feedbacks') {
                                 const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                                 
                                 if (section === 'colaboradores') {
@@ -3294,26 +3294,55 @@
             }
         };
 
+        // Função corrigida para atualizar estatísticas de feedbacks
         function updateFeedbackStats(feedbacks) {
             const hoje = new Date();
             const mesAtual = String(hoje.getMonth() + 1).padStart(2, '0');
             const anoAtual = hoje.getFullYear();
             const mesAnoAtual = `${anoAtual}-${mesAtual}`;
             
+            // Se não houver feedbacks, mostrar 0
+            if (!feedbacks || feedbacks.length === 0) {
+                document.getElementById('stat-positivos').textContent = '0';
+                document.getElementById('stat-neutros').textContent = '0';
+                document.getElementById('stat-melhorar').textContent = '0';
+                document.getElementById('stat-total-feedbacks').textContent = '0';
+                return;
+            }
+            
+            // Aplicar filtros atuais aos feedbacks
+            let filteredFeedbacks = feedbacks;
+            
+            if (feedbacksFiltroAtual.mesAno) {
+                filteredFeedbacks = filteredFeedbacks.filter(f => f.mesAno === feedbacksFiltroAtual.mesAno);
+            }
+            
+            if (feedbacksFiltroAtual.departamento) {
+                filteredFeedbacks = filteredFeedbacks.filter(f => f.departamento === feedbacksFiltroAtual.departamento);
+            }
+            
+            // Se não houver filtros, mostrar apenas o mês atual
+            if (!feedbacksFiltroAtual.mesAno && !feedbacksFiltroAtual.departamento) {
+                filteredFeedbacks = filteredFeedbacks.filter(f => f.mesAno === mesAnoAtual);
+            }
+            
             let positivos = 0;
             let neutros = 0;
             let melhorar = 0;
             let total = 0;
             
-            feedbacks.forEach(feedback => {
-                if (feedback.mesAno === mesAnoAtual) {
-                    positivos += parseInt(feedback.positivos || 0);
-                    neutros += parseInt(feedback.neutros || 0);
-                    melhorar += parseInt(feedback.melhorar || 0);
-                    total += parseInt(feedback.positivos || 0) + parseInt(feedback.neutros || 0) + parseInt(feedback.melhorar || 0);
-                }
+            filteredFeedbacks.forEach(feedback => {
+                const p = parseInt(feedback.positivos) || 0;
+                const n = parseInt(feedback.neutros) || 0;
+                const m = parseInt(feedback.melhorar) || 0;
+                
+                positivos += p;
+                neutros += n;
+                melhorar += m;
+                total += (p + n + m);
             });
             
+            // Atualizar os elementos do DOM
             const statPositivos = document.getElementById('stat-positivos');
             const statNeutros = document.getElementById('stat-neutros');
             const statMelhorar = document.getElementById('stat-melhorar');
@@ -3323,6 +3352,8 @@
             if (statNeutros) statNeutros.textContent = neutros;
             if (statMelhorar) statMelhorar.textContent = melhorar;
             if (statTotal) statTotal.textContent = total;
+            
+            console.log(`📊 Feedbacks atualizados: Positivos=${positivos}, Neutros=${neutros}, Melhorar=${melhorar}, Total=${total}`);
         }
 
         function applyColaboradoresFilters(docs) {
@@ -4585,6 +4616,7 @@
             feedbacksFiltroAtual.mesAno = document.getElementById('filtro-mes-feedback').value;
             feedbacksFiltroAtual.departamento = document.getElementById('filtro-departamento-feedback').value;
             
+            // Recarregar os dados e atualizar os cards
             loadTableData('feedbacks');
         }
 
