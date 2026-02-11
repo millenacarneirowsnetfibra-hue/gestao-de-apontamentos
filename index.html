@@ -68,7 +68,6 @@
             --orange-color: #e67e22;
             --red-color: #c0392b;
             
-            /* Cores leves para os cards */
             --card-advertencia: rgba(243, 156, 18, 0.15);
             --card-falta: rgba(231, 76, 60, 0.15);
             --card-multa: rgba(52, 152, 219, 0.15);
@@ -93,7 +92,6 @@
             min-height: 100vh;
         }
 
-        /* Sidebar */
         .sidebar {
             width: 250px;
             background-color: var(--primary-color);
@@ -153,7 +151,6 @@
             font-size: 1.1rem;
         }
 
-        /* Main Content */
         .main-content {
             flex: 1;
             padding: 20px;
@@ -212,7 +209,6 @@
             color: var(--accent-color);
         }
 
-        /* Cards com cores diferenciadas */
         .cards-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -297,7 +293,6 @@
             color: var(--accent-color);
         }
 
-        /* Sections */
         .section {
             background-color: white;
             border-radius: var(--border-radius);
@@ -319,7 +314,6 @@
             font-weight: 600;
         }
 
-        /* Filtros */
         .filters-container {
             background-color: #f8f9fa;
             border-radius: var(--border-radius);
@@ -489,7 +483,6 @@
             background-color: #219a52;
         }
 
-        /* Loading */
         .loading {
             display: flex;
             justify-content: center;
@@ -511,7 +504,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Tables */
         .table-container {
             overflow-x: auto;
         }
@@ -595,7 +587,6 @@
             background-color: var(--gray-color);
         }
 
-        /* Forms */
         .form-container {
             max-width: 800px;
             margin: 0 auto;
@@ -640,7 +631,6 @@
             resize: vertical;
         }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -698,7 +688,6 @@
             gap: 10px;
         }
 
-        /* Alert */
         .alert {
             padding: 12px 20px;
             border-radius: var(--border-radius);
@@ -738,7 +727,6 @@
             border: 1px solid rgba(52, 152, 219, 0.2);
         }
 
-        /* Badges */
         .badge {
             display: inline-block;
             padding: 4px 10px;
@@ -762,7 +750,6 @@
             color: var(--red-color);
         }
 
-        /* Estatísticas */
         .stats-container {
             display: flex;
             flex-wrap: wrap;
@@ -798,7 +785,6 @@
             margin-top: 5px;
         }
 
-        /* Estatísticas de multas */
         .multas-stats-container {
             display: flex;
             flex-wrap: wrap;
@@ -835,7 +821,6 @@
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
         }
 
-        /* Top 5 Cards */
         .top5-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -906,7 +891,6 @@
             padding: 10px;
         }
 
-        /* Dashboard Filters */
         .dashboard-filters-container {
             background-color: #f8f9fa;
             border-radius: var(--border-radius);
@@ -955,7 +939,6 @@
             border-color: var(--secondary-color);
         }
 
-        /* Estatísticas de danos */
         .danos-stats-container {
             display: flex;
             flex-wrap: wrap;
@@ -984,7 +967,6 @@
             color: rgba(255, 255, 255, 0.8);
         }
 
-        /* Estatísticas de faltas */
         .faltas-stats-container {
             display: flex;
             flex-wrap: wrap;
@@ -1013,7 +995,6 @@
             color: rgba(255, 255, 255, 0.8);
         }
 
-        /* Filtros de data manual no dashboard */
         .dashboard-filters-date-row {
             display: flex;
             flex-wrap: wrap;
@@ -1023,7 +1004,6 @@
             border-top: 1px solid #ddd;
         }
 
-        /* Responsive */
         @media (max-width: 992px) {
             .container {
                 flex-direction: column;
@@ -1099,7 +1079,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- Sidebar -->
         <nav class="sidebar">
             <div class="sidebar-header">
                 <h2><i class="fas fa-users-cog"></i> Gestão de RH</h2>
@@ -1121,9 +1100,7 @@
             </ul>
         </nav>
 
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- Header -->
             <div class="header">
                 <h1 id="page-title">Dashboard</h1>
                 <div class="user-info">
@@ -1135,9 +1112,7 @@
                 </div>
             </div>
 
-            <!-- Dashboard -->
             <div id="dashboard" class="section-content">
-                <!-- Filtros do Dashboard - Ocultos por padrão, estilo igual às demais abas -->
                 <div class="btn-filters">
                     <button class="btn-toggle-filters" id="toggle-filters-dashboard">
                         <i class="fas fa-filter"></i> Mostrar Filtros
@@ -1166,7 +1141,6 @@
                         </div>
                     </div>
                     
-                    <!-- Filtros de data manual -->
                     <div class="dashboard-filters-date-row">
                         <div class="dashboard-filter-group">
                             <label for="dashboard-filtro-data-inicio"><i class="fas fa-calendar"></i> Data Início</label>
@@ -1185,7 +1159,6 @@
                     </div>
                 </div>
 
-                <!-- Cards com cores diferenciadas -->
                 <div class="cards-container">
                     <div class="card card-colaborador">
                         <div class="card-header">
@@ -1229,7 +1202,6 @@
                     </div>
                 </div>
 
-                <!-- Top 5 - Advertências -->
                 <div class="top5-grid">
                     <div class="top5-card">
                         <div class="top5-header">
@@ -1252,7 +1224,6 @@
                     </div>
                 </div>
 
-                <!-- Top 5 - Danos e Avarias -->
                 <div class="top5-grid">
                     <div class="top5-card">
                         <div class="top5-header">
@@ -1275,7 +1246,6 @@
                     </div>
                 </div>
 
-                <!-- Top 5 - Faltas -->
                 <div class="top5-grid">
                     <div class="top5-card">
                         <div class="top5-header">
@@ -1298,7 +1268,6 @@
                     </div>
                 </div>
 
-                <!-- Top 5 - Feedbacks por Setor -->
                 <div class="top5-grid">
                     <div class="top5-card">
                         <div class="top5-header">
@@ -1341,7 +1310,6 @@
                     </div>
                 </div>
 
-                <!-- Top 5 - Multas -->
                 <div class="top5-grid">
                     <div class="top5-card">
                         <div class="top5-header">
@@ -1365,7 +1333,6 @@
                 </div>
             </div>
 
-            <!-- Empresas Section -->
             <div id="empresas" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1393,7 +1360,6 @@
                 </div>
             </div>
 
-            <!-- Departamentos Section -->
             <div id="departamentos" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1421,7 +1387,6 @@
                 </div>
             </div>
 
-            <!-- Colaboradores Section -->
             <div id="colaboradores" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1497,7 +1462,6 @@
                 </div>
             </div>
 
-            <!-- Tipos de Multa Section -->
             <div id="tipos-multa" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1527,7 +1491,6 @@
                 </div>
             </div>
 
-            <!-- Advertências Section -->
             <div id="advertencias" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1596,7 +1559,6 @@
                 </div>
             </div>
 
-            <!-- Danos e Avarias Section -->
             <div id="danos" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1679,7 +1641,6 @@
                 </div>
             </div>
 
-            <!-- Faltas Section -->
             <div id="faltas" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1756,7 +1717,6 @@
                 </div>
             </div>
 
-            <!-- Feedbacks Section -->
             <div id="feedbacks" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1865,7 +1825,6 @@
                 </div>
             </div>
 
-            <!-- Multas Section -->
             <div id="multas" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1982,7 +1941,6 @@
         </main>
     </div>
 
-    <!-- Modal -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -2177,37 +2135,46 @@
                         collectionRef,
                         (snapshot) => {
                             console.log(`${section}: ${snapshot.size} documentos (tempo real)`);
-                            updateTableFromSnapshot(section, snapshot);
+                            
+                            // Atualizar cache primeiro
                             updateCache(section, snapshot);
                             
-                            if (section === 'colaboradores' || section === 'advertencias' || 
-                                section === 'faltas' || section === 'multas' || section === 'feedbacks' ||
-                                section === 'danos' || section === 'tiposMulta') {
-                                updateDashboardCounts();
-                                if (section === 'multas') {
-                                    updateMultasStats();
-                                }
-                                if (section === 'feedbacks') {
-                                    const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                                    updateFeedbackStats(docs);
-                                }
+                            // Depois atualizar a tabela com os filtros atuais
+                            if (section === currentSection || section === 'colaboradores' || section === 'departamentos') {
+                                const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                                
                                 if (section === 'colaboradores') {
-                                    updateColaboradoresFilterOptions();
-                                    updateDashboardFilters();
-                                }
-                                if (section === 'departamentos' || section === 'colaboradores') {
-                                    updateDashboardFilters();
-                                }
-                                if (section === 'danos' && currentSection === 'danos') {
-                                    const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                                    const filteredDocs = applyDanosFilters(docs);
-                                    updateDanosStats(filteredDocs);
-                                }
-                                if (section === 'faltas' && currentSection === 'faltas') {
-                                    const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                                    const filteredDocs = applyColaboradoresFilters(docs);
+                                    updateTableFromSnapshot(section, snapshot, filteredDocs);
+                                } else if (section === 'advertencias') {
+                                    const filteredDocs = applyAdvertenciasFilters(docs);
+                                    updateTableFromSnapshot(section, snapshot, filteredDocs);
+                                } else if (section === 'faltas') {
                                     const filteredDocs = applyFaltasFilters(docs);
+                                    updateTableFromSnapshot(section, snapshot, filteredDocs);
                                     updateFaltasStats(filteredDocs);
+                                } else if (section === 'danos') {
+                                    const filteredDocs = applyDanosFilters(docs);
+                                    updateTableFromSnapshot(section, snapshot, filteredDocs);
+                                    updateDanosStats(filteredDocs);
+                                } else if (section === 'feedbacks') {
+                                    const filteredDocs = applyFeedbacksFilters(docs);
+                                    updateTableFromSnapshot(section, snapshot, filteredDocs);
+                                    updateFeedbackStats(filteredDocs);
+                                } else if (section === 'multas') {
+                                    const filteredDocs = applyMultasFilters(docs);
+                                    updateTableFromSnapshot(section, snapshot, filteredDocs);
+                                    updateMultasStats();
+                                } else {
+                                    updateTableFromSnapshot(section, snapshot);
                                 }
+                            }
+                            
+                            // Atualizar dashboard e filtros
+                            updateDashboardCounts();
+                            if (section === 'departamentos' || section === 'colaboradores') {
+                                updateColaboradoresFilterOptions();
+                                updateDashboardFilters();
                             }
                         },
                         (error) => {
@@ -2227,6 +2194,7 @@
             const empresaFilter = document.getElementById('filtro-empresa-colaborador');
             
             if (deptoFilter) {
+                const valorAtual = deptoFilter.value;
                 deptoFilter.innerHTML = '<option value="">Todos os departamentos</option>';
                 const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
                 departamentosUnicos.sort().forEach(depto => {
@@ -2235,9 +2203,11 @@
                     option.textContent = depto;
                     deptoFilter.appendChild(option);
                 });
+                if (valorAtual) deptoFilter.value = valorAtual;
             }
             
             if (empresaFilter) {
+                const valorAtual = empresaFilter.value;
                 empresaFilter.innerHTML = '<option value="">Todas as empresas</option>';
                 const empresasUnicas = [...new Set(empresasData.map(e => e.nome).filter(Boolean))];
                 empresasUnicas.sort().forEach(empresa => {
@@ -2246,6 +2216,7 @@
                     option.textContent = empresa;
                     empresaFilter.appendChild(option);
                 });
+                if (valorAtual) empresaFilter.value = valorAtual;
             }
         }
 
@@ -2326,13 +2297,17 @@
                 valorTotal += parseFloat(dano.valor) || 0;
             });
             
-            document.getElementById('stat-danos-valor-total').textContent = `R$ ${valorTotal.toFixed(2)}`;
-            document.getElementById('stat-danos-total').textContent = danos.length;
+            const statValorTotal = document.getElementById('stat-danos-valor-total');
+            const statTotal = document.getElementById('stat-danos-total');
+            
+            if (statValorTotal) statValorTotal.textContent = `R$ ${valorTotal.toFixed(2)}`;
+            if (statTotal) statTotal.textContent = danos.length;
         }
 
         // Atualizar estatísticas de faltas com filtros
         function updateFaltasStats(faltas) {
-            document.getElementById('stat-faltas-total').textContent = faltas.length;
+            const statFaltasTotal = document.getElementById('stat-faltas-total');
+            if (statFaltasTotal) statFaltasTotal.textContent = faltas.length;
         }
 
         // Aplicar filtros automáticos do dashboard
@@ -2343,19 +2318,16 @@
         // Atualizar dashboard com filtros automáticos
         async function updateDashboardCounts() {
             try {
-                // Colaboradores - total geral
                 const colaboradoresRef = firebaseApp.firestore.collection(firebaseApp.db, 'colaboradores');
                 const colaboradoresSnapshot = await firebaseApp.firestore.getDocs(colaboradoresRef);
                 document.getElementById('total-colaboradores').textContent = colaboradoresSnapshot.size;
                 
-                // Aplicar filtros automáticos
                 let filtroDepartamento = dashboardFiltroAtual.departamento;
                 let filtroColaborador = dashboardFiltroAtual.colaborador;
                 let dataInicio = dashboardFiltroAtual.dataInicio ? new Date(dashboardFiltroAtual.dataInicio) : null;
                 let dataFim = dashboardFiltroAtual.dataFim ? new Date(dashboardFiltroAtual.dataFim) : null;
                 if (dataFim) dataFim.setHours(23, 59, 59, 999);
                 
-                // Advertências com filtros automáticos
                 const advertenciasRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
                 const advertenciasSnapshot = await firebaseApp.firestore.getDocs(advertenciasRef);
                 let advertenciasDocs = advertenciasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -2378,7 +2350,6 @@
                 document.getElementById('total-advertencias').textContent = advertenciasDocs.length;
                 document.getElementById('advertencias-periodo').textContent = filtroDepartamento || filtroColaborador || dataInicio || dataFim ? 'com filtros' : 'total geral';
                 
-                // Faltas com filtros automáticos
                 const faltasRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
                 const faltasSnapshot = await firebaseApp.firestore.getDocs(faltasRef);
                 let faltasDocs = faltasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -2401,7 +2372,6 @@
                 document.getElementById('total-faltas').textContent = faltasDocs.length;
                 document.getElementById('faltas-periodo').textContent = filtroDepartamento || filtroColaborador || dataInicio || dataFim ? 'com filtros' : 'total geral';
                 
-                // Multas valor total (todos os status)
                 const multasRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
                 const multasSnapshot = await firebaseApp.firestore.getDocs(multasRef);
                 let multasDocs = multasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -2429,7 +2399,6 @@
                 document.getElementById('total-multas').textContent = `R$ ${totalMultas.toFixed(2)}`;
                 document.getElementById('multas-periodo').textContent = filtroDepartamento || filtroColaborador || dataInicio || dataFim ? 'com filtros' : 'total geral';
                 
-                // Atualizar todos os Top 5 com os filtros automáticos
                 await updateTop5Advertencias();
                 await updateTop5Danos();
                 await updateTop5Faltas();
@@ -2449,7 +2418,6 @@
                 const snapshot = await firebaseApp.firestore.getDocs(advertenciasRef);
                 let advertencias = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                // Aplicar filtros automáticos do dashboard
                 advertencias = advertencias.filter(item => {
                     if (dashboardFiltroAtual.colaborador && item.colaborador !== dashboardFiltroAtual.colaborador) return false;
                     if (dashboardFiltroAtual.departamento) {
@@ -2470,7 +2438,6 @@
                     return true;
                 });
                 
-                // Top 5 Colaboradores
                 const colaboradoresCount = {};
                 const setoresCount = {};
                 
@@ -2485,7 +2452,6 @@
                     }
                 });
                 
-                // Ordenar e pegar top 5 colaboradores
                 const topColaboradores = Object.entries(colaboradoresCount)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
@@ -2508,7 +2474,6 @@
                     }
                 }
                 
-                // Top 5 Setores
                 const topSetores = Object.entries(setoresCount)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
@@ -2543,7 +2508,6 @@
                 const snapshot = await firebaseApp.firestore.getDocs(danosRef);
                 let danos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                // Aplicar filtros automáticos do dashboard
                 danos = danos.filter(item => {
                     if (dashboardFiltroAtual.colaborador && item.colaborador !== dashboardFiltroAtual.colaborador) return false;
                     if (dashboardFiltroAtual.departamento) {
@@ -2564,7 +2528,6 @@
                     return true;
                 });
                 
-                // Top 5 Colaboradores (por quantidade)
                 const colaboradoresCount = {};
                 const setoresCount = {};
                 
@@ -2579,7 +2542,6 @@
                     }
                 });
                 
-                // Ordenar e pegar top 5 colaboradores
                 const topColaboradores = Object.entries(colaboradoresCount)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
@@ -2602,7 +2564,6 @@
                     }
                 }
                 
-                // Top 5 Setores
                 const topSetores = Object.entries(setoresCount)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
@@ -2637,7 +2598,6 @@
                 const snapshot = await firebaseApp.firestore.getDocs(faltasRef);
                 let faltas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                // Aplicar filtros automáticos do dashboard
                 faltas = faltas.filter(item => {
                     if (dashboardFiltroAtual.colaborador && item.colaborador !== dashboardFiltroAtual.colaborador) return false;
                     if (dashboardFiltroAtual.departamento) {
@@ -2658,7 +2618,6 @@
                     return true;
                 });
                 
-                // Top 5 Colaboradores
                 const colaboradoresCount = {};
                 const setoresCount = {};
                 
@@ -2673,7 +2632,6 @@
                     }
                 });
                 
-                // Ordenar e pegar top 5 colaboradores
                 const topColaboradores = Object.entries(colaboradoresCount)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
@@ -2696,7 +2654,6 @@
                     }
                 }
                 
-                // Top 5 Setores
                 const topSetores = Object.entries(setoresCount)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
@@ -2731,7 +2688,6 @@
                 const snapshot = await firebaseApp.firestore.getDocs(feedbacksRef);
                 let feedbacks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                // Aplicar filtros automáticos do dashboard (datas)
                 let dataInicio = dashboardFiltroAtual.dataInicio ? new Date(dashboardFiltroAtual.dataInicio) : null;
                 let dataFim = dashboardFiltroAtual.dataFim ? new Date(dashboardFiltroAtual.dataFim) : null;
                 if (dataFim) dataFim.setHours(23, 59, 59, 999);
@@ -2747,7 +2703,6 @@
                     });
                 }
                 
-                // Agrupar por departamento
                 const deptTotal = {};
                 const deptPositivos = {};
                 const deptNeutros = {};
@@ -2771,7 +2726,6 @@
                     }
                 });
                 
-                // Top 5 - Total
                 const topTotal = Object.entries(deptTotal)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
@@ -2794,7 +2748,6 @@
                     }
                 }
                 
-                // Top 5 - Positivos
                 const topPositivos = Object.entries(deptPositivos)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
@@ -2817,7 +2770,6 @@
                     }
                 }
                 
-                // Top 5 - Neutros
                 const topNeutros = Object.entries(deptNeutros)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
@@ -2840,7 +2792,6 @@
                     }
                 }
                 
-                // Top 5 - A Melhorar
                 const topMelhorar = Object.entries(deptMelhorar)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
@@ -2875,7 +2826,6 @@
                 const snapshot = await firebaseApp.firestore.getDocs(multasRef);
                 let multas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                // Aplicar filtros automáticos do dashboard
                 multas = multas.filter(item => {
                     if (dashboardFiltroAtual.colaborador && item.colaborador !== dashboardFiltroAtual.colaborador) return false;
                     if (dashboardFiltroAtual.departamento) {
@@ -2896,7 +2846,6 @@
                     return true;
                 });
                 
-                // Top 5 Colaboradores (por valor total)
                 const colaboradoresValor = {};
                 const setoresValor = {};
                 
@@ -2912,7 +2861,6 @@
                     }
                 });
                 
-                // Ordenar e pegar top 5 colaboradores por valor
                 const topColaboradores = Object.entries(colaboradoresValor)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
@@ -2935,7 +2883,6 @@
                     }
                 }
                 
-                // Top 5 Setores por valor
                 const topSetores = Object.entries(setoresValor)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
@@ -2970,7 +2917,6 @@
                 const snapshot = await firebaseApp.firestore.getDocs(multasRef);
                 let multas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                // Aplicar filtros da seção de multas
                 multas = applyMultasFilters(multas);
                 
                 let totalRegistros = multas.length;
@@ -2980,8 +2926,11 @@
                     valorTotal += parseFloat(multa.valor) || 0;
                 });
                 
-                document.getElementById('stat-multas-total').textContent = totalRegistros;
-                document.getElementById('stat-valor-total').textContent = `R$ ${valorTotal.toFixed(2)}`;
+                const statMultasTotal = document.getElementById('stat-multas-total');
+                const statValorTotal = document.getElementById('stat-valor-total');
+                
+                if (statMultasTotal) statMultasTotal.textContent = totalRegistros;
+                if (statValorTotal) statValorTotal.textContent = `R$ ${valorTotal.toFixed(2)}`;
                 
             } catch (error) {
                 console.error(`Erro ao atualizar estatísticas de multas: ${error.message}`);
@@ -3002,8 +2951,35 @@
                 const snapshot = await firebaseApp.firestore.getDocs(query);
                 
                 console.log(`${section}: ${snapshot.size} documentos carregados`);
-                updateTableFromSnapshot(section, snapshot, filters);
                 updateCache(section, snapshot);
+                
+                const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                if (section === 'colaboradores') {
+                    const filteredDocs = applyColaboradoresFilters(docs);
+                    updateTableFromSnapshot(section, snapshot, filteredDocs);
+                } else if (section === 'advertencias') {
+                    const filteredDocs = applyAdvertenciasFilters(docs);
+                    updateTableFromSnapshot(section, snapshot, filteredDocs);
+                } else if (section === 'faltas') {
+                    const filteredDocs = applyFaltasFilters(docs);
+                    updateTableFromSnapshot(section, snapshot, filteredDocs);
+                    updateFaltasStats(filteredDocs);
+                } else if (section === 'danos') {
+                    const filteredDocs = applyDanosFilters(docs);
+                    updateTableFromSnapshot(section, snapshot, filteredDocs);
+                    updateDanosStats(filteredDocs);
+                } else if (section === 'feedbacks') {
+                    const filteredDocs = applyFeedbacksFilters(docs);
+                    updateTableFromSnapshot(section, snapshot, filteredDocs);
+                    updateFeedbackStats(filteredDocs);
+                } else if (section === 'multas') {
+                    const filteredDocs = applyMultasFilters(docs);
+                    updateTableFromSnapshot(section, snapshot, filteredDocs);
+                    updateMultasStats();
+                } else {
+                    updateTableFromSnapshot(section, snapshot);
+                }
                 
             } catch (error) {
                 console.error(`Erro ao carregar ${section}: ${error.message}`);
@@ -3015,64 +2991,38 @@
         }
 
         // Atualizar tabela com snapshot
-        function updateTableFromSnapshot(section, snapshot, filters = null) {
+        function updateTableFromSnapshot(section, snapshot, filteredDocs = null) {
             const tableBody = document.getElementById(`${section}-table-body`);
             if (!tableBody) return;
             
-            if (snapshot.empty) {
+            let docs = filteredDocs;
+            if (!docs) {
+                docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            }
+            
+            if (docs.length === 0) {
                 const cols = getColumnCount(section);
-                tableBody.innerHTML = `<tr><td colspan="${cols}">Nenhum registro encontrado.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="${cols}">Nenhum registro encontrado com os filtros aplicados.</td></tr>`;
                 return;
             }
             
             tableBody.innerHTML = '';
-            let docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             
-            // Aplicar filtros conforme a seção
             if (section === 'colaboradores') {
-                docs = applyColaboradoresFilters(docs);
-                // Ordenar por nome (alfabética)
                 docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
             } else if (section === 'empresas') {
-                // Ordenar por nome (alfabética)
                 docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
             } else if (section === 'departamentos') {
-                // Ordenar por nome (alfabética)
                 docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
             } else if (section === 'tiposMulta') {
-                // Ordenar por nome (alfabética)
                 docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
-            } else if (section === 'advertencias') {
-                docs = applyAdvertenciasFilters(docs);
-                // Ordenar por data (mais recente primeiro)
+            } else if (section === 'advertencias' || section === 'danos' || section === 'faltas' || section === 'multas') {
                 docs.sort((a, b) => {
                     const dataA = parseDateExactly(a.data) || new Date(0);
                     const dataB = parseDateExactly(b.data) || new Date(0);
                     return dataB - dataA;
                 });
-            } else if (section === 'danos') {
-                docs = applyDanosFilters(docs);
-                // Ordenar por data (mais recente primeiro)
-                docs.sort((a, b) => {
-                    const dataA = parseDateExactly(a.data) || new Date(0);
-                    const dataB = parseDateExactly(b.data) || new Date(0);
-                    return dataB - dataA;
-                });
-                // Atualizar estatísticas de danos
-                updateDanosStats(docs);
-            } else if (section === 'faltas') {
-                docs = applyFaltasFilters(docs);
-                // Ordenar por data (mais recente primeiro)
-                docs.sort((a, b) => {
-                    const dataA = parseDateExactly(a.data) || new Date(0);
-                    const dataB = parseDateExactly(b.data) || new Date(0);
-                    return dataB - dataA;
-                });
-                // Atualizar estatísticas de faltas
-                updateFaltasStats(docs);
             } else if (section === 'feedbacks') {
-                docs = applyFeedbacksFilters(docs);
-                // Ordenar por mês/ano (mais recente primeiro)
                 docs.sort((a, b) => {
                     const [mesA, anoA] = (a.mesAno || '01-2024').split('-');
                     const [mesB, anoB] = (b.mesAno || '01-2024').split('-');
@@ -3080,21 +3030,6 @@
                     const dataB = new Date(parseInt(anoB), parseInt(mesB) - 1, 1);
                     return dataB - dataA;
                 });
-                updateFeedbackStats(docs);
-            } else if (section === 'multas') {
-                docs = applyMultasFilters(docs);
-                // Ordenar por data (mais recente primeiro)
-                docs.sort((a, b) => {
-                    const dataA = parseDateExactly(a.data) || new Date(0);
-                    const dataB = parseDateExactly(b.data) || new Date(0);
-                    return dataB - dataA;
-                });
-            }
-            
-            if (docs.length === 0) {
-                const cols = getColumnCount(section);
-                tableBody.innerHTML = `<tr><td colspan="${cols}">Nenhum registro encontrado com os filtros aplicados.</td></tr>`;
-                return;
             }
             
             docs.forEach((data) => {
@@ -3291,7 +3226,6 @@
             });
         }
 
-        // Função para obter a classe CSS do status
         function getStatusClass(status) {
             const statusClasses = {
                 'Colaborador ciente': 'status-info',
@@ -3306,7 +3240,6 @@
             return statusClasses[status] || 'status-warning';
         }
 
-        // Função para obter o número de colunas da tabela
         function getColumnCount(section) {
             const columns = {
                 empresas: 2,
@@ -3322,7 +3255,6 @@
             return columns[section] || 5;
         }
 
-        // Função para avançar status da multa
         window.avancarStatusMulta = async function(id) {
             const statusFlow = [
                 'Colaborador ciente',
@@ -3362,7 +3294,6 @@
             }
         };
 
-        // Atualizar estatísticas de feedbacks
         function updateFeedbackStats(feedbacks) {
             const hoje = new Date();
             const mesAtual = String(hoje.getMonth() + 1).padStart(2, '0');
@@ -3383,13 +3314,17 @@
                 }
             });
             
-            document.getElementById('stat-positivos').textContent = positivos;
-            document.getElementById('stat-neutros').textContent = neutros;
-            document.getElementById('stat-melhorar').textContent = melhorar;
-            document.getElementById('stat-total-feedbacks').textContent = total;
+            const statPositivos = document.getElementById('stat-positivos');
+            const statNeutros = document.getElementById('stat-neutros');
+            const statMelhorar = document.getElementById('stat-melhorar');
+            const statTotal = document.getElementById('stat-total-feedbacks');
+            
+            if (statPositivos) statPositivos.textContent = positivos;
+            if (statNeutros) statNeutros.textContent = neutros;
+            if (statMelhorar) statMelhorar.textContent = melhorar;
+            if (statTotal) statTotal.textContent = total;
         }
 
-        // Aplicar filtros aos colaboradores
         function applyColaboradoresFilters(docs) {
             let filtered = [...docs];
             
@@ -3419,7 +3354,6 @@
             return filtered;
         }
 
-        // Aplicar filtros às advertências
         function applyAdvertenciasFilters(docs) {
             let filtered = [...docs];
             
@@ -3461,7 +3395,6 @@
             return filtered;
         }
 
-        // Aplicar filtros às faltas
         function applyFaltasFilters(docs) {
             let filtered = [...docs];
             
@@ -3503,7 +3436,6 @@
             return filtered;
         }
 
-        // Aplicar filtros aos danos
         function applyDanosFilters(docs) {
             let filtered = [...docs];
             
@@ -3545,7 +3477,6 @@
             return filtered;
         }
 
-        // Aplicar filtros aos feedbacks
         function applyFeedbacksFilters(docs) {
             let filtered = [...docs];
             
@@ -3568,7 +3499,6 @@
             return filtered;
         }
 
-        // Aplicar filtros às multas
         function applyMultasFilters(docs) {
             let filtered = [...docs];
             
@@ -3628,7 +3558,6 @@
             return filtered;
         }
 
-        // Formulário para empresas
         function loadEmpresaForm(mode = 'add', id = null) {
             let formHTML = `
                 <div class="form-group" style="flex: 100%;">
@@ -3644,7 +3573,6 @@
             }
         }
 
-        // Formulário para departamentos
         function loadDepartamentoForm(mode = 'add', id = null) {
             let formHTML = `
                 <div class="form-group" style="flex: 100%;">
@@ -3660,7 +3588,6 @@
             }
         }
 
-        // Formulário para colaboradores
         function loadColaboradorForm(mode = 'add', id = null) {
             let formHTML = `
                 <div class="form-row">
@@ -3707,7 +3634,6 @@
             }
         }
 
-        // Formulário para advertências
         function loadAdvertenciaForm(mode = 'add', id = null) {
             let formHTML = `
                 <div class="form-row">
@@ -3756,7 +3682,6 @@
             }
         }
 
-        // Formulário para danos e avarias
         function loadDanoForm(mode = 'add', id = null) {
             let formHTML = `
                 <div class="form-row">
@@ -3845,7 +3770,6 @@
             }
         }
 
-        // Formulário para faltas
         function loadFaltaForm(mode = 'add', id = null) {
             let formHTML = `
                 <div class="form-row">
@@ -3897,7 +3821,6 @@
             }
         }
 
-        // Formulário para feedbacks (SEM OBSERVAÇÕES)
         function loadFeedbackForm(mode = 'add', id = null) {
             const hoje = new Date();
             const mesAtual = String(hoje.getMonth() + 1).padStart(2, '0');
@@ -3966,7 +3889,6 @@
             }
         }
 
-        // Formulário para tipos de multa
         function loadTipoMultaForm(mode = 'add', id = null) {
             let formHTML = `
                 <div class="form-group" style="flex: 100%;">
@@ -3982,7 +3904,6 @@
             }
         }
 
-        // Formulário para multas
         function loadMultaForm(mode = 'add', id = null) {
             let statusOptions = [
                 'Colaborador ciente',
@@ -4110,14 +4031,12 @@
             }
         }
 
-        // Função auxiliar para obter nome do mês
         function getNomeMes(mesNumero) {
             const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
                           'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
             return meses[parseInt(mesNumero) - 1] || 'Mês inválido';
         }
 
-        // Popular opções dos selects
         function populateSelectOptions() {
             const departamentoSelect = document.getElementById('departamento');
             const empresaSelect = document.getElementById('empresa');
@@ -4147,7 +4066,6 @@
             }
         }
 
-        // Preencher formulário com dados
         async function fillFormWithData(section, id) {
             try {
                 const collectionName = collections[section];
@@ -4185,7 +4103,6 @@
             }
         }
 
-        // Salvar empresa
         async function saveEmpresa(formData, mode, id) {
             try {
                 const collectionName = 'empresas';
@@ -4212,7 +4129,6 @@
             }
         }
 
-        // Salvar departamento
         async function saveDepartamento(formData, mode, id) {
             try {
                 const collectionName = 'departamentos';
@@ -4239,7 +4155,6 @@
             }
         }
 
-        // Salvar colaborador
         async function saveColaborador(formData, mode, id) {
             try {
                 const collectionName = 'colaboradores';
@@ -4270,7 +4185,6 @@
             }
         }
 
-        // Salvar advertência
         async function saveAdvertencia(formData, mode, id) {
             try {
                 const collectionName = 'advertencias';
@@ -4300,7 +4214,6 @@
             }
         }
 
-        // Salvar dano/avaria
         async function saveDano(formData, mode, id) {
             try {
                 const collectionName = 'danos';
@@ -4336,7 +4249,6 @@
             }
         }
 
-        // Salvar falta
         async function saveFalta(formData, mode, id) {
             try {
                 const collectionName = 'faltas';
@@ -4374,7 +4286,6 @@
             }
         }
 
-        // Salvar feedback (SEM OBSERVAÇÕES)
         async function saveFeedback(formData, mode, id) {
             try {
                 const collectionName = 'feedbacks';
@@ -4420,7 +4331,6 @@
             }
         }
 
-        // Salvar tipo de multa
         async function saveTipoMulta(formData, mode, id) {
             try {
                 const collectionName = 'tiposMulta';
@@ -4447,7 +4357,6 @@
             }
         }
 
-        // Salvar multa
         async function saveMulta(formData, mode, id) {
             try {
                 const collectionName = 'multas';
@@ -4486,7 +4395,6 @@
             }
         }
 
-        // Abrir modal
         function openModal(section, mode = 'add', id = null) {
             currentSection = section;
             currentAction = mode;
@@ -4531,14 +4439,12 @@
             document.getElementById('modal').style.display = 'flex';
         }
 
-        // Fechar modal
         function closeModal() {
             document.getElementById('modal').style.display = 'none';
             document.getElementById('modal-form').innerHTML = '';
             currentItemId = null;
         }
 
-        // Manipular envio do formulário
         async function handleFormSubmit() {
             const form = document.getElementById('modal-form');
             const formData = {};
@@ -4701,92 +4607,50 @@
             }
         }
 
-        // Aplicar filtros de colaboradores (automático)
         function aplicarFiltrosColaboradoresAutomatico() {
             colaboradoresFiltroAtual.status = document.getElementById('filtro-status-colaborador').value;
             colaboradoresFiltroAtual.nome = document.getElementById('filtro-nome-colaborador').value;
             colaboradoresFiltroAtual.departamento = document.getElementById('filtro-departamento-colaborador').value;
             colaboradoresFiltroAtual.empresa = document.getElementById('filtro-empresa-colaborador').value;
             
-            if (unsubscribeListeners.colaboradores) {
-                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'colaboradores');
-                const snapshot = unsubscribeListeners.colaboradores._snapshot;
-                if (snapshot) {
-                    updateTableFromSnapshot('colaboradores', snapshot);
-                }
-            }
+            loadTableData('colaboradores');
         }
 
-        // Aplicar filtros de advertências (automático)
         function aplicarFiltrosAdvertenciasAutomatico() {
             advertenciasFiltroAtual.nome = document.getElementById('filtro-nome').value;
             advertenciasFiltroAtual.departamento = document.getElementById('filtro-departamento').value;
             advertenciasFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio').value;
             advertenciasFiltroAtual.dataFim = document.getElementById('filtro-data-fim').value;
             
-            if (unsubscribeListeners.advertencias) {
-                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
-                const snapshot = unsubscribeListeners.advertencias._snapshot;
-                if (snapshot) {
-                    updateTableFromSnapshot('advertencias', snapshot);
-                }
-            }
+            loadTableData('advertencias');
         }
 
-        // Aplicar filtros de faltas (automático)
         function aplicarFiltrosFaltasAutomatico() {
             faltasFiltroAtual.nome = document.getElementById('filtro-nome-falta').value;
             faltasFiltroAtual.departamento = document.getElementById('filtro-departamento-falta').value;
             faltasFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio-falta').value;
             faltasFiltroAtual.dataFim = document.getElementById('filtro-data-fim-falta').value;
             
-            if (unsubscribeListeners.faltas) {
-                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
-                const snapshot = unsubscribeListeners.faltas._snapshot;
-                if (snapshot) {
-                    const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    const filteredDocs = applyFaltasFilters(docs);
-                    updateTableFromSnapshot('faltas', snapshot);
-                    updateFaltasStats(filteredDocs);
-                }
-            }
+            loadTableData('faltas');
         }
 
-        // Aplicar filtros de danos (automático)
         function aplicarFiltrosDanosAutomatico() {
             danosFiltroAtual.nome = document.getElementById('filtro-nome-dano').value;
             danosFiltroAtual.departamento = document.getElementById('filtro-departamento-dano').value;
             danosFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio-dano').value;
             danosFiltroAtual.dataFim = document.getElementById('filtro-data-fim-dano').value;
             
-            if (unsubscribeListeners.danos) {
-                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'danos');
-                const snapshot = unsubscribeListeners.danos._snapshot;
-                if (snapshot) {
-                    const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    const filteredDocs = applyDanosFilters(docs);
-                    updateTableFromSnapshot('danos', snapshot);
-                    updateDanosStats(filteredDocs);
-                }
-            }
+            loadTableData('danos');
         }
 
-        // Aplicar filtros de feedbacks (automático)
         function aplicarFiltrosFeedbacksAutomatico() {
             feedbacksFiltroAtual.mes = document.getElementById('filtro-mes-feedback').value;
             feedbacksFiltroAtual.ano = document.getElementById('filtro-ano-feedback').value;
             feedbacksFiltroAtual.departamento = document.getElementById('filtro-departamento-feedback').value;
             
-            if (unsubscribeListeners.feedbacks) {
-                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
-                const snapshot = unsubscribeListeners.feedbacks._snapshot;
-                if (snapshot) {
-                    updateTableFromSnapshot('feedbacks', snapshot);
-                }
-            }
+            loadTableData('feedbacks');
         }
 
-        // Aplicar filtros de multas (automático)
         function aplicarFiltrosMultasAutomatico() {
             multasFiltroAtual.nome = document.getElementById('filtro-nome-multa').value;
             multasFiltroAtual.departamento = document.getElementById('filtro-departamento-multa').value;
@@ -4796,19 +4660,10 @@
             multasFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio-multa').value;
             multasFiltroAtual.dataFim = document.getElementById('filtro-data-fim-multa').value;
             
-            if (unsubscribeListeners.multas) {
-                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
-                const snapshot = unsubscribeListeners.multas._snapshot;
-                if (snapshot) {
-                    updateTableFromSnapshot('multas', snapshot);
-                    updateMultasStats();
-                }
-            }
+            loadTableData('multas');
         }
 
-        // Configurar eventos
         function setupEventListeners() {
-            // Navegação
             document.querySelectorAll('.sidebar-menu a').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -4835,7 +4690,6 @@
                     };
                     document.getElementById('page-title').textContent = titles[targetSection] || 'Dashboard';
                     
-                    // Fechar todos os filtros ao trocar de seção
                     document.querySelectorAll('.filters-container, .dashboard-filters-container').forEach(container => {
                         container.classList.remove('show');
                     });
@@ -4845,7 +4699,6 @@
                         btn.classList.remove('active');
                     });
                     
-                    // Popular filtros quando acessar a seção
                     if (targetSection === 'colaboradores') {
                         updateColaboradoresFilterOptions();
                     }
@@ -4862,6 +4715,7 @@
                                 departamentoSelect.appendChild(option);
                             });
                         }
+                        loadTableData('advertencias');
                     }
                     
                     if (targetSection === 'faltas') {
@@ -4876,17 +4730,7 @@
                                 departamentoSelect.appendChild(option);
                             });
                         }
-                        
-                        // Atualizar estatísticas de faltas ao entrar na seção
-                        if (unsubscribeListeners.faltas) {
-                            const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
-                            const snapshot = unsubscribeListeners.faltas._snapshot;
-                            if (snapshot) {
-                                const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                                const filteredDocs = applyFaltasFilters(docs);
-                                updateFaltasStats(filteredDocs);
-                            }
-                        }
+                        loadTableData('faltas');
                     }
                     
                     if (targetSection === 'danos') {
@@ -4901,17 +4745,7 @@
                                 departamentoSelect.appendChild(option);
                             });
                         }
-                        
-                        // Atualizar estatísticas de danos ao entrar na seção
-                        if (unsubscribeListeners.danos) {
-                            const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'danos');
-                            const snapshot = unsubscribeListeners.danos._snapshot;
-                            if (snapshot) {
-                                const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                                const filteredDocs = applyDanosFilters(docs);
-                                updateDanosStats(filteredDocs);
-                            }
-                        }
+                        loadTableData('danos');
                     }
                     
                     if (targetSection === 'feedbacks') {
@@ -4926,15 +4760,7 @@
                                 departamentoSelect.appendChild(option);
                             });
                         }
-                        
-                        if (unsubscribeListeners.feedbacks) {
-                            const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
-                            const snapshot = unsubscribeListeners.feedbacks._snapshot;
-                            if (snapshot) {
-                                const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                                updateFeedbackStats(docs);
-                            }
-                        }
+                        loadTableData('feedbacks');
                     }
                     
                     if (targetSection === 'multas') {
@@ -4949,7 +4775,7 @@
                                 departamentoSelect.appendChild(option);
                             });
                         }
-                        
+                        loadTableData('multas');
                         updateMultasStats();
                     }
                     
@@ -4959,7 +4785,6 @@
                 });
             });
 
-            // Botões de adicionar
             document.getElementById('add-empresa-btn').addEventListener('click', () => openModal('empresas', 'add'));
             document.getElementById('add-departamento-btn').addEventListener('click', () => openModal('departamentos', 'add'));
             document.getElementById('add-colaborador-btn').addEventListener('click', () => openModal('colaboradores', 'add'));
@@ -4970,7 +4795,6 @@
             document.getElementById('add-tipo-multa-btn').addEventListener('click', () => openModal('tiposMulta', 'add'));
             document.getElementById('add-multa-btn').addEventListener('click', () => openModal('multas', 'add'));
 
-            // Botões de toggle dos filtros
             document.getElementById('toggle-filters-colaboradores').addEventListener('click', () => toggleFilters('colaboradores'));
             document.getElementById('toggle-filters-advertencias').addEventListener('click', () => toggleFilters('advertencias'));
             document.getElementById('toggle-filters-faltas').addEventListener('click', () => toggleFilters('faltas'));
@@ -4979,42 +4803,34 @@
             document.getElementById('toggle-filters-multas').addEventListener('click', () => toggleFilters('multas'));
             document.getElementById('toggle-filters-dashboard').addEventListener('click', () => toggleFilters('dashboard'));
 
-            // Modal
             document.getElementById('close-modal').addEventListener('click', closeModal);
             document.getElementById('cancel-form').addEventListener('click', closeModal);
             document.getElementById('submit-form').addEventListener('click', handleFormSubmit);
             
-            // FILTROS AUTOMÁTICOS - SEM BOTÕES DE CONFIRMAR
-            // Colaboradores
             document.getElementById('filtro-status-colaborador').addEventListener('change', aplicarFiltrosColaboradoresAutomatico);
             document.getElementById('filtro-nome-colaborador').addEventListener('input', aplicarFiltrosColaboradoresAutomatico);
             document.getElementById('filtro-departamento-colaborador').addEventListener('change', aplicarFiltrosColaboradoresAutomatico);
             document.getElementById('filtro-empresa-colaborador').addEventListener('change', aplicarFiltrosColaboradoresAutomatico);
             
-            // Advertências
             document.getElementById('filtro-nome').addEventListener('input', aplicarFiltrosAdvertenciasAutomatico);
             document.getElementById('filtro-departamento').addEventListener('change', aplicarFiltrosAdvertenciasAutomatico);
             document.getElementById('filtro-data-inicio').addEventListener('change', aplicarFiltrosAdvertenciasAutomatico);
             document.getElementById('filtro-data-fim').addEventListener('change', aplicarFiltrosAdvertenciasAutomatico);
             
-            // Faltas
             document.getElementById('filtro-nome-falta').addEventListener('input', aplicarFiltrosFaltasAutomatico);
             document.getElementById('filtro-departamento-falta').addEventListener('change', aplicarFiltrosFaltasAutomatico);
             document.getElementById('filtro-data-inicio-falta').addEventListener('change', aplicarFiltrosFaltasAutomatico);
             document.getElementById('filtro-data-fim-falta').addEventListener('change', aplicarFiltrosFaltasAutomatico);
             
-            // Danos
             document.getElementById('filtro-nome-dano').addEventListener('input', aplicarFiltrosDanosAutomatico);
             document.getElementById('filtro-departamento-dano').addEventListener('change', aplicarFiltrosDanosAutomatico);
             document.getElementById('filtro-data-inicio-dano').addEventListener('change', aplicarFiltrosDanosAutomatico);
             document.getElementById('filtro-data-fim-dano').addEventListener('change', aplicarFiltrosDanosAutomatico);
             
-            // Feedbacks
             document.getElementById('filtro-mes-feedback').addEventListener('change', aplicarFiltrosFeedbacksAutomatico);
             document.getElementById('filtro-ano-feedback').addEventListener('change', aplicarFiltrosFeedbacksAutomatico);
             document.getElementById('filtro-departamento-feedback').addEventListener('change', aplicarFiltrosFeedbacksAutomatico);
             
-            // Multas
             document.getElementById('filtro-nome-multa').addEventListener('input', aplicarFiltrosMultasAutomatico);
             document.getElementById('filtro-departamento-multa').addEventListener('change', aplicarFiltrosMultasAutomatico);
             document.getElementById('filtro-status-multa').addEventListener('change', aplicarFiltrosMultasAutomatico);
@@ -5023,7 +4839,6 @@
             document.getElementById('filtro-data-inicio-multa').addEventListener('change', aplicarFiltrosMultasAutomatico);
             document.getElementById('filtro-data-fim-multa').addEventListener('change', aplicarFiltrosMultasAutomatico);
             
-            // Dashboard - Filtros automáticos
             document.getElementById('dashboard-filtro-departamento').addEventListener('change', function() {
                 dashboardFiltroAtual.departamento = this.value;
                 aplicarFiltrosDashboardAutomatico();
@@ -5053,13 +4868,11 @@
                 showAlert('Filtros de data limpos!', 'success', '');
             });
             
-            // Fechar modal ao clicar fora
             document.getElementById('modal').addEventListener('click', function(e) {
                 if (e.target === this) closeModal();
             });
         }
 
-        // Funções globais para ações
         window.editItem = function(section, id) {
             openModal(section, 'edit', id);
         };
@@ -5099,7 +4912,6 @@
             }
         };
 
-        // FUNÇÕES AUXILIARES PARA DATAS
         function parseDateExactly(dateString) {
             if (!dateString) return null;
             try {
