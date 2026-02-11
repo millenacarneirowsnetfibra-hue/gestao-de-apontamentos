@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão de RH - Sistema Completo com Gráficos</title>
+    <title>Gestão de RH - Sistema Completo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chart.js para gráficos -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <!-- Firebase 9 Modular -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -69,10 +67,6 @@
             --border-radius: 8px;
             --orange-color: #e67e22;
             --red-color: #c0392b;
-            --purple-color: #9b59b6;
-            --blue-color: #3498db;
-            --green-color: #2ecc71;
-            --yellow-color: #f1c40f;
             
             /* Cores leves para os cards */
             --card-advertencia: rgba(243, 156, 18, 0.15);
@@ -301,102 +295,6 @@
 
         .negative {
             color: var(--accent-color);
-        }
-
-        /* Seção de Gráficos */
-        .charts-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .chart-card {
-            background-color: white;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            box-shadow: var(--shadow);
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .chart-title {
-            font-size: 1.1rem;
-            color: var(--primary-color);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .chart-title i {
-            color: var(--secondary-color);
-        }
-
-        .chart-container {
-            position: relative;
-            height: 300px;
-            width: 100%;
-        }
-
-        .chart-legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-        }
-
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 4px;
-        }
-
-        /* Estatísticas em tempo real */
-        .stats-banner {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: var(--border-radius);
-            padding: 25px;
-            color: white;
-            margin-bottom: 30px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        .stats-banner-item {
-            text-align: center;
-        }
-
-        .stats-banner-value {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .stats-banner-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
         }
 
         /* Sections */
@@ -1158,10 +1056,6 @@
                 border-left: none;
                 border-bottom: 3px solid var(--secondary-color);
             }
-
-            .charts-row {
-                grid-template-columns: 1fr;
-            }
         }
 
         @media (max-width: 768px) {
@@ -1199,14 +1093,6 @@
             
             .dashboard-filter-group {
                 min-width: 100%;
-            }
-
-            .charts-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .chart-container {
-                height: 250px;
             }
         }
     </style>
@@ -1251,7 +1137,7 @@
 
             <!-- Dashboard -->
             <div id="dashboard" class="section-content">
-                <!-- Filtros do Dashboard -->
+                <!-- Filtros do Dashboard - Ocultos por padrão, estilo igual às demais abas -->
                 <div class="btn-filters">
                     <button class="btn-toggle-filters" id="toggle-filters-dashboard">
                         <i class="fas fa-filter"></i> Mostrar Filtros
@@ -1299,26 +1185,6 @@
                     </div>
                 </div>
 
-                <!-- Banner de Estatísticas em Tempo Real -->
-                <div class="stats-banner">
-                    <div class="stats-banner-item">
-                        <div class="stats-banner-value" id="banner-total-colaboradores">0</div>
-                        <div class="stats-banner-label"><i class="fas fa-users"></i> Colaboradores Ativos</div>
-                    </div>
-                    <div class="stats-banner-item">
-                        <div class="stats-banner-value" id="banner-total-advertencias">0</div>
-                        <div class="stats-banner-label"><i class="fas fa-exclamation-triangle"></i> Advertências</div>
-                    </div>
-                    <div class="stats-banner-item">
-                        <div class="stats-banner-value" id="banner-total-faltas">0</div>
-                        <div class="stats-banner-label"><i class="fas fa-calendar-times"></i> Faltas</div>
-                    </div>
-                    <div class="stats-banner-item">
-                        <div class="stats-banner-value" id="banner-total-multas-valor">R$ 0</div>
-                        <div class="stats-banner-label"><i class="fas fa-money-bill-wave"></i> Valor em Multas</div>
-                    </div>
-                </div>
-
                 <!-- Cards com cores diferenciadas -->
                 <div class="cards-container">
                     <div class="card card-colaborador">
@@ -1360,93 +1226,6 @@
                         </div>
                         <div class="card-value" id="total-multas">R$ 0,00</div>
                         <div class="card-change"><span id="multas-periodo">com filtros</span></div>
-                    </div>
-                </div>
-
-                <!-- GRÁFICOS VISUAIS - Primeira Linha -->
-                <div class="charts-row">
-                    <!-- Gráfico de Pizza - Distribuição por Status -->
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <div class="chart-title">
-                                <i class="fas fa-chart-pie"></i> Colaboradores por Status
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="chart-colaboradores-status"></canvas>
-                        </div>
-                        <div class="chart-legend" id="legend-colaboradores-status">
-                            <!-- Preenchido via JavaScript -->
-                        </div>
-                    </div>
-
-                    <!-- Gráfico de Barras - Ocorrências por Departamento -->
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <div class="chart-title">
-                                <i class="fas fa-chart-bar"></i> Ocorrências por Departamento
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="chart-ocorrencias-departamento"></canvas>
-                        </div>
-                        <div class="chart-legend" id="legend-ocorrencias-departamento">
-                            <!-- Preenchido via JavaScript -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- GRÁFICOS VISUAIS - Segunda Linha -->
-                <div class="charts-row">
-                    <!-- Gráfico de Linha - Evolução Mensal -->
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <div class="chart-title">
-                                <i class="fas fa-chart-line"></i> Evolução Mensal - Advertências e Faltas
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="chart-evolucao-mensal"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Gráfico de Barras - Top 5 Colaboradores (Multas) -->
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <div class="chart-title">
-                                <i class="fas fa-trophy"></i> Top 5 - Multas por Colaborador
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="chart-top5-multas"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- GRÁFICOS VISUAIS - Terceira Linha -->
-                <div class="charts-row">
-                    <!-- Gráfico de Pizza - Distribuição de Feedbacks -->
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <div class="chart-title">
-                                <i class="fas fa-smile"></i> Feedbacks do Mês Atual
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="chart-feedbacks-mes"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Gráfico de Barras - Danos por Colaborador -->
-                    <div class="chart-card">
-                        <div class="chart-header">
-                            <div class="chart-title">
-                                <i class="fas fa-tools"></i> Top 5 - Danos/Avarias
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="chart-top5-danos"></canvas>
-                        </div>
                     </div>
                 </div>
 
@@ -2300,9 +2079,6 @@
             dataFim: ''
         };
 
-        // Gráficos
-        let charts = {};
-
         // Elementos DOM
         const firebaseStatus = document.getElementById('firebase-status');
 
@@ -2408,9 +2184,6 @@
                                 section === 'faltas' || section === 'multas' || section === 'feedbacks' ||
                                 section === 'danos' || section === 'tiposMulta') {
                                 updateDashboardCounts();
-                                updateBannerStats();
-                                updateAllCharts();
-                                
                                 if (section === 'multas') {
                                     updateMultasStats();
                                 }
@@ -2446,494 +2219,6 @@
                     console.error(`Erro ao configurar listener ${section}: ${error.message}`);
                 }
             });
-        }
-
-        // Inicializar todos os gráficos
-        function initAllCharts() {
-            // Gráfico de Pizza - Colaboradores por Status
-            const ctx1 = document.getElementById('chart-colaboradores-status')?.getContext('2d');
-            if (ctx1) {
-                charts.colaboradoresStatus = new Chart(ctx1, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Ativos', 'Inativos'],
-                        datasets: [{
-                            data: [0, 0],
-                            backgroundColor: ['#27ae60', '#e74c3c'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Gráfico de Barras - Ocorrências por Departamento
-            const ctx2 = document.getElementById('chart-ocorrencias-departamento')?.getContext('2d');
-            if (ctx2) {
-                charts.ocorrenciasDepartamento = new Chart(ctx2, {
-                    type: 'bar',
-                    data: {
-                        labels: [],
-                        datasets: [
-                            {
-                                label: 'Advertências',
-                                data: [],
-                                backgroundColor: '#f39c12',
-                                borderRadius: 6
-                            },
-                            {
-                                label: 'Faltas',
-                                data: [],
-                                backgroundColor: '#e74c3c',
-                                borderRadius: 6
-                            },
-                            {
-                                label: 'Danos',
-                                data: [],
-                                backgroundColor: '#e67e22',
-                                borderRadius: 6
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                                labels: {
-                                    boxWidth: 12,
-                                    padding: 15
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    drawBorder: false
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    display: false
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Gráfico de Linha - Evolução Mensal
-            const ctx3 = document.getElementById('chart-evolucao-mensal')?.getContext('2d');
-            if (ctx3) {
-                charts.evolucaoMensal = new Chart(ctx3, {
-                    type: 'line',
-                    data: {
-                        labels: [],
-                        datasets: [
-                            {
-                                label: 'Advertências',
-                                data: [],
-                                borderColor: '#f39c12',
-                                backgroundColor: 'rgba(243, 156, 18, 0.1)',
-                                tension: 0.4,
-                                fill: true
-                            },
-                            {
-                                label: 'Faltas',
-                                data: [],
-                                borderColor: '#e74c3c',
-                                backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                                tension: 0.4,
-                                fill: true
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'top'
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    drawBorder: false
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Gráfico de Barras - Top 5 Multas
-            const ctx4 = document.getElementById('chart-top5-multas')?.getContext('2d');
-            if (ctx4) {
-                charts.top5Multas = new Chart(ctx4, {
-                    type: 'bar',
-                    data: {
-                        labels: [],
-                        datasets: [{
-                            label: 'Valor (R$)',
-                            data: [],
-                            backgroundColor: '#3498db',
-                            borderRadius: 6
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    callback: function(value) {
-                                        return 'R$ ' + value.toFixed(2);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Gráfico de Pizza - Feedbacks do Mês
-            const ctx5 = document.getElementById('chart-feedbacks-mes')?.getContext('2d');
-            if (ctx5) {
-                charts.feedbacksMes = new Chart(ctx5, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Positivos', 'Neutros', 'A Melhorar'],
-                        datasets: [{
-                            data: [0, 0, 0],
-                            backgroundColor: ['#27ae60', '#e67e22', '#c0392b'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom'
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Gráfico de Barras - Top 5 Danos
-            const ctx6 = document.getElementById('chart-top5-danos')?.getContext('2d');
-            if (ctx6) {
-                charts.top5Danos = new Chart(ctx6, {
-                    type: 'bar',
-                    data: {
-                        labels: [],
-                        datasets: [{
-                            label: 'Quantidade',
-                            data: [],
-                            backgroundColor: '#e67e22',
-                            borderRadius: 6
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                stepSize: 1
-                            }
-                        }
-                    }
-                });
-            }
-        }
-
-        // Atualizar todos os gráficos
-        async function updateAllCharts() {
-            await updateChartColaboradoresStatus();
-            await updateChartOcorrenciasDepartamento();
-            await updateChartEvolucaoMensal();
-            await updateChartTop5Multas();
-            await updateChartFeedbacksMes();
-            await updateChartTop5Danos();
-        }
-
-        // Atualizar gráfico de colaboradores por status
-        async function updateChartColaboradoresStatus() {
-            if (!charts.colaboradoresStatus) return;
-            
-            const colaboradoresRef = firebaseApp.firestore.collection(firebaseApp.db, 'colaboradores');
-            const snapshot = await firebaseApp.firestore.getDocs(colaboradoresRef);
-            const colaboradores = snapshot.docs.map(doc => doc.data());
-            
-            let ativos = 0;
-            let inativos = 0;
-            
-            colaboradores.forEach(col => {
-                if (col.status === 'Ativo') ativos++;
-                else if (col.status === 'Inativo') inativos++;
-            });
-            
-            charts.colaboradoresStatus.data.datasets[0].data = [ativos, inativos];
-            charts.colaboradoresStatus.update();
-            
-            // Atualizar legenda
-            const legend = document.getElementById('legend-colaboradores-status');
-            if (legend) {
-                legend.innerHTML = `
-                    <div class="legend-item">
-                        <span class="legend-color" style="background-color: #27ae60;"></span>
-                        <span>Ativos: ${ativos}</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-color" style="background-color: #e74c3c;"></span>
-                        <span>Inativos: ${inativos}</span>
-                    </div>
-                `;
-            }
-        }
-
-        // Atualizar gráfico de ocorrências por departamento
-        async function updateChartOcorrenciasDepartamento() {
-            if (!charts.ocorrenciasDepartamento) return;
-            
-            // Buscar todos os departamentos
-            const departamentos = departamentosData.map(d => d.nome).filter(Boolean);
-            
-            // Buscar dados
-            const advertenciasRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
-            const faltasRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
-            const danosRef = firebaseApp.firestore.collection(firebaseApp.db, 'danos');
-            
-            const [advertenciasSnap, faltasSnap, danosSnap] = await Promise.all([
-                firebaseApp.firestore.getDocs(advertenciasRef),
-                firebaseApp.firestore.getDocs(faltasRef),
-                firebaseApp.firestore.getDocs(danosRef)
-            ]);
-            
-            const advertencias = advertenciasSnap.docs.map(doc => doc.data());
-            const faltas = faltasSnap.docs.map(doc => doc.data());
-            const danos = danosSnap.docs.map(doc => doc.data());
-            
-            const advPorDepto = {};
-            const faltasPorDepto = {};
-            const danosPorDepto = {};
-            
-            departamentos.forEach(depto => {
-                advPorDepto[depto] = 0;
-                faltasPorDepto[depto] = 0;
-                danosPorDepto[depto] = 0;
-            });
-            
-            // Contar advertências
-            advertencias.forEach(adv => {
-                const colaborador = colaboradoresData.find(c => c.nome === adv.colaborador);
-                if (colaborador && colaborador.departamento) {
-                    advPorDepto[colaborador.departamento] = (advPorDepto[colaborador.departamento] || 0) + 1;
-                }
-            });
-            
-            // Contar faltas
-            faltas.forEach(falta => {
-                const colaborador = colaboradoresData.find(c => c.nome === falta.colaborador);
-                if (colaborador && colaborador.departamento) {
-                    faltasPorDepto[colaborador.departamento] = (faltasPorDepto[colaborador.departamento] || 0) + 1;
-                }
-            });
-            
-            // Contar danos
-            danos.forEach(dano => {
-                const colaborador = colaboradoresData.find(c => c.nome === dano.colaborador);
-                if (colaborador && colaborador.departamento) {
-                    danosPorDepto[colaborador.departamento] = (danosPorDepto[colaborador.departamento] || 0) + 1;
-                }
-            });
-            
-            // Ordenar departamentos por total de ocorrências
-            const departamentosOrdenados = departamentos.sort((a, b) => {
-                const totalA = (advPorDepto[a] || 0) + (faltasPorDepto[a] || 0) + (danosPorDepto[a] || 0);
-                const totalB = (advPorDepto[b] || 0) + (faltasPorDepto[b] || 0) + (danosPorDepto[b] || 0);
-                return totalB - totalA;
-            }).slice(0, 6); // Mostrar top 6 departamentos
-            
-            charts.ocorrenciasDepartamento.data.labels = departamentosOrdenados;
-            charts.ocorrenciasDepartamento.data.datasets[0].data = departamentosOrdenados.map(d => advPorDepto[d] || 0);
-            charts.ocorrenciasDepartamento.data.datasets[1].data = departamentosOrdenados.map(d => faltasPorDepto[d] || 0);
-            charts.ocorrenciasDepartamento.data.datasets[2].data = departamentosOrdenados.map(d => danosPorDepto[d] || 0);
-            charts.ocorrenciasDepartamento.update();
-        }
-
-        // Atualizar gráfico de evolução mensal
-        async function updateChartEvolucaoMensal() {
-            if (!charts.evolucaoMensal) return;
-            
-            const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            const hoje = new Date();
-            const labels = [];
-            
-            for (let i = 5; i >= 0; i--) {
-                const data = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
-                labels.push(`${meses[data.getMonth()]}/${data.getFullYear().toString().substr(-2)}`);
-            }
-            
-            const advertenciasRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
-            const faltasRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
-            
-            const [advertenciasSnap, faltasSnap] = await Promise.all([
-                firebaseApp.firestore.getDocs(advertenciasRef),
-                firebaseApp.firestore.getDocs(faltasRef)
-            ]);
-            
-            const advertencias = advertenciasSnap.docs.map(doc => doc.data());
-            const faltas = faltasSnap.docs.map(doc => doc.data());
-            
-            const dadosAdv = new Array(6).fill(0);
-            const dadosFaltas = new Array(6).fill(0);
-            
-            advertencias.forEach(adv => {
-                if (!adv.data) return;
-                const dataAdv = parseDateExactly(adv.data);
-                if (!dataAdv) return;
-                
-                for (let i = 0; i < 6; i++) {
-                    const dataBase = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
-                    if (dataAdv.getMonth() === dataBase.getMonth() && dataAdv.getFullYear() === dataBase.getFullYear()) {
-                        dadosAdv[5 - i]++;
-                        break;
-                    }
-                }
-            });
-            
-            faltas.forEach(falta => {
-                if (!falta.data) return;
-                const dataFalta = parseDateExactly(falta.data);
-                if (!dataFalta) return;
-                
-                for (let i = 0; i < 6; i++) {
-                    const dataBase = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
-                    if (dataFalta.getMonth() === dataBase.getMonth() && dataFalta.getFullYear() === dataBase.getFullYear()) {
-                        dadosFaltas[5 - i]++;
-                        break;
-                    }
-                }
-            });
-            
-            charts.evolucaoMensal.data.labels = labels;
-            charts.evolucaoMensal.data.datasets[0].data = dadosAdv;
-            charts.evolucaoMensal.data.datasets[1].data = dadosFaltas;
-            charts.evolucaoMensal.update();
-        }
-
-        // Atualizar gráfico de Top 5 Multas
-        async function updateChartTop5Multas() {
-            if (!charts.top5Multas) return;
-            
-            const multasRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
-            const snapshot = await firebaseApp.firestore.getDocs(multasRef);
-            const multas = snapshot.docs.map(doc => doc.data());
-            
-            const colaboradoresValor = {};
-            
-            multas.forEach(multa => {
-                if (multa.colaborador) {
-                    const valor = parseFloat(multa.valor) || 0;
-                    colaboradoresValor[multa.colaborador] = (colaboradoresValor[multa.colaborador] || 0) + valor;
-                }
-            });
-            
-            const top5 = Object.entries(colaboradoresValor)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5);
-            
-            charts.top5Multas.data.labels = top5.map(item => item[0].split(' ')[0]); // Primeiro nome
-            charts.top5Multas.data.datasets[0].data = top5.map(item => item[1]);
-            charts.top5Multas.update();
-        }
-
-        // Atualizar gráfico de Feedbacks do Mês
-        async function updateChartFeedbacksMes() {
-            if (!charts.feedbacksMes) return;
-            
-            const hoje = new Date();
-            const mesAtual = String(hoje.getMonth() + 1).padStart(2, '0');
-            const anoAtual = hoje.getFullYear();
-            const mesAnoAtual = `${mesAtual}-${anoAtual}`;
-            
-            const feedbacksRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
-            const snapshot = await firebaseApp.firestore.getDocs(feedbacksRef);
-            const feedbacks = snapshot.docs.map(doc => doc.data());
-            
-            let positivos = 0;
-            let neutros = 0;
-            let melhorar = 0;
-            
-            feedbacks.forEach(fb => {
-                if (fb.mesAno === mesAnoAtual) {
-                    positivos += parseInt(fb.positivos) || 0;
-                    neutros += parseInt(fb.neutros) || 0;
-                    melhorar += parseInt(fb.melhorar) || 0;
-                }
-            });
-            
-            charts.feedbacksMes.data.datasets[0].data = [positivos, neutros, melhorar];
-            charts.feedbacksMes.update();
-        }
-
-        // Atualizar gráfico de Top 5 Danos
-        async function updateChartTop5Danos() {
-            if (!charts.top5Danos) return;
-            
-            const danosRef = firebaseApp.firestore.collection(firebaseApp.db, 'danos');
-            const snapshot = await firebaseApp.firestore.getDocs(danosRef);
-            const danos = snapshot.docs.map(doc => doc.data());
-            
-            const colaboradoresCount = {};
-            
-            danos.forEach(dano => {
-                if (dano.colaborador) {
-                    colaboradoresCount[dano.colaborador] = (colaboradoresCount[dano.colaborador] || 0) + 1;
-                }
-            });
-            
-            const top5 = Object.entries(colaboradoresCount)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5);
-            
-            charts.top5Danos.data.labels = top5.map(item => item[0].split(' ')[0]); // Primeiro nome
-            charts.top5Danos.data.datasets[0].data = top5.map(item => item[1]);
-            charts.top5Danos.update();
-        }
-
-        // Atualizar banner de estatísticas
-        function updateBannerStats() {
-            const totalColaboradores = colaboradoresData.filter(c => c.status === 'Ativo').length;
-            document.getElementById('banner-total-colaboradores').textContent = totalColaboradores;
-            
-            // Os outros valores são atualizados via updateDashboardCounts
         }
 
         // Atualizar opções dos filtros de colaboradores
@@ -3023,16 +2308,11 @@
                     await loadTableData(section);
                 }
                 
-                // Inicializar gráficos
-                initAllCharts();
-                
                 await updateDashboardCounts();
-                updateBannerStats();
-                updateAllCharts();
                 updateMultasStats();
                 updateDashboardFilters();
                 
-                console.log('✅ Dados iniciais carregados e gráficos iniciados');
+                console.log('✅ Dados iniciais carregados');
             } catch (error) {
                 console.error(`Erro ao carregar dados: ${error.message}`);
             }
@@ -3058,7 +2338,6 @@
         // Aplicar filtros automáticos do dashboard
         async function aplicarFiltrosDashboardAutomatico() {
             updateDashboardCounts();
-            updateAllCharts();
         }
 
         // Atualizar dashboard com filtros automáticos
@@ -3068,7 +2347,6 @@
                 const colaboradoresRef = firebaseApp.firestore.collection(firebaseApp.db, 'colaboradores');
                 const colaboradoresSnapshot = await firebaseApp.firestore.getDocs(colaboradoresRef);
                 document.getElementById('total-colaboradores').textContent = colaboradoresSnapshot.size;
-                document.getElementById('banner-total-colaboradores').textContent = colaboradoresData.filter(c => c.status === 'Ativo').length;
                 
                 // Aplicar filtros automáticos
                 let filtroDepartamento = dashboardFiltroAtual.departamento;
@@ -3098,7 +2376,6 @@
                 });
                 
                 document.getElementById('total-advertencias').textContent = advertenciasDocs.length;
-                document.getElementById('banner-total-advertencias').textContent = advertenciasDocs.length;
                 document.getElementById('advertencias-periodo').textContent = filtroDepartamento || filtroColaborador || dataInicio || dataFim ? 'com filtros' : 'total geral';
                 
                 // Faltas com filtros automáticos
@@ -3122,7 +2399,6 @@
                 });
                 
                 document.getElementById('total-faltas').textContent = faltasDocs.length;
-                document.getElementById('banner-total-faltas').textContent = faltasDocs.length;
                 document.getElementById('faltas-periodo').textContent = filtroDepartamento || filtroColaborador || dataInicio || dataFim ? 'com filtros' : 'total geral';
                 
                 // Multas valor total (todos os status)
@@ -3151,7 +2427,6 @@
                 });
                 
                 document.getElementById('total-multas').textContent = `R$ ${totalMultas.toFixed(2)}`;
-                document.getElementById('banner-total-multas-valor').textContent = `R$ ${totalMultas.toFixed(2)}`;
                 document.getElementById('multas-periodo').textContent = filtroDepartamento || filtroColaborador || dataInicio || dataFim ? 'com filtros' : 'total geral';
                 
                 // Atualizar todos os Top 5 com os filtros automáticos
@@ -5402,8 +4677,6 @@
                     showAlert(`${currentSection.charAt(0).toUpperCase() + currentSection.slice(1)} salvo com sucesso!`, 'success', `${currentSection}-alert`);
                     closeModal();
                     await updateDashboardCounts();
-                    await updateAllCharts();
-                    
                     if (currentSection === 'multas') {
                         await updateMultasStats();
                     }
@@ -5683,10 +4956,6 @@
                     if (targetSection === 'tipos-multa') {
                         loadTableData('tiposMulta');
                     }
-                    
-                    if (targetSection === 'dashboard') {
-                        updateAllCharts();
-                    }
                 });
             });
 
@@ -5808,8 +5077,6 @@
                 
                 if (['colaboradores', 'advertencias', 'faltas', 'multas', 'feedbacks', 'danos', 'tiposMulta'].includes(section)) {
                     await updateDashboardCounts();
-                    await updateAllCharts();
-                    
                     if (section === 'multas') {
                         await updateMultasStats();
                     }
