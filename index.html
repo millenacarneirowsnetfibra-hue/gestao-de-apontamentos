@@ -2146,9 +2146,10 @@
                             
                             // Atualizar dashboard e filtros
                             updateDashboardCounts();
-                            if (section === 'departamentos' || section === 'colaboradores') {
+                            if (section === 'departamentos' || section === 'colaboradores' || section === 'feedbacks') {
                                 updateColaboradoresFilterOptions();
                                 updateDashboardFilters();
+                                updateFeedbackSelects();
                             }
                         },
                         (error) => {
@@ -2160,6 +2161,24 @@
                     console.error(`Erro ao configurar listener ${section}: ${error.message}`);
                 }
             });
+        }
+
+        // Atualizar opções dos filtros de feedbacks
+        function updateFeedbackSelects() {
+            const deptoFilter = document.getElementById('filtro-departamento-feedback');
+            
+            if (deptoFilter) {
+                const valorAtual = deptoFilter.value;
+                deptoFilter.innerHTML = '<option value="">Todos os departamentos</option>';
+                const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
+                departamentosUnicos.sort().forEach(depto => {
+                    const option = document.createElement('option');
+                    option.value = depto;
+                    option.textContent = depto;
+                    deptoFilter.appendChild(option);
+                });
+                if (valorAtual) deptoFilter.value = valorAtual;
+            }
         }
 
         // Atualizar opções dos filtros de colaboradores
@@ -2256,6 +2275,7 @@
                 await updateDashboardCounts();
                 updateMultasStats();
                 updateDashboardFilters();
+                updateFeedbackSelects();
                 
                 console.log('✅ Dados iniciais carregados');
             } catch (error) {
@@ -4510,6 +4530,12 @@
                         const filteredDocs = applyFaltasFilters(docs);
                         updateFaltasStats(filteredDocs);
                     }
+                    if (currentSection === 'feedbacks') {
+                        const snapshot = await firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks'));
+                        const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                        const filteredDocs = applyFeedbacksFilters(docs);
+                        updateFeedbackStats(filteredDocs);
+                    }
                 } else {
                     showAlert('Erro ao salvar. Verifique o console (F12).', 'error', `${currentSection}-alert`);
                 }
@@ -4814,6 +4840,12 @@
                         const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                         const filteredDocs = applyFaltasFilters(docs);
                         updateFaltasStats(filteredDocs);
+                    }
+                    if (section === 'feedbacks') {
+                        const snapshot = await firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks'));
+                        const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                        const filteredDocs = applyFeedbacksFilters(docs);
+                        updateFeedbackStats(filteredDocs);
                     }
                 }
             } catch (error) {
