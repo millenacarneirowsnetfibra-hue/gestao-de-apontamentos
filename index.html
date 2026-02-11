@@ -870,6 +870,50 @@
             padding: 10px;
         }
 
+        /* Dashboard Filters */
+        .dashboard-filters-container {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+        }
+
+        .dashboard-filters-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .dashboard-filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .dashboard-filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+            font-size: 0.9rem;
+        }
+
+        .dashboard-filter-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: border 0.3s ease;
+        }
+
+        .dashboard-filter-input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
         /* Responsive */
         @media (max-width: 992px) {
             .container {
@@ -933,6 +977,14 @@
             .stats-container, .multas-stats-container, .top5-grid {
                 flex-direction: column;
             }
+
+            .dashboard-filters-row {
+                flex-direction: column;
+            }
+            
+            .dashboard-filter-group {
+                min-width: 100%;
+            }
         }
     </style>
 </head>
@@ -951,11 +1003,11 @@
                 <li><a href="#" data-section="empresas"><i class="fas fa-building"></i> Empresas</a></li>
                 <li><a href="#" data-section="departamentos"><i class="fas fa-sitemap"></i> Departamentos</a></li>
                 <li><a href="#" data-section="colaboradores"><i class="fas fa-user-tie"></i> Colaboradores</a></li>
+                <li><a href="#" data-section="tipos-multa"><i class="fas fa-tag"></i> Tipos de Multa</a></li>
                 <li><a href="#" data-section="advertencias"><i class="fas fa-exclamation-triangle"></i> Advertências</a></li>
                 <li><a href="#" data-section="danos"><i class="fas fa-tools"></i> Danos e Avarias</a></li>
                 <li><a href="#" data-section="faltas"><i class="fas fa-calendar-times"></i> Faltas</a></li>
                 <li><a href="#" data-section="feedbacks"><i class="fas fa-comment-dots"></i> Feedbacks</a></li>
-                <li><a href="#" data-section="tipos-multa"><i class="fas fa-tag"></i> Tipos de Multa</a></li>
                 <li><a href="#" data-section="multas"><i class="fas fa-money-bill-wave"></i> Multas</a></li>
             </ul>
         </nav>
@@ -976,39 +1028,37 @@
 
             <!-- Dashboard -->
             <div id="dashboard" class="section-content">
-                <!-- Filtros do Dashboard -->
+                <!-- Filtros automáticos do Dashboard -->
                 <div class="section">
                     <div class="section-header">
                         <h3 class="section-title">Filtros do Dashboard</h3>
-                        <button class="btn-toggle-filters" id="toggle-filters-dashboard">
-                            <i class="fas fa-filter"></i> Mostrar Filtros
-                        </button>
                     </div>
                     
-                    <div class="filters-container" id="filters-dashboard">
-                        <div class="filters-header">
-                            <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros de Período</h4>
-                            <button class="close-filters-btn" onclick="closeFilters('dashboard')">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="filters-row">
-                            <div class="filter-group">
-                                <label for="dashboard-data-inicio">Data Início</label>
-                                <input type="date" id="dashboard-data-inicio" class="filter-input">
+                    <div class="dashboard-filters-container">
+                        <div class="dashboard-filters-row">
+                            <div class="dashboard-filter-group">
+                                <label for="dashboard-filtro-departamento"><i class="fas fa-sitemap"></i> Departamento</label>
+                                <select id="dashboard-filtro-departamento" class="dashboard-filter-input">
+                                    <option value="">Todos os departamentos</option>
+                                </select>
                             </div>
-                            <div class="filter-group">
-                                <label for="dashboard-data-fim">Data Fim</label>
-                                <input type="date" id="dashboard-data-fim" class="filter-input">
+                            <div class="dashboard-filter-group">
+                                <label for="dashboard-filtro-colaborador"><i class="fas fa-user"></i> Colaborador</label>
+                                <select id="dashboard-filtro-colaborador" class="dashboard-filter-input">
+                                    <option value="">Todos os colaboradores</option>
+                                </select>
                             </div>
-                        </div>
-                        <div class="filter-buttons">
-                            <button class="btn btn-primary" id="aplicar-filtros-dashboard">
-                                <i class="fas fa-search"></i> Aplicar Filtros
-                            </button>
-                            <button class="btn btn-secondary" id="limpar-filtros-dashboard">
-                                <i class="fas fa-times"></i> Limpar Filtros
-                            </button>
+                            <div class="dashboard-filter-group">
+                                <label for="dashboard-filtro-periodo"><i class="fas fa-calendar"></i> Período</label>
+                                <select id="dashboard-filtro-periodo" class="dashboard-filter-input">
+                                    <option value="todos">Todo período</option>
+                                    <option value="mes_atual">Mês atual</option>
+                                    <option value="mes_anterior">Mês anterior</option>
+                                    <option value="trimestre">Últimos 3 meses</option>
+                                    <option value="semestre">Últimos 6 meses</option>
+                                    <option value="ano">Último ano</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1190,36 +1240,9 @@
                         </ul>
                     </div>
                 </div>
-
-                <div class="section">
-                    <div class="section-header">
-                        <h3 class="section-title">Atividades Recentes</h3>
-                        <button class="btn btn-secondary" id="ver-todas-atividades">Ver Todas</button>
-                    </div>
-                    <div class="table-container">
-                        <table id="atividades-table">
-                            <thead>
-                                <tr>
-                                    <th>Data</th>
-                                    <th>Tipo</th>
-                                    <th>Colaborador</th>
-                                    <th>Descrição</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="atividades-table-body">
-                                <tr>
-                                    <td colspan="5" class="loading">
-                                        <div class="loading-spinner"></div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
 
-            <!-- Empresas Section -->
+            <!-- Empresas Section - SEM DATA DE CRIAÇÃO, ORDEM ALFABÉTICA -->
             <div id="empresas" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1232,13 +1255,12 @@
                             <thead>
                                 <tr>
                                     <th>Nome</th>
-                                    <th>Data de Criação</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="empresas-table-body">
                                 <tr>
-                                    <td colspan="3" class="loading">
+                                    <td colspan="2" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -1248,7 +1270,7 @@
                 </div>
             </div>
 
-            <!-- Departamentos Section -->
+            <!-- Departamentos Section - SEM DATA DE CRIAÇÃO, ORDEM ALFABÉTICA -->
             <div id="departamentos" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1261,13 +1283,12 @@
                             <thead>
                                 <tr>
                                     <th>Nome</th>
-                                    <th>Data de Criação</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="departamentos-table-body">
                                 <tr>
-                                    <td colspan="3" class="loading">
+                                    <td colspan="2" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -1277,7 +1298,7 @@
                 </div>
             </div>
 
-            <!-- Colaboradores Section - FILTRO ATIVOS/INATIVOS -->
+            <!-- Colaboradores Section - ORDEM ALFABÉTICA -->
             <div id="colaboradores" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1361,7 +1382,37 @@
                 </div>
             </div>
 
-            <!-- Advertências Section -->
+            <!-- Tipos de Multa Section - ORDEM ALFABÉTICA -->
+            <div id="tipos-multa" class="section-content" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Tipos de Multa</h3>
+                        <button class="btn btn-primary" id="add-tipo-multa-btn">
+                            <i class="fas fa-plus"></i> Cadastrar Tipo de Multa
+                        </button>
+                    </div>
+                    <div id="tipos-multa-alert"></div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome do Tipo</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tiposMulta-table-body">
+                                <tr>
+                                    <td colspan="2" class="loading">
+                                        <div class="loading-spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advertências Section - ÚLTIMOS REGISTROS PRIMEIRO -->
             <div id="advertencias" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1438,7 +1489,7 @@
                 </div>
             </div>
 
-            <!-- Danos e Avarias Section -->
+            <!-- Danos e Avarias Section - ÚLTIMOS REGISTROS PRIMEIRO -->
             <div id="danos" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1516,7 +1567,7 @@
                 </div>
             </div>
 
-            <!-- Faltas Section -->
+            <!-- Faltas Section - ÚLTIMOS REGISTROS PRIMEIRO -->
             <div id="faltas" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1593,7 +1644,7 @@
                 </div>
             </div>
 
-            <!-- Feedbacks Section -->
+            <!-- Feedbacks Section - ÚLTIMOS REGISTROS PRIMEIRO -->
             <div id="feedbacks" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1699,38 +1750,7 @@
                 </div>
             </div>
 
-            <!-- Tipos de Multa Section - CORRIGIDO -->
-            <div id="tipos-multa" class="section-content" style="display: none;">
-                <div class="section">
-                    <div class="section-header">
-                        <h3 class="section-title">Tipos de Multa</h3>
-                        <button class="btn btn-primary" id="add-tipo-multa-btn">
-                            <i class="fas fa-plus"></i> Cadastrar Tipo de Multa
-                        </button>
-                    </div>
-                    <div id="tipos-multa-alert"></div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Nome do Tipo</th>
-                                    <th>Data de Cadastro</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tiposMulta-table-body">
-                                <tr>
-                                    <td colspan="3" class="loading">
-                                        <div class="loading-spinner"></div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Multas Section -->
+            <!-- Multas Section - ÚLTIMOS REGISTROS PRIMEIRO -->
             <div id="multas" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1746,7 +1766,6 @@
                         </button>
                     </div>
 
-                    <!-- Filtros para Multas -->
                     <div class="filters-container" id="filters-multas">
                         <div class="filters-header">
                             <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
@@ -1813,7 +1832,6 @@
                         </div>
                     </div>
 
-                    <!-- Estatísticas de Multas -->
                     <div class="multas-stats-container">
                         <div class="multa-stat-card">
                             <div class="stat-title">Total Pendente</div>
@@ -1914,12 +1932,14 @@
         let currentCollection = null;
         let unsubscribeListeners = {};
         
-        // Filtros atuais
+        // Filtros do Dashboard (automáticos)
         let dashboardFiltroAtual = {
-            dataInicio: '',
-            dataFim: ''
+            departamento: '',
+            colaborador: '',
+            periodo: 'todos'
         };
         
+        // Filtros das outras seções
         let colaboradoresFiltroAtual = {
             status: 'Ativo',
             nome: '',
@@ -2076,8 +2096,11 @@
                                     updateFeedbackStats(docs);
                                 }
                                 if (section === 'colaboradores') {
-                                    // Atualizar filtros de departamento e empresa
                                     updateColaboradoresFilterOptions();
+                                    updateDashboardFilters();
+                                }
+                                if (section === 'departamentos' || section === 'colaboradores') {
+                                    updateDashboardFilters();
                                 }
                             }
                         },
@@ -2100,7 +2123,7 @@
             if (deptoFilter) {
                 deptoFilter.innerHTML = '<option value="">Todos os departamentos</option>';
                 const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
-                departamentosUnicos.forEach(depto => {
+                departamentosUnicos.sort().forEach(depto => {
                     const option = document.createElement('option');
                     option.value = depto;
                     option.textContent = depto;
@@ -2111,7 +2134,7 @@
             if (empresaFilter) {
                 empresaFilter.innerHTML = '<option value="">Todas as empresas</option>';
                 const empresasUnicas = [...new Set(empresasData.map(e => e.nome).filter(Boolean))];
-                empresasUnicas.forEach(empresa => {
+                empresasUnicas.sort().forEach(empresa => {
                     const option = document.createElement('option');
                     option.value = empresa;
                     option.textContent = empresa;
@@ -2120,18 +2143,53 @@
             }
         }
 
+        // Atualizar filtros do dashboard (automáticos)
+        function updateDashboardFilters() {
+            const deptoFilter = document.getElementById('dashboard-filtro-departamento');
+            const colaboradorFilter = document.getElementById('dashboard-filtro-colaborador');
+            
+            if (deptoFilter) {
+                const valorAtual = deptoFilter.value;
+                deptoFilter.innerHTML = '<option value="">Todos os departamentos</option>';
+                const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
+                departamentosUnicos.sort().forEach(depto => {
+                    const option = document.createElement('option');
+                    option.value = depto;
+                    option.textContent = depto;
+                    deptoFilter.appendChild(option);
+                });
+                if (valorAtual) deptoFilter.value = valorAtual;
+            }
+            
+            if (colaboradorFilter) {
+                const valorAtual = colaboradorFilter.value;
+                colaboradorFilter.innerHTML = '<option value="">Todos os colaboradores</option>';
+                const colaboradoresAtivos = colaboradoresData
+                    .filter(c => c.nome && c.status === 'Ativo')
+                    .map(c => c.nome)
+                    .sort();
+                colaboradoresAtivos.forEach(colab => {
+                    const option = document.createElement('option');
+                    option.value = colab;
+                    option.textContent = colab;
+                    colaboradorFilter.appendChild(option);
+                });
+                if (valorAtual) colaboradorFilter.value = valorAtual;
+            }
+        }
+
         // Atualizar cache
         function updateCache(section, snapshot) {
             const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             
             if (section === 'empresas') {
-                empresasData = docs;
+                empresasData = docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
             } else if (section === 'departamentos') {
-                departamentosData = docs;
+                departamentosData = docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
             } else if (section === 'colaboradores') {
-                colaboradoresData = docs;
+                colaboradoresData = docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
             } else if (section === 'tiposMulta') {
-                tiposMultaData = docs;
+                tiposMultaData = docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
             }
         }
 
@@ -2146,6 +2204,7 @@
                 
                 await updateDashboardCounts();
                 updateMultasStats();
+                updateDashboardFilters();
                 
                 console.log('✅ Dados iniciais carregados');
             } catch (error) {
@@ -2153,7 +2212,32 @@
             }
         }
 
-        // Atualizar dashboard com filtros
+        // Função para calcular datas com base no período
+        function getDataInicioPeriodo(periodo) {
+            const hoje = new Date();
+            
+            switch(periodo) {
+                case 'mes_atual':
+                    return new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+                case 'mes_anterior':
+                    return new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
+                case 'trimestre':
+                    return new Date(hoje.getFullYear(), hoje.getMonth() - 2, 1);
+                case 'semestre':
+                    return new Date(hoje.getFullYear(), hoje.getMonth() - 5, 1);
+                case 'ano':
+                    return new Date(hoje.getFullYear() - 1, hoje.getMonth(), 1);
+                default:
+                    return null;
+            }
+        }
+
+        // Aplicar filtros automáticos do dashboard
+        function aplicarFiltrosDashboardAutomatico() {
+            updateDashboardCounts();
+        }
+
+        // Atualizar dashboard com filtros automáticos
         async function updateDashboardCounts() {
             try {
                 // Colaboradores - total geral
@@ -2161,88 +2245,68 @@
                 const colaboradoresSnapshot = await firebaseApp.firestore.getDocs(colaboradoresRef);
                 document.getElementById('total-colaboradores').textContent = colaboradoresSnapshot.size;
                 
-                // Advertências com filtro de data
+                // Aplicar filtros automáticos
+                let filtroDepartamento = dashboardFiltroAtual.departamento;
+                let filtroColaborador = dashboardFiltroAtual.colaborador;
+                let dataInicioPeriodo = getDataInicioPeriodo(dashboardFiltroAtual.periodo);
+                
+                // Advertências com filtros automáticos
                 const advertenciasRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
                 const advertenciasSnapshot = await firebaseApp.firestore.getDocs(advertenciasRef);
                 let advertenciasDocs = advertenciasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                if (dashboardFiltroAtual.dataInicio || dashboardFiltroAtual.dataFim) {
-                    advertenciasDocs = advertenciasDocs.filter(item => {
-                        if (!item.data) return false;
+                advertenciasDocs = advertenciasDocs.filter(item => {
+                    if (filtroColaborador && item.colaborador !== filtroColaborador) return false;
+                    if (filtroDepartamento) {
+                        const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
+                        if (!colaboradorInfo || colaboradorInfo.departamento !== filtroDepartamento) return false;
+                    }
+                    if (dataInicioPeriodo && item.data) {
                         const dataItem = parseDateExactly(item.data);
-                        
-                        if (dashboardFiltroAtual.dataInicio) {
-                            const dataInicio = new Date(dashboardFiltroAtual.dataInicio);
-                            if (dataItem < dataInicio) return false;
-                        }
-                        
-                        if (dashboardFiltroAtual.dataFim) {
-                            const dataFim = new Date(dashboardFiltroAtual.dataFim);
-                            dataFim.setHours(23, 59, 59, 999);
-                            if (dataItem > dataFim) return false;
-                        }
-                        
-                        return true;
-                    });
-                }
+                        if (dataItem < dataInicioPeriodo) return false;
+                    }
+                    return true;
+                });
                 
                 document.getElementById('total-advertencias').textContent = advertenciasDocs.length;
-                document.getElementById('advertencias-periodo').textContent = 
-                    dashboardFiltroAtual.dataInicio || dashboardFiltroAtual.dataFim ? 'no período filtrado' : 'total';
                 
-                // Faltas com filtro de data
+                // Faltas com filtros automáticos
                 const faltasRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
                 const faltasSnapshot = await firebaseApp.firestore.getDocs(faltasRef);
                 let faltasDocs = faltasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                if (dashboardFiltroAtual.dataInicio || dashboardFiltroAtual.dataFim) {
-                    faltasDocs = faltasDocs.filter(item => {
-                        if (!item.data) return false;
+                faltasDocs = faltasDocs.filter(item => {
+                    if (filtroColaborador && item.colaborador !== filtroColaborador) return false;
+                    if (filtroDepartamento) {
+                        const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
+                        if (!colaboradorInfo || colaboradorInfo.departamento !== filtroDepartamento) return false;
+                    }
+                    if (dataInicioPeriodo && item.data) {
                         const dataItem = parseDateExactly(item.data);
-                        
-                        if (dashboardFiltroAtual.dataInicio) {
-                            const dataInicio = new Date(dashboardFiltroAtual.dataInicio);
-                            if (dataItem < dataInicio) return false;
-                        }
-                        
-                        if (dashboardFiltroAtual.dataFim) {
-                            const dataFim = new Date(dashboardFiltroAtual.dataFim);
-                            dataFim.setHours(23, 59, 59, 999);
-                            if (dataItem > dataFim) return false;
-                        }
-                        
-                        return true;
-                    });
-                }
+                        if (dataItem < dataInicioPeriodo) return false;
+                    }
+                    return true;
+                });
                 
                 document.getElementById('total-faltas').textContent = faltasDocs.length;
-                document.getElementById('faltas-periodo').textContent = 
-                    dashboardFiltroAtual.dataInicio || dashboardFiltroAtual.dataFim ? 'no período filtrado' : 'total';
                 
-                // Multas pendentes com filtro de data
+                // Multas pendentes com filtros automáticos
                 const multasRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
                 const multasSnapshot = await firebaseApp.firestore.getDocs(multasRef);
                 let multasDocs = multasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                if (dashboardFiltroAtual.dataInicio || dashboardFiltroAtual.dataFim) {
-                    multasDocs = multasDocs.filter(item => {
-                        if (!item.data) return false;
+                multasDocs = multasDocs.filter(item => {
+                    if (filtroColaborador && item.colaborador !== filtroColaborador) return false;
+                    if (filtroDepartamento) {
+                        const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
+                        if (!colaboradorInfo || colaboradorInfo.departamento !== filtroDepartamento) return false;
+                    }
+                    if (dataInicioPeriodo && item.data) {
                         const dataItem = parseDateExactly(item.data);
-                        
-                        if (dashboardFiltroAtual.dataInicio) {
-                            const dataInicio = new Date(dashboardFiltroAtual.dataInicio);
-                            if (dataItem < dataInicio) return false;
-                        }
-                        
-                        if (dashboardFiltroAtual.dataFim) {
-                            const dataFim = new Date(dashboardFiltroAtual.dataFim);
-                            dataFim.setHours(23, 59, 59, 999);
-                            if (dataItem > dataFim) return false;
-                        }
-                        
-                        return true;
-                    });
-                }
+                        if (dataItem < dataInicioPeriodo) return false;
+                    }
+                    return true;
+                });
                 
                 let totalMultas = 0;
                 multasDocs.forEach(multa => {
@@ -2252,20 +2316,15 @@
                 });
                 
                 document.getElementById('total-multas').textContent = `R$ ${totalMultas.toFixed(2)}`;
-                document.getElementById('multas-periodo').textContent = 
-                    dashboardFiltroAtual.dataInicio || dashboardFiltroAtual.dataFim ? 'no período' : 'em aberto';
                 
-                // Atualizar todos os Top 5
+                // Atualizar todos os Top 5 com os filtros automáticos
                 await updateTop5Advertencias();
                 await updateTop5Danos();
                 await updateTop5Faltas();
                 await updateTop5Feedbacks();
                 await updateTop5Multas();
                 
-                // Atualizar atividades recentes
-                await updateAtividadesRecentes();
-                
-                console.log(`Dashboard atualizado com filtros`);
+                console.log(`Dashboard atualizado com filtros automáticos`);
             } catch (error) {
                 console.error(`Erro ao atualizar dashboard: ${error.message}`);
             }
@@ -2278,26 +2337,20 @@
                 const snapshot = await firebaseApp.firestore.getDocs(advertenciasRef);
                 let advertencias = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                // Aplicar filtros de data
-                if (dashboardFiltroAtual.dataInicio || dashboardFiltroAtual.dataFim) {
-                    advertencias = advertencias.filter(item => {
-                        if (!item.data) return false;
+                // Aplicar filtros automáticos do dashboard
+                advertencias = advertencias.filter(item => {
+                    if (dashboardFiltroAtual.colaborador && item.colaborador !== dashboardFiltroAtual.colaborador) return false;
+                    if (dashboardFiltroAtual.departamento) {
+                        const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
+                        if (!colaboradorInfo || colaboradorInfo.departamento !== dashboardFiltroAtual.departamento) return false;
+                    }
+                    const dataInicioPeriodo = getDataInicioPeriodo(dashboardFiltroAtual.periodo);
+                    if (dataInicioPeriodo && item.data) {
                         const dataItem = parseDateExactly(item.data);
-                        
-                        if (dashboardFiltroAtual.dataInicio) {
-                            const dataInicio = new Date(dashboardFiltroAtual.dataInicio);
-                            if (dataItem < dataInicio) return false;
-                        }
-                        
-                        if (dashboardFiltroAtual.dataFim) {
-                            const dataFim = new Date(dashboardFiltroAtual.dataFim);
-                            dataFim.setHours(23, 59, 59, 999);
-                            if (dataItem > dataFim) return false;
-                        }
-                        
-                        return true;
-                    });
-                }
+                        if (dataItem < dataInicioPeriodo) return false;
+                    }
+                    return true;
+                });
                 
                 // Top 5 Colaboradores
                 const colaboradoresCount = {};
@@ -2372,26 +2425,20 @@
                 const snapshot = await firebaseApp.firestore.getDocs(danosRef);
                 let danos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                // Aplicar filtros de data
-                if (dashboardFiltroAtual.dataInicio || dashboardFiltroAtual.dataFim) {
-                    danos = danos.filter(item => {
-                        if (!item.data) return false;
+                // Aplicar filtros automáticos do dashboard
+                danos = danos.filter(item => {
+                    if (dashboardFiltroAtual.colaborador && item.colaborador !== dashboardFiltroAtual.colaborador) return false;
+                    if (dashboardFiltroAtual.departamento) {
+                        const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
+                        if (!colaboradorInfo || colaboradorInfo.departamento !== dashboardFiltroAtual.departamento) return false;
+                    }
+                    const dataInicioPeriodo = getDataInicioPeriodo(dashboardFiltroAtual.periodo);
+                    if (dataInicioPeriodo && item.data) {
                         const dataItem = parseDateExactly(item.data);
-                        
-                        if (dashboardFiltroAtual.dataInicio) {
-                            const dataInicio = new Date(dashboardFiltroAtual.dataInicio);
-                            if (dataItem < dataInicio) return false;
-                        }
-                        
-                        if (dashboardFiltroAtual.dataFim) {
-                            const dataFim = new Date(dashboardFiltroAtual.dataFim);
-                            dataFim.setHours(23, 59, 59, 999);
-                            if (dataItem > dataFim) return false;
-                        }
-                        
-                        return true;
-                    });
-                }
+                        if (dataItem < dataInicioPeriodo) return false;
+                    }
+                    return true;
+                });
                 
                 // Top 5 Colaboradores
                 const colaboradoresCount = {};
@@ -2466,26 +2513,20 @@
                 const snapshot = await firebaseApp.firestore.getDocs(faltasRef);
                 let faltas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                // Aplicar filtros de data
-                if (dashboardFiltroAtual.dataInicio || dashboardFiltroAtual.dataFim) {
-                    faltas = faltas.filter(item => {
-                        if (!item.data) return false;
+                // Aplicar filtros automáticos do dashboard
+                faltas = faltas.filter(item => {
+                    if (dashboardFiltroAtual.colaborador && item.colaborador !== dashboardFiltroAtual.colaborador) return false;
+                    if (dashboardFiltroAtual.departamento) {
+                        const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
+                        if (!colaboradorInfo || colaboradorInfo.departamento !== dashboardFiltroAtual.departamento) return false;
+                    }
+                    const dataInicioPeriodo = getDataInicioPeriodo(dashboardFiltroAtual.periodo);
+                    if (dataInicioPeriodo && item.data) {
                         const dataItem = parseDateExactly(item.data);
-                        
-                        if (dashboardFiltroAtual.dataInicio) {
-                            const dataInicio = new Date(dashboardFiltroAtual.dataInicio);
-                            if (dataItem < dataInicio) return false;
-                        }
-                        
-                        if (dashboardFiltroAtual.dataFim) {
-                            const dataFim = new Date(dashboardFiltroAtual.dataFim);
-                            dataFim.setHours(23, 59, 59, 999);
-                            if (dataItem > dataFim) return false;
-                        }
-                        
-                        return true;
-                    });
-                }
+                        if (dataItem < dataInicioPeriodo) return false;
+                    }
+                    return true;
+                });
                 
                 // Top 5 Colaboradores
                 const colaboradoresCount = {};
@@ -2560,24 +2601,14 @@
                 const snapshot = await firebaseApp.firestore.getDocs(feedbacksRef);
                 let feedbacks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                // Aplicar filtros de data baseado no mês/ano
-                if (dashboardFiltroAtual.dataInicio || dashboardFiltroAtual.dataFim) {
+                // Aplicar filtros automáticos do dashboard
+                const dataInicioPeriodo = getDataInicioPeriodo(dashboardFiltroAtual.periodo);
+                if (dataInicioPeriodo) {
                     feedbacks = feedbacks.filter(item => {
                         if (!item.mesAno) return false;
                         const [mes, ano] = item.mesAno.split('-');
                         const dataItem = new Date(parseInt(ano), parseInt(mes) - 1, 1);
-                        
-                        if (dashboardFiltroAtual.dataInicio) {
-                            const dataInicio = new Date(dashboardFiltroAtual.dataInicio);
-                            if (dataItem < dataInicio) return false;
-                        }
-                        
-                        if (dashboardFiltroAtual.dataFim) {
-                            const dataFim = new Date(dashboardFiltroAtual.dataFim);
-                            if (dataItem > dataFim) return false;
-                        }
-                        
-                        return true;
+                        return dataItem >= dataInicioPeriodo;
                     });
                 }
                 
@@ -2709,26 +2740,20 @@
                 const snapshot = await firebaseApp.firestore.getDocs(multasRef);
                 let multas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                // Aplicar filtros de data
-                if (dashboardFiltroAtual.dataInicio || dashboardFiltroAtual.dataFim) {
-                    multas = multas.filter(item => {
-                        if (!item.data) return false;
+                // Aplicar filtros automáticos do dashboard
+                multas = multas.filter(item => {
+                    if (dashboardFiltroAtual.colaborador && item.colaborador !== dashboardFiltroAtual.colaborador) return false;
+                    if (dashboardFiltroAtual.departamento) {
+                        const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
+                        if (!colaboradorInfo || colaboradorInfo.departamento !== dashboardFiltroAtual.departamento) return false;
+                    }
+                    const dataInicioPeriodo = getDataInicioPeriodo(dashboardFiltroAtual.periodo);
+                    if (dataInicioPeriodo && item.data) {
                         const dataItem = parseDateExactly(item.data);
-                        
-                        if (dashboardFiltroAtual.dataInicio) {
-                            const dataInicio = new Date(dashboardFiltroAtual.dataInicio);
-                            if (dataItem < dataInicio) return false;
-                        }
-                        
-                        if (dashboardFiltroAtual.dataFim) {
-                            const dataFim = new Date(dashboardFiltroAtual.dataFim);
-                            dataFim.setHours(23, 59, 59, 999);
-                            if (dataItem > dataFim) return false;
-                        }
-                        
-                        return true;
-                    });
-                }
+                        if (dataItem < dataInicioPeriodo) return false;
+                    }
+                    return true;
+                });
                 
                 // Top 5 Colaboradores (por valor total)
                 const colaboradoresValor = {};
@@ -2797,97 +2822,6 @@
             }
         }
 
-        // Atualizar atividades recentes
-        async function updateAtividadesRecentes() {
-            try {
-                const atividades = [];
-                
-                // Buscar últimas 5 faltas
-                const faltasRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
-                const faltasSnapshot = await firebaseApp.firestore.getDocs(faltasRef);
-                faltasSnapshot.docs.slice(0, 2).forEach(doc => {
-                    atividades.push({
-                        data: doc.data().data,
-                        tipo: 'Falta',
-                        colaborador: doc.data().colaborador,
-                        descricao: doc.data().justificativa || 'Sem justificativa',
-                        status: 'Registrada'
-                    });
-                });
-                
-                // Buscar últimas 5 multas
-                const multasRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
-                const multasSnapshot = await firebaseApp.firestore.getDocs(multasRef);
-                multasSnapshot.docs.slice(0, 2).forEach(doc => {
-                    atividades.push({
-                        data: doc.data().data,
-                        tipo: 'Multa',
-                        colaborador: doc.data().colaborador,
-                        descricao: `${doc.data().tipo} - ${doc.data().ait}`,
-                        status: doc.data().status
-                    });
-                });
-                
-                // Buscar últimas 5 advertências
-                const advertenciasRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
-                const advertenciasSnapshot = await firebaseApp.firestore.getDocs(advertenciasRef);
-                advertenciasSnapshot.docs.slice(0, 2).forEach(doc => {
-                    atividades.push({
-                        data: doc.data().data,
-                        tipo: 'Advertência',
-                        colaborador: doc.data().colaborador,
-                        descricao: doc.data().motivo,
-                        status: 'Ativa'
-                    });
-                });
-                
-                // Buscar últimas 5 danos
-                const danosRef = firebaseApp.firestore.collection(firebaseApp.db, 'danos');
-                const danosSnapshot = await firebaseApp.firestore.getDocs(danosRef);
-                danosSnapshot.docs.slice(0, 2).forEach(doc => {
-                    atividades.push({
-                        data: doc.data().data,
-                        tipo: 'Dano/Avaria',
-                        colaborador: doc.data().colaborador,
-                        descricao: doc.data().motivo,
-                        status: 'Registrado'
-                    });
-                });
-                
-                // Ordenar por data (mais recente primeiro)
-                atividades.sort((a, b) => {
-                    const dataA = parseDateExactly(a.data);
-                    const dataB = parseDateExactly(b.data);
-                    return dataB - dataA;
-                });
-                
-                // Pegar apenas as 5 mais recentes
-                const recentes = atividades.slice(0, 5);
-                
-                const tbody = document.getElementById('atividades-table-body');
-                if (recentes.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5">Nenhuma atividade recente.</td></tr>';
-                    return;
-                }
-                
-                tbody.innerHTML = '';
-                recentes.forEach(atividade => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${formatDateExactly(atividade.data)}</td>
-                        <td><span class="badge badge-${atividade.tipo === 'Multa' ? 'melhorar' : atividade.tipo === 'Dano/Avaria' ? 'neutro' : 'positivo'}">${atividade.tipo}</span></td>
-                        <td>${atividade.colaborador || 'N/A'}</td>
-                        <td>${atividade.descricao.substring(0, 30)}${atividade.descricao.length > 30 ? '...' : ''}</td>
-                        <td><span class="status ${atividade.status === 'Processo finalizado' || atividade.status === 'Desconto Realizado' ? 'status-active' : 'status-warning'}">${atividade.status}</span></td>
-                    `;
-                    tbody.appendChild(row);
-                });
-                
-            } catch (error) {
-                console.error(`Erro ao atualizar atividades recentes: ${error.message}`);
-            }
-        }
-
         // Atualizar estatísticas de multas
         async function updateMultasStats() {
             try {
@@ -2921,7 +2855,7 @@
             }
         }
 
-        // Carregar dados da tabela
+        // Carregar dados da tabela com ordenação específica
         async function loadTableData(section, filters = null) {
             const tableBody = document.getElementById(`${section}-table-body`);
             if (!tableBody) return;
@@ -2947,7 +2881,7 @@
             }
         }
 
-        // Atualizar tabela com snapshot
+        // Atualizar tabela com snapshot - COM ORDENAÇÃO ESPECÍFICA
         function updateTableFromSnapshot(section, snapshot, filters = null) {
             const tableBody = document.getElementById(`${section}-table-body`);
             if (!tableBody) return;
@@ -2964,17 +2898,60 @@
             // Aplicar filtros conforme a seção
             if (section === 'colaboradores') {
                 docs = applyColaboradoresFilters(docs);
+                // Ordenar por nome (alfabética)
+                docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+            } else if (section === 'empresas') {
+                // Ordenar por nome (alfabética)
+                docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+            } else if (section === 'departamentos') {
+                // Ordenar por nome (alfabética)
+                docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+            } else if (section === 'tiposMulta') {
+                // Ordenar por nome (alfabética)
+                docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
             } else if (section === 'advertencias') {
                 docs = applyAdvertenciasFilters(docs);
-            } else if (section === 'faltas') {
-                docs = applyFaltasFilters(docs);
+                // Ordenar por data (mais recente primeiro)
+                docs.sort((a, b) => {
+                    const dataA = parseDateExactly(a.data) || new Date(0);
+                    const dataB = parseDateExactly(b.data) || new Date(0);
+                    return dataB - dataA;
+                });
             } else if (section === 'danos') {
                 docs = applyDanosFilters(docs);
+                // Ordenar por data (mais recente primeiro)
+                docs.sort((a, b) => {
+                    const dataA = parseDateExactly(a.data) || new Date(0);
+                    const dataB = parseDateExactly(b.data) || new Date(0);
+                    return dataB - dataA;
+                });
+            } else if (section === 'faltas') {
+                docs = applyFaltasFilters(docs);
+                // Ordenar por data (mais recente primeiro)
+                docs.sort((a, b) => {
+                    const dataA = parseDateExactly(a.data) || new Date(0);
+                    const dataB = parseDateExactly(b.data) || new Date(0);
+                    return dataB - dataA;
+                });
             } else if (section === 'feedbacks') {
                 docs = applyFeedbacksFilters(docs);
+                // Ordenar por mês/ano (mais recente primeiro)
+                docs.sort((a, b) => {
+                    const [mesA, anoA] = (a.mesAno || '01-2024').split('-');
+                    const [mesB, anoB] = (b.mesAno || '01-2024').split('-');
+                    const dataA = new Date(parseInt(anoA), parseInt(mesA) - 1, 1);
+                    const dataB = new Date(parseInt(anoB), parseInt(mesB) - 1, 1);
+                    return dataB - dataA;
+                });
                 updateFeedbackStats(docs);
             } else if (section === 'multas') {
                 docs = applyMultasFilters(docs);
+                // Ordenar por data (mais recente primeiro)
+                docs.sort((a, b) => {
+                    const dataA = parseDateExactly(a.data) || new Date(0);
+                    const dataB = parseDateExactly(b.data) || new Date(0);
+                    return dataB - dataA;
+                });
             }
             
             if (docs.length === 0) {
@@ -2989,7 +2966,6 @@
                 if (section === 'empresas') {
                     row.innerHTML = `
                         <td><strong>${data.nome || 'Sem nome'}</strong></td>
-                        <td>${formatDateExactly(data.createdAt) || 'N/A'}</td>
                         <td>
                             <div class="action-buttons">
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
@@ -3004,7 +2980,6 @@
                 } else if (section === 'departamentos') {
                     row.innerHTML = `
                         <td><strong>${data.nome || 'Sem nome'}</strong></td>
-                        <td>${formatDateExactly(data.createdAt) || 'N/A'}</td>
                         <td>
                             <div class="action-buttons">
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
@@ -3123,7 +3098,6 @@
                 } else if (section === 'tiposMulta') {
                     row.innerHTML = `
                         <td><strong>${data.nome || 'Sem nome'}</strong></td>
-                        <td>${formatDateExactly(data.createdAt) || 'N/A'}</td>
                         <td>
                             <div class="action-buttons">
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
@@ -3198,14 +3172,14 @@
         // Função para obter o número de colunas da tabela
         function getColumnCount(section) {
             const columns = {
-                empresas: 3,
-                departamentos: 3,
+                empresas: 2,
+                departamentos: 2,
                 colaboradores: 6,
                 advertencias: 5,
                 danos: 6,
                 faltas: 5,
                 feedbacks: 7,
-                tiposMulta: 3,
+                tiposMulta: 2,
                 multas: 11
             };
             return columns[section] || 5;
@@ -3838,7 +3812,7 @@
             const departamentoSelect = document.getElementById('departamento');
             if (departamentoSelect) {
                 departamentoSelect.innerHTML = '<option value="">Selecione um departamento</option>';
-                departamentosData.forEach(depto => {
+                departamentosData.sort((a, b) => (a.nome || '').localeCompare(b.nome || '')).forEach(depto => {
                     if (depto.nome) {
                         const option = document.createElement('option');
                         option.value = depto.nome;
@@ -3883,7 +3857,7 @@
             ];
             
             let tipoOptions = '';
-            tiposMultaData.forEach(tipo => {
+            tiposMultaData.sort((a, b) => (a.nome || '').localeCompare(b.nome || '')).forEach(tipo => {
                 tipoOptions += `<option value="${tipo.nome}">${tipo.nome}</option>`;
             });
             
@@ -4011,7 +3985,7 @@
             
             if (departamentoSelect) {
                 departamentoSelect.innerHTML = '<option value="">Selecione um departamento</option>';
-                departamentosData.forEach(depto => {
+                departamentosData.sort((a, b) => (a.nome || '').localeCompare(b.nome || '')).forEach(depto => {
                     if (depto.nome) {
                         const option = document.createElement('option');
                         option.value = depto.nome;
@@ -4023,7 +3997,7 @@
             
             if (empresaSelect) {
                 empresaSelect.innerHTML = '<option value="">Selecione uma empresa</option>';
-                empresasData.forEach(empresa => {
+                empresasData.sort((a, b) => (a.nome || '').localeCompare(b.nome || '')).forEach(empresa => {
                     if (empresa.nome) {
                         const option = document.createElement('option');
                         option.value = empresa.nome;
@@ -4577,29 +4551,6 @@
             }
         }
 
-        // Aplicar filtros do dashboard
-        function aplicarFiltrosDashboard() {
-            dashboardFiltroAtual.dataInicio = document.getElementById('dashboard-data-inicio').value;
-            dashboardFiltroAtual.dataFim = document.getElementById('dashboard-data-fim').value;
-            
-            updateDashboardCounts();
-            showAlert('Filtros aplicados com sucesso!', 'success', 'dashboard-alert');
-        }
-
-        // Limpar filtros do dashboard
-        function limparFiltrosDashboard() {
-            document.getElementById('dashboard-data-inicio').value = '';
-            document.getElementById('dashboard-data-fim').value = '';
-            
-            dashboardFiltroAtual = {
-                dataInicio: '',
-                dataFim: ''
-            };
-            
-            updateDashboardCounts();
-            showAlert('Filtros limpos com sucesso!', 'success', 'dashboard-alert');
-        }
-
         // Aplicar filtros de colaboradores
         function aplicarFiltrosColaboradores() {
             colaboradoresFiltroAtual.status = document.getElementById('filtro-status-colaborador').value;
@@ -4985,7 +4936,7 @@
                         if (departamentoSelect) {
                             departamentoSelect.innerHTML = '<option value="">Todos os departamentos</option>';
                             const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
-                            departamentosUnicos.forEach(depto => {
+                            departamentosUnicos.sort().forEach(depto => {
                                 const option = document.createElement('option');
                                 option.value = depto;
                                 option.textContent = depto;
@@ -4999,7 +4950,7 @@
                         if (departamentoSelect) {
                             departamentoSelect.innerHTML = '<option value="">Todos os departamentos</option>';
                             const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
-                            departamentosUnicos.forEach(depto => {
+                            departamentosUnicos.sort().forEach(depto => {
                                 const option = document.createElement('option');
                                 option.value = depto;
                                 option.textContent = depto;
@@ -5013,7 +4964,7 @@
                         if (departamentoSelect) {
                             departamentoSelect.innerHTML = '<option value="">Todos os departamentos</option>';
                             const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
-                            departamentosUnicos.forEach(depto => {
+                            departamentosUnicos.sort().forEach(depto => {
                                 const option = document.createElement('option');
                                 option.value = depto;
                                 option.textContent = depto;
@@ -5027,7 +4978,7 @@
                         if (departamentoSelect) {
                             departamentoSelect.innerHTML = '<option value="">Todos os departamentos</option>';
                             const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
-                            departamentosUnicos.forEach(depto => {
+                            departamentosUnicos.sort().forEach(depto => {
                                 const option = document.createElement('option');
                                 option.value = depto;
                                 option.textContent = depto;
@@ -5050,7 +5001,7 @@
                         if (departamentoSelect) {
                             departamentoSelect.innerHTML = '<option value="">Todos os departamentos</option>';
                             const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
-                            departamentosUnicos.forEach(depto => {
+                            departamentosUnicos.sort().forEach(depto => {
                                 const option = document.createElement('option');
                                 option.value = depto;
                                 option.textContent = depto;
@@ -5062,7 +5013,6 @@
                     }
                     
                     if (targetSection === 'tipos-multa') {
-                        // Forçar carregamento dos tipos de multa
                         loadTableData('tiposMulta');
                     }
                 });
@@ -5080,7 +5030,6 @@
             document.getElementById('add-multa-btn').addEventListener('click', () => openModal('multas', 'add'));
 
             // Botões de toggle dos filtros
-            document.getElementById('toggle-filters-dashboard').addEventListener('click', () => toggleFilters('dashboard'));
             document.getElementById('toggle-filters-colaboradores').addEventListener('click', () => toggleFilters('colaboradores'));
             document.getElementById('toggle-filters-advertencias').addEventListener('click', () => toggleFilters('advertencias'));
             document.getElementById('toggle-filters-faltas').addEventListener('click', () => toggleFilters('faltas'));
@@ -5092,10 +5041,6 @@
             document.getElementById('close-modal').addEventListener('click', closeModal);
             document.getElementById('cancel-form').addEventListener('click', closeModal);
             document.getElementById('submit-form').addEventListener('click', handleFormSubmit);
-            
-            // Filtros do dashboard
-            document.getElementById('aplicar-filtros-dashboard').addEventListener('click', aplicarFiltrosDashboard);
-            document.getElementById('limpar-filtros-dashboard').addEventListener('click', limparFiltrosDashboard);
             
             // Filtros de colaboradores
             document.getElementById('aplicar-filtros-colaboradores').addEventListener('click', aplicarFiltrosColaboradores);
@@ -5122,17 +5067,20 @@
             document.getElementById('limpar-filtros-multa').addEventListener('click', limparFiltrosMultas);
             document.getElementById('gerar-relatorio-multas').addEventListener('click', gerarRelatorioMultas);
             
-            // Ver todas atividades
-            document.getElementById('ver-todas-atividades').addEventListener('click', function() {
-                document.querySelectorAll('.sidebar-menu a').forEach(l => l.classList.remove('active'));
-                const link = Array.from(document.querySelectorAll('.sidebar-menu a')).find(l => l.getAttribute('data-section') === 'dashboard');
-                if (link) link.classList.add('active');
-                
-                currentSection = 'dashboard';
-                document.querySelectorAll('.section-content').forEach(s => s.style.display = 'none');
-                document.getElementById('dashboard').style.display = 'block';
-                document.getElementById('page-title').textContent = 'Dashboard';
-                updateDashboardCounts();
+            // Filtros automáticos do Dashboard
+            document.getElementById('dashboard-filtro-departamento').addEventListener('change', function() {
+                dashboardFiltroAtual.departamento = this.value;
+                aplicarFiltrosDashboardAutomatico();
+            });
+            
+            document.getElementById('dashboard-filtro-colaborador').addEventListener('change', function() {
+                dashboardFiltroAtual.colaborador = this.value;
+                aplicarFiltrosDashboardAutomatico();
+            });
+            
+            document.getElementById('dashboard-filtro-periodo').addEventListener('change', function() {
+                dashboardFiltroAtual.periodo = this.value;
+                aplicarFiltrosDashboardAutomatico();
             });
             
             // Fechar modal ao clicar fora
