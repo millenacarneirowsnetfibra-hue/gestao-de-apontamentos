@@ -289,19 +289,30 @@
             font-weight: 600;
         }
 
-        /* Filtros */
+        /* Filtros - OCULTOS POR PADRÃO */
         .filters-container {
             background-color: #f8f9fa;
             border-radius: var(--border-radius);
             padding: 20px;
             margin-bottom: 20px;
             border: 1px solid #eee;
+            display: none;
+        }
+
+        .filters-container.show {
+            display: block;
+        }
+
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
         }
 
         .filters-title {
             font-size: 1rem;
             color: var(--primary-color);
-            margin-bottom: 15px;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -310,6 +321,20 @@
 
         .filters-title i {
             color: var(--secondary-color);
+        }
+
+        .close-filters-btn {
+            background: none;
+            border: none;
+            color: var(--gray-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+            transition: color 0.3s;
+        }
+
+        .close-filters-btn:hover {
+            color: var(--accent-color);
         }
 
         .filters-row {
@@ -351,6 +376,35 @@
             display: flex;
             gap: 10px;
             margin-top: 10px;
+        }
+
+        .btn-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn-toggle-filters {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-toggle-filters:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-toggle-filters.active {
+            background-color: var(--accent-color);
         }
 
         .btn {
@@ -1020,8 +1074,19 @@
                         <button class="btn btn-primary" id="add-advertencia-btn">Adicionar Advertência</button>
                     </div>
                     
-                    <div class="filters-container">
-                        <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                    <div class="btn-filters">
+                        <button class="btn-toggle-filters" id="toggle-filters-advertencias">
+                            <i class="fas fa-filter"></i> Mostrar Filtros
+                        </button>
+                    </div>
+                    
+                    <div class="filters-container" id="filters-advertencias">
+                        <div class="filters-header">
+                            <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                            <button class="close-filters-btn" onclick="closeFilters('advertencias')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                         <div class="filters-row">
                             <div class="filter-group">
                                 <label for="filtro-nome">Nome do Colaborador</label>
@@ -1086,8 +1151,19 @@
                         <button class="btn btn-primary" id="add-dano-btn">Registrar Dano/Avaria</button>
                     </div>
                     
-                    <div class="filters-container">
-                        <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                    <div class="btn-filters">
+                        <button class="btn-toggle-filters" id="toggle-filters-danos">
+                            <i class="fas fa-filter"></i> Mostrar Filtros
+                        </button>
+                    </div>
+                    
+                    <div class="filters-container" id="filters-danos">
+                        <div class="filters-header">
+                            <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                            <button class="close-filters-btn" onclick="closeFilters('danos')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                         <div class="filters-row">
                             <div class="filter-group">
                                 <label for="filtro-nome-dano">Nome do Colaborador</label>
@@ -1153,8 +1229,19 @@
                         <button class="btn btn-primary" id="add-falta-btn">Registrar Falta</button>
                     </div>
                     
-                    <div class="filters-container">
-                        <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                    <div class="btn-filters">
+                        <button class="btn-toggle-filters" id="toggle-filters-faltas">
+                            <i class="fas fa-filter"></i> Mostrar Filtros
+                        </button>
+                    </div>
+                    
+                    <div class="filters-container" id="filters-faltas">
+                        <div class="filters-header">
+                            <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                            <button class="close-filters-btn" onclick="closeFilters('faltas')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                         <div class="filters-row">
                             <div class="filter-group">
                                 <label for="filtro-nome-falta">Nome do Colaborador</label>
@@ -1219,8 +1306,19 @@
                         <button class="btn btn-primary" id="add-feedback-btn">Adicionar Feedback</button>
                     </div>
                     
-                    <div class="filters-container">
-                        <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                    <div class="btn-filters">
+                        <button class="btn-toggle-filters" id="toggle-filters-feedbacks">
+                            <i class="fas fa-filter"></i> Mostrar Filtros
+                        </button>
+                    </div>
+                    
+                    <div class="filters-container" id="filters-feedbacks">
+                        <div class="filters-header">
+                            <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                            <button class="close-filters-btn" onclick="closeFilters('feedbacks')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                         <div class="filters-row">
                             <div class="filter-group">
                                 <label for="filtro-mes-feedback">Mês/Ano</label>
@@ -1306,7 +1404,7 @@
                 </div>
             </div>
 
-            <!-- Tipos de Multa Section - NOVA -->
+            <!-- Tipos de Multa Section - CORRIGIDO -->
             <div id="tipos-multa" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1347,9 +1445,20 @@
                         </button>
                     </div>
 
+                    <div class="btn-filters">
+                        <button class="btn-toggle-filters" id="toggle-filters-multas">
+                            <i class="fas fa-filter"></i> Mostrar Filtros
+                        </button>
+                    </div>
+
                     <!-- Filtros para Multas -->
-                    <div class="filters-container">
-                        <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                    <div class="filters-container" id="filters-multas">
+                        <div class="filters-header">
+                            <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                            <button class="close-filters-btn" onclick="closeFilters('multas')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                         <div class="filters-row">
                             <div class="filter-group">
                                 <label for="filtro-nome-multa">Nome do Colaborador</label>
@@ -1383,6 +1492,10 @@
                             </div>
                         </div>
                         <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-ait-multa">Número do AIT</label>
+                                <input type="text" id="filtro-ait-multa" class="filter-input" placeholder="Digite o AIT...">
+                            </div>
                             <div class="filter-group">
                                 <label for="filtro-data-inicio-multa">Data Início</label>
                                 <input type="date" id="filtro-data-inicio-multa" class="filter-input">
@@ -1539,12 +1652,44 @@
             departamento: '',
             status: '',
             placa: '',
+            ait: '',
             dataInicio: '',
             dataFim: ''
         };
 
         // Elementos DOM
         const firebaseStatus = document.getElementById('firebase-status');
+
+        // Função para alternar visibilidade dos filtros
+        window.toggleFilters = function(section) {
+            const filtersContainer = document.getElementById(`filters-${section}`);
+            const toggleBtn = document.getElementById(`toggle-filters-${section}`);
+            
+            if (filtersContainer) {
+                filtersContainer.classList.toggle('show');
+                if (filtersContainer.classList.contains('show')) {
+                    toggleBtn.innerHTML = '<i class="fas fa-times"></i> Ocultar Filtros';
+                    toggleBtn.classList.add('active');
+                } else {
+                    toggleBtn.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
+                    toggleBtn.classList.remove('active');
+                }
+            }
+        };
+
+        // Função para fechar filtros
+        window.closeFilters = function(section) {
+            const filtersContainer = document.getElementById(`filters-${section}`);
+            const toggleBtn = document.getElementById(`toggle-filters-${section}`);
+            
+            if (filtersContainer) {
+                filtersContainer.classList.remove('show');
+                if (toggleBtn) {
+                    toggleBtn.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
+                    toggleBtn.classList.remove('active');
+                }
+            }
+        };
 
         // Testar conexão com Firebase
         async function testFirebaseConnection() {
@@ -2350,6 +2495,13 @@
                 const termo = multasFiltroAtual.placa.toLowerCase();
                 filtered = filtered.filter(item => 
                     item.placa && item.placa.toLowerCase().includes(termo)
+                );
+            }
+            
+            if (multasFiltroAtual.ait) {
+                const termo = multasFiltroAtual.ait.toLowerCase();
+                filtered = filtered.filter(item => 
+                    item.ait && item.ait.toLowerCase().includes(termo)
                 );
             }
             
@@ -3617,6 +3769,7 @@
             multasFiltroAtual.departamento = document.getElementById('filtro-departamento-multa').value;
             multasFiltroAtual.status = document.getElementById('filtro-status-multa').value;
             multasFiltroAtual.placa = document.getElementById('filtro-placa-multa').value;
+            multasFiltroAtual.ait = document.getElementById('filtro-ait-multa').value;
             multasFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio-multa').value;
             multasFiltroAtual.dataFim = document.getElementById('filtro-data-fim-multa').value;
             
@@ -3637,6 +3790,7 @@
             document.getElementById('filtro-departamento-multa').value = '';
             document.getElementById('filtro-status-multa').value = '';
             document.getElementById('filtro-placa-multa').value = '';
+            document.getElementById('filtro-ait-multa').value = '';
             document.getElementById('filtro-data-inicio-multa').value = '';
             document.getElementById('filtro-data-fim-multa').value = '';
             
@@ -3645,6 +3799,7 @@
                 departamento: '',
                 status: '',
                 placa: '',
+                ait: '',
                 dataInicio: '',
                 dataFim: ''
             };
@@ -3668,6 +3823,7 @@
                     departamento: multasFiltroAtual.departamento || 'Todos',
                     status: multasFiltroAtual.status || 'Todos',
                     placa: multasFiltroAtual.placa || 'Todas',
+                    ait: multasFiltroAtual.ait || 'Todos',
                     periodo: multasFiltroAtual.dataInicio || multasFiltroAtual.dataFim ? 
                              `${multasFiltroAtual.dataInicio || 'Início'} até ${multasFiltroAtual.dataFim || 'Fim'}` : 'Todo período'
                 };
@@ -3675,7 +3831,7 @@
                 let relatorio = 'RELATÓRIO DE MULTAS\n';
                 relatorio += '=====================\n\n';
                 relatorio += `Data: ${new Date().toLocaleDateString('pt-BR')}\n`;
-                relatorio += `Filtros: Colaborador: ${filtros.colaborador} | Departamento: ${filtros.departamento} | Status: ${filtros.status} | Placa: ${filtros.placa} | Período: ${filtros.periodo}\n\n`;
+                relatorio += `Filtros: Colaborador: ${filtros.colaborador} | Departamento: ${filtros.departamento} | Status: ${filtros.status} | Placa: ${filtros.placa} | AIT: ${filtros.ait} | Período: ${filtros.periodo}\n\n`;
                 
                 const tableBody = document.getElementById('multas-table-body');
                 const rows = tableBody.querySelectorAll('tr');
@@ -3763,6 +3919,16 @@
                     };
                     document.getElementById('page-title').textContent = titles[targetSection] || 'Dashboard';
                     
+                    // Fechar todos os filtros ao trocar de seção
+                    document.querySelectorAll('.filters-container').forEach(container => {
+                        container.classList.remove('show');
+                    });
+                    
+                    document.querySelectorAll('.btn-toggle-filters').forEach(btn => {
+                        btn.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
+                        btn.classList.remove('active');
+                    });
+                    
                     // Popular filtros quando acessar a seção
                     if (targetSection === 'advertencias') {
                         const departamentoSelect = document.getElementById('filtro-departamento');
@@ -3844,6 +4010,11 @@
                         
                         updateMultasStats();
                     }
+                    
+                    if (targetSection === 'tipos-multa') {
+                        // Forçar carregamento dos tipos de multa
+                        loadTableData('tiposMulta');
+                    }
                 });
             });
 
@@ -3857,6 +4028,13 @@
             document.getElementById('add-feedback-btn').addEventListener('click', () => openModal('feedbacks', 'add'));
             document.getElementById('add-tipo-multa-btn').addEventListener('click', () => openModal('tiposMulta', 'add'));
             document.getElementById('add-multa-btn').addEventListener('click', () => openModal('multas', 'add'));
+
+            // Botões de toggle dos filtros
+            document.getElementById('toggle-filters-advertencias').addEventListener('click', () => toggleFilters('advertencias'));
+            document.getElementById('toggle-filters-faltas').addEventListener('click', () => toggleFilters('faltas'));
+            document.getElementById('toggle-filters-danos').addEventListener('click', () => toggleFilters('danos'));
+            document.getElementById('toggle-filters-feedbacks').addEventListener('click', () => toggleFilters('feedbacks'));
+            document.getElementById('toggle-filters-multas').addEventListener('click', () => toggleFilters('multas'));
 
             // Modal
             document.getElementById('close-modal').addEventListener('click', closeModal);
