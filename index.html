@@ -65,6 +65,8 @@
             --gray-color: #95a5a6;
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             --border-radius: 8px;
+            --orange-color: #e67e22;
+            --red-color: #c0392b;
             
             /* Cores leves para os cards */
             --card-advertencia: rgba(243, 156, 18, 0.15);
@@ -751,13 +753,13 @@
         }
 
         .badge-neutro {
-            background-color: rgba(52, 152, 219, 0.1);
-            color: var(--secondary-color);
+            background-color: rgba(230, 126, 34, 0.15);
+            color: var(--orange-color);
         }
 
         .badge-melhorar {
-            background-color: rgba(243, 156, 18, 0.1);
-            color: var(--warning-color);
+            background-color: rgba(192, 57, 43, 0.15);
+            color: var(--red-color);
         }
 
         /* Estatísticas */
@@ -1320,7 +1322,7 @@
                     
                     <div class="top5-card">
                         <div class="top5-header">
-                            <i class="fas fa-meh" style="color: var(--secondary-color);"></i>
+                            <i class="fas fa-meh" style="color: var(--orange-color);"></i>
                             <div class="top5-title">Top 5 - Feedbacks Neutros por Setor</div>
                         </div>
                         <ul class="top5-list" id="top5-feedbacks-neutros">
@@ -1330,7 +1332,7 @@
                     
                     <div class="top5-card">
                         <div class="top5-header">
-                            <i class="fas fa-frown" style="color: var(--warning-color);"></i>
+                            <i class="fas fa-frown" style="color: var(--red-color);"></i>
                             <div class="top5-title">Top 5 - A Melhorar por Setor</div>
                         </div>
                         <ul class="top5-list" id="top5-feedbacks-melhorar">
@@ -2831,7 +2833,7 @@
                             li.className = 'top5-item';
                             li.innerHTML = `
                                 <span class="top5-name">${index + 1}. ${setor}</span>
-                                <span class="top5-value">${count}</span>
+                                <span class="top5-value" style="background-color: var(--orange-color);">${count}</span>
                             `;
                             topNeutrosList.appendChild(li);
                         });
@@ -2854,7 +2856,7 @@
                             li.className = 'top5-item';
                             li.innerHTML = `
                                 <span class="top5-name">${index + 1}. ${setor}</span>
-                                <span class="top5-value">${count}</span>
+                                <span class="top5-value" style="background-color: var(--red-color);">${count}</span>
                             `;
                             topMelhorarList.appendChild(li);
                         });
