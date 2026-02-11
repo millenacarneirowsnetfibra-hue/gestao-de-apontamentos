@@ -471,6 +471,11 @@
             color: var(--warning-color);
         }
 
+        .status-info {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--secondary-color);
+        }
+
         .action-buttons {
             display: flex;
             gap: 5px;
@@ -563,7 +568,7 @@
             background-color: white;
             border-radius: var(--border-radius);
             width: 90%;
-            max-width: 500px;
+            max-width: 800px;
             max-height: 90vh;
             overflow-y: auto;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
@@ -825,6 +830,7 @@
                 <li><a href="#" data-section="danos"><i class="fas fa-tools"></i> Danos e Avarias</a></li>
                 <li><a href="#" data-section="faltas"><i class="fas fa-calendar-times"></i> Faltas</a></li>
                 <li><a href="#" data-section="feedbacks"><i class="fas fa-comment-dots"></i> Feedbacks</a></li>
+                <li><a href="#" data-section="tipos-multa"><i class="fas fa-tag"></i> Tipos de Multa</a></li>
                 <li><a href="#" data-section="multas"><i class="fas fa-money-bill-wave"></i> Multas</a></li>
             </ul>
         </nav>
@@ -1300,7 +1306,38 @@
                 </div>
             </div>
 
-            <!-- Multas Section - DESENVOLVIDA -->
+            <!-- Tipos de Multa Section - NOVA -->
+            <div id="tipos-multa" class="section-content" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Tipos de Multa</h3>
+                        <button class="btn btn-primary" id="add-tipo-multa-btn">
+                            <i class="fas fa-plus"></i> Cadastrar Tipo de Multa
+                        </button>
+                    </div>
+                    <div id="tipos-multa-alert"></div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome do Tipo</th>
+                                    <th>Data de Cadastro</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tipos-multa-table-body">
+                                <tr>
+                                    <td colspan="3" class="loading">
+                                        <div class="loading-spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Multas Section - REFATORADA -->
             <div id="multas" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1330,11 +1367,22 @@
                                 <label for="filtro-status-multa">Status</label>
                                 <select id="filtro-status-multa" class="filter-input">
                                     <option value="">Todos os status</option>
-                                    <option value="Pendente">Pendente</option>
-                                    <option value="Paga">Paga</option>
-                                    <option value="Cancelada">Cancelada</option>
+                                    <option value="Colaborador ciente">Colaborador ciente</option>
+                                    <option value="Aguardando CNH">Aguardando CNH</option>
+                                    <option value="Indicação realizada">Indicação realizada</option>
+                                    <option value="Indicação aceita">Indicação aceita</option>
+                                    <option value="Aguardando penalidade">Aguardando penalidade</option>
+                                    <option value="Desconto Realizado">Desconto Realizado</option>
+                                    <option value="Processo finalizado">Processo finalizado</option>
+                                    <option value="Aguardando recurso">Aguardando recurso</option>
                                 </select>
                             </div>
+                            <div class="filter-group">
+                                <label for="filtro-placa-multa">Placa do Veículo</label>
+                                <input type="text" id="filtro-placa-multa" class="filter-input" placeholder="Digite a placa...">
+                            </div>
+                        </div>
+                        <div class="filters-row">
                             <div class="filter-group">
                                 <label for="filtro-data-inicio-multa">Data Início</label>
                                 <input type="date" id="filtro-data-inicio-multa" class="filter-input">
@@ -1370,9 +1418,9 @@
                             <div class="stat-subtitle">a receber</div>
                         </div>
                         <div class="multa-stat-card success">
-                            <div class="stat-title">Total Pagas</div>
-                            <div class="stat-value" id="stat-multas-pagas">0</div>
-                            <div class="stat-subtitle">multas quitadas</div>
+                            <div class="stat-title">Total Concluídas</div>
+                            <div class="stat-value" id="stat-multas-concluidas">0</div>
+                            <div class="stat-subtitle">processos finalizados</div>
                         </div>
                         <div class="multa-stat-card">
                             <div class="stat-title">Valor Total Recebido</div>
@@ -1389,16 +1437,20 @@
                                 <tr>
                                     <th>Colaborador</th>
                                     <th>Departamento</th>
-                                    <th>Data</th>
-                                    <th>Motivo</th>
+                                    <th>Data/Hora</th>
+                                    <th>Tipo</th>
+                                    <th>Placa</th>
+                                    <th>AIT</th>
+                                    <th>Local</th>
                                     <th>Valor (R$)</th>
                                     <th>Status</th>
+                                    <th>Data Limite</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="multas-table-body">
                                 <tr>
-                                    <td colspan="7" class="loading">
+                                    <td colspan="11" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -1437,6 +1489,7 @@
             danos: 'danos',
             faltas: 'faltas',
             feedbacks: 'feedbacks',
+            tiposMulta: 'tiposMulta',
             multas: 'multas'
         };
 
@@ -1444,6 +1497,7 @@
         let empresasData = [];
         let departamentosData = [];
         let colaboradoresData = [];
+        let tiposMultaData = [];
 
         // Estado
         let currentSection = 'dashboard';
@@ -1484,6 +1538,7 @@
             nome: '',
             departamento: '',
             status: '',
+            placa: '',
             dataInicio: '',
             dataFim: ''
         };
@@ -1560,7 +1615,7 @@
                             
                             if (section === 'colaboradores' || section === 'advertencias' || 
                                 section === 'faltas' || section === 'multas' || section === 'feedbacks' ||
-                                section === 'danos') {
+                                section === 'danos' || section === 'tiposMulta') {
                                 updateDashboardCounts();
                                 if (section === 'multas') {
                                     updateMultasStats();
@@ -1592,6 +1647,8 @@
                 departamentosData = docs;
             } else if (section === 'colaboradores') {
                 colaboradoresData = docs;
+            } else if (section === 'tiposMulta') {
+                tiposMultaData = docs;
             }
         }
 
@@ -1644,7 +1701,7 @@
                 const multasSnapshot = await firebaseApp.firestore.getDocs(multasRef);
                 let totalMultas = 0;
                 multasSnapshot.docs.forEach(doc => {
-                    if (doc.data().status === 'Pendente') {
+                    if (doc.data().status !== 'Processo finalizado' && doc.data().status !== 'Desconto Realizado') {
                         totalMultas += parseFloat(doc.data().valor) || 0;
                     }
                 });
@@ -1685,7 +1742,7 @@
                         data: doc.data().data,
                         tipo: 'Multa',
                         colaborador: doc.data().colaborador,
-                        descricao: doc.data().motivo,
+                        descricao: `${doc.data().tipo} - ${doc.data().ait}`,
                         status: doc.data().status
                     });
                 });
@@ -1727,7 +1784,7 @@
                         <td><span class="badge badge-${atividade.tipo === 'Multa' ? 'melhorar' : 'neutro'}">${atividade.tipo}</span></td>
                         <td>${atividade.colaborador || 'N/A'}</td>
                         <td>${atividade.descricao.substring(0, 30)}${atividade.descricao.length > 30 ? '...' : ''}</td>
-                        <td><span class="status ${atividade.status === 'Pendente' ? 'status-warning' : 'status-active'}">${atividade.status}</span></td>
+                        <td><span class="status ${atividade.status === 'Processo finalizado' ? 'status-active' : 'status-warning'}">${atividade.status}</span></td>
                     `;
                     tbody.appendChild(row);
                 });
@@ -1745,24 +1802,24 @@
                 const multas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
                 let pendentes = 0;
-                let pagas = 0;
+                let concluidas = 0;
                 let valorPendente = 0;
                 let valorRecebido = 0;
                 
                 multas.forEach(multa => {
                     const valor = parseFloat(multa.valor) || 0;
-                    if (multa.status === 'Pendente') {
+                    if (multa.status !== 'Processo finalizado' && multa.status !== 'Desconto Realizado') {
                         pendentes++;
                         valorPendente += valor;
-                    } else if (multa.status === 'Paga') {
-                        pagas++;
+                    } else {
+                        concluidas++;
                         valorRecebido += valor;
                     }
                 });
                 
                 document.getElementById('stat-multas-pendentes').textContent = pendentes;
                 document.getElementById('stat-valor-pendente').textContent = `R$ ${valorPendente.toFixed(2)}`;
-                document.getElementById('stat-multas-pagas').textContent = pagas;
+                document.getElementById('stat-multas-concluidas').textContent = concluidas;
                 document.getElementById('stat-valor-recebido').textContent = `R$ ${valorRecebido.toFixed(2)}`;
                 
             } catch (error) {
@@ -1776,7 +1833,7 @@
             if (!tableBody) return;
             
             try {
-                tableBody.innerHTML = '<tr><td colspan="7" class="loading"><div class="loading-spinner"></div></td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="11" class="loading"><div class="loading-spinner"></div></td></tr>';
                 
                 const collectionName = collections[section];
                 let query = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
@@ -1791,7 +1848,7 @@
                 console.error(`Erro ao carregar ${section}: ${error.message}`);
                 const tableBody = document.getElementById(`${section}-table-body`);
                 if (tableBody) {
-                    tableBody.innerHTML = `<tr><td colspan="7">Erro: ${error.message}</td></tr>`;
+                    tableBody.innerHTML = `<tr><td colspan="11">Erro: ${error.message}</td></tr>`;
                 }
             }
         }
@@ -1802,12 +1859,7 @@
             if (!tableBody) return;
             
             if (snapshot.empty) {
-                const cols = section === 'multas' ? 7 : 
-                            section === 'danos' ? 6 :
-                            section === 'feedbacks' ? 7 :
-                            section === 'colaboradores' ? 6 :
-                            section === 'empresas' ? 3 :
-                            section === 'departamentos' ? 3 : 5;
+                const cols = getColumnCount(section);
                 tableBody.innerHTML = `<tr><td colspan="${cols}">Nenhum registro encontrado.</td></tr>`;
                 return;
             }
@@ -1830,12 +1882,7 @@
             }
             
             if (docs.length === 0) {
-                const cols = section === 'multas' ? 7 : 
-                            section === 'danos' ? 6 :
-                            section === 'feedbacks' ? 7 :
-                            section === 'colaboradores' ? 6 :
-                            section === 'empresas' ? 3 :
-                            section === 'departamentos' ? 3 : 5;
+                const cols = getColumnCount(section);
                 tableBody.innerHTML = `<tr><td colspan="${cols}">Nenhum registro encontrado com os filtros aplicados.</td></tr>`;
                 return;
             }
@@ -1977,30 +2024,52 @@
                             </div>
                         </td>
                     `;
+                } else if (section === 'tiposMulta') {
+                    row.innerHTML = `
+                        <td><strong>${data.nome || 'Sem nome'}</strong></td>
+                        <td>${formatDateExactly(data.createdAt) || 'N/A'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${data.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
                 } else if (section === 'multas') {
                     const colaboradorInfo = colaboradoresData.find(c => c.nome === data.colaborador);
                     const departamento = colaboradorInfo ? colaboradorInfo.departamento : 'Não especificado';
                     
+                    // Formatar data e hora
+                    let dataHora = formatDateExactly(data.data);
+                    if (data.hora) {
+                        dataHora += ` ${data.hora}`;
+                    }
+                    
                     row.innerHTML = `
                         <td>${data.colaborador || 'Não especificado'}</td>
                         <td>${departamento}</td>
-                        <td>${formatDateExactly(data.data) || 'Não especificada'}</td>
-                        <td>${data.motivo ? (data.motivo.substring(0, 30) + '...') : 'Sem motivo'}</td>
+                        <td>${dataHora}</td>
+                        <td>${data.tipo || 'Não especificado'}</td>
+                        <td>${data.placa || 'Não informada'}</td>
+                        <td>${data.ait || 'Não informado'}</td>
+                        <td>${data.local || 'Não informado'}${data.municipio ? ` - ${data.municipio}` : ''}</td>
                         <td><strong>R$ ${parseFloat(data.valor || 0).toFixed(2)}</strong></td>
                         <td>
-                            <span class="status ${data.status === 'Paga' ? 'status-active' : 
-                                                  data.status === 'Cancelada' ? 'status-inactive' : 'status-warning'}">
+                            <span class="status ${getStatusClass(data.status)}">
                                 ${data.status || 'Pendente'}
                             </span>
                         </td>
+                        <td>${formatDateExactly(data.dataLimiteIndicacao) || 'Não informada'}</td>
                         <td>
                             <div class="action-buttons">
-                                ${data.status !== 'Paga' ? `
-                                    <button class="action-btn" style="background-color: var(--success-color);" 
-                                            onclick="marcarMultaComoPaga('${data.id}')" title="Marcar como Paga">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                ` : ''}
+                                <button class="action-btn" style="background-color: var(--success-color);" 
+                                        onclick="avancarStatusMulta('${data.id}')" title="Avançar Status">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -2016,25 +2085,74 @@
             });
         }
 
-        // Função para marcar multa como paga
-        window.marcarMultaComoPaga = async function(id) {
-            if (!confirm('Deseja marcar esta multa como PAGA?')) return;
+        // Função para obter a classe CSS do status
+        function getStatusClass(status) {
+            const statusClasses = {
+                'Colaborador ciente': 'status-info',
+                'Aguardando CNH': 'status-warning',
+                'Indicação realizada': 'status-info',
+                'Indicação aceita': 'status-info',
+                'Aguardando penalidade': 'status-warning',
+                'Desconto Realizado': 'status-active',
+                'Processo finalizado': 'status-active',
+                'Aguardando recurso': 'status-warning'
+            };
+            return statusClasses[status] || 'status-warning';
+        }
+
+        // Função para obter o número de colunas da tabela
+        function getColumnCount(section) {
+            const columns = {
+                empresas: 3,
+                departamentos: 3,
+                colaboradores: 6,
+                advertencias: 5,
+                danos: 6,
+                faltas: 5,
+                feedbacks: 7,
+                tiposMulta: 3,
+                multas: 11
+            };
+            return columns[section] || 5;
+        }
+
+        // Função para avançar status da multa
+        window.avancarStatusMulta = async function(id) {
+            const statusFlow = [
+                'Colaborador ciente',
+                'Aguardando CNH',
+                'Indicação realizada',
+                'Indicação aceita',
+                'Aguardando penalidade',
+                'Desconto Realizado',
+                'Processo finalizado'
+            ];
             
             try {
                 const docRef = firebaseApp.firestore.doc(firebaseApp.db, 'multas', id);
-                await firebaseApp.firestore.updateDoc(docRef, {
-                    status: 'Paga',
-                    updatedAt: new Date().toISOString(),
-                    dataPagamento: new Date().toISOString()
-                });
+                const docSnap = await firebaseApp.firestore.getDocs(
+                    firebaseApp.firestore.query(firebaseApp.firestore.collection(firebaseApp.db, 'multas'))
+                );
                 
-                showAlert('Multa marcada como paga com sucesso!', 'success', 'multas-alert');
-                updateMultasStats();
-                updateDashboardCounts();
-                
+                const multaDoc = docSnap.docs.find(d => d.id === id);
+                if (multaDoc) {
+                    const multa = multaDoc.data();
+                    const currentIndex = statusFlow.indexOf(multa.status);
+                    
+                    if (currentIndex < statusFlow.length - 1) {
+                        const nextStatus = statusFlow[currentIndex + 1];
+                        await firebaseApp.firestore.updateDoc(docRef, {
+                            status: nextStatus,
+                            updatedAt: new Date().toISOString()
+                        });
+                        showAlert(`Status avançado para: ${nextStatus}`, 'success', 'multas-alert');
+                    } else {
+                        showAlert('Processo já está finalizado!', 'warning', 'multas-alert');
+                    }
+                }
             } catch (error) {
-                console.error(`Erro ao marcar multa como paga: ${error.message}`);
-                showAlert(`Erro ao marcar multa como paga: ${error.message}`, 'error', 'multas-alert');
+                console.error(`Erro ao avançar status: ${error.message}`);
+                showAlert(`Erro ao avançar status: ${error.message}`, 'error', 'multas-alert');
             }
         };
 
@@ -2226,6 +2344,13 @@
             
             if (multasFiltroAtual.status) {
                 filtered = filtered.filter(item => item.status === multasFiltroAtual.status);
+            }
+            
+            if (multasFiltroAtual.placa) {
+                const termo = multasFiltroAtual.placa.toLowerCase();
+                filtered = filtered.filter(item => 
+                    item.placa && item.placa.toLowerCase().includes(termo)
+                );
             }
             
             if (multasFiltroAtual.dataInicio || multasFiltroAtual.dataFim) {
@@ -2596,8 +2721,40 @@
             }
         }
 
-        // Formulário para multas - ATUALIZADO E MELHORADO
+        // Formulário para tipos de multa - NOVO
+        function loadTipoMultaForm(mode = 'add', id = null) {
+            let formHTML = `
+                <div class="form-group" style="flex: 100%;">
+                    <label for="nome">Nome do Tipo de Multa *</label>
+                    <input type="text" id="nome" class="form-control" placeholder="Ex: Excesso de velocidade, Estacionamento irregular..." required>
+                </div>
+            `;
+            
+            document.getElementById('modal-form').innerHTML = formHTML;
+            
+            if (mode === 'edit' && id) {
+                fillFormWithData('tiposMulta', id);
+            }
+        }
+
+        // Formulário para multas - REFATORADO
         function loadMultaForm(mode = 'add', id = null) {
+            let statusOptions = [
+                'Colaborador ciente',
+                'Aguardando CNH',
+                'Indicação realizada',
+                'Indicação aceita',
+                'Aguardando penalidade',
+                'Desconto Realizado',
+                'Processo finalizado',
+                'Aguardando recurso'
+            ];
+            
+            let tipoOptions = '';
+            tiposMultaData.forEach(tipo => {
+                tipoOptions += `<option value="${tipo.nome}">${tipo.nome}</option>`;
+            });
+            
             let formHTML = `
                 <div class="form-row">
                     <div class="form-group">
@@ -2607,49 +2764,64 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="data">Data da Multa *</label>
+                        <label for="data">Data da Autuação *</label>
                         <input type="date" id="data" class="form-control" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
+                        <label for="hora">Hora da Autuação *</label>
+                        <input type="time" id="hora" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="placa">Placa do Carro *</label>
+                        <input type="text" id="placa" class="form-control" placeholder="ABC-1234" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tipo">Tipo de Multa *</label>
+                        <select id="tipo" class="form-control" required>
+                            <option value="">Selecione o tipo</option>
+                            ${tipoOptions}
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="valor">Valor (R$) *</label>
                         <input type="number" id="valor" class="form-control" placeholder="0.00" step="0.01" min="0" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ait">Número do AIT *</label>
+                        <input type="text" id="ait" class="form-control" placeholder="Ex: 123456789" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="orgaoAutuador">Órgão Autuador *</label>
+                        <input type="text" id="orgaoAutuador" class="form-control" placeholder="Ex: DER, Polícia Rodoviária..." required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="local">Local da Infração *</label>
+                        <input type="text" id="local" class="form-control" placeholder="Ex: Rodovia, Av. ..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="municipio">Município *</label>
+                        <input type="text" id="municipio" class="form-control" placeholder="Ex: São Paulo" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dataLimiteIndicacao">Data Limite para Indicação *</label>
+                        <input type="date" id="dataLimiteIndicacao" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="status">Status *</label>
                         <select id="status" class="form-control" required>
-                            <option value="Pendente">Pendente</option>
-                            <option value="Paga">Paga</option>
-                            <option value="Cancelada">Cancelada</option>
+                            <option value="">Selecione o status</option>
+                            ${statusOptions.map(status => `<option value="${status}">${status}</option>`).join('')}
                         </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group" style="flex: 100%;">
-                        <label for="motivo">Motivo da Multa *</label>
-                        <select id="motivo" class="form-control" required>
-                            <option value="">Selecione um motivo</option>
-                            <option value="Atraso">Atraso</option>
-                            <option value="Falta não justificada">Falta não justificada</option>
-                            <option value="Dano a equipamento">Dano a equipamento</option>
-                            <option value="Descumprimento de normas">Descumprimento de normas</option>
-                            <option value="Uso indevido de celular">Uso indevido de celular</option>
-                            <option value="Saída antecipada">Saída antecipada</option>
-                            <option value="Outro">Outro</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row" id="outro-motivo-multa-container" style="display: none;">
-                    <div class="form-group" style="flex: 100%;">
-                        <label for="outroMotivo">Especificar outro motivo</label>
-                        <input type="text" id="outroMotivo" class="form-control" placeholder="Digite o motivo da multa...">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group" style="flex: 100%;">
-                        <label for="observacoes">Observações</label>
-                        <textarea id="observacoes" class="form-control" rows="3" placeholder="Observações adicionais sobre a multa..."></textarea>
                     </div>
                 </div>
             `;
@@ -2669,35 +2841,27 @@
                 });
             }
             
-            const motivoSelect = document.getElementById('motivo');
-            if (motivoSelect) {
-                motivoSelect.addEventListener('change', function() {
-                    const outroContainer = document.getElementById('outro-motivo-multa-container');
-                    if (this.value === 'Outro') {
-                        outroContainer.style.display = 'block';
-                    } else {
-                        outroContainer.style.display = 'none';
-                        document.getElementById('outroMotivo').value = '';
-                    }
-                });
-            }
-            
             const today = new Date().toISOString().split('T')[0];
             const dataInput = document.getElementById('data');
-            if (dataInput) {
-                dataInput.value = today;
+            if (dataInput) dataInput.value = today;
+            
+            const dataLimite = new Date();
+            dataLimite.setDate(dataLimite.getDate() + 30);
+            const dataLimiteInput = document.getElementById('dataLimiteIndicacao');
+            if (dataLimiteInput) {
+                dataLimiteInput.value = dataLimite.toISOString().split('T')[0];
+            }
+            
+            const horaInput = document.getElementById('hora');
+            if (horaInput) {
+                const now = new Date();
+                const horas = String(now.getHours()).padStart(2, '0');
+                const minutos = String(now.getMinutes()).padStart(2, '0');
+                horaInput.value = `${horas}:${minutos}`;
             }
             
             if (mode === 'edit' && id) {
                 fillFormWithData('multas', id);
-                
-                setTimeout(() => {
-                    const motivoSelect = document.getElementById('motivo');
-                    const outroInput = document.getElementById('outroMotivo');
-                    if (motivoSelect && outroInput && motivoSelect.value === 'Outro' && outroInput.value) {
-                        document.getElementById('outro-motivo-multa-container').style.display = 'block';
-                    }
-                }, 100);
             }
         }
 
@@ -2763,49 +2927,13 @@
                                 } else {
                                     field.value = dateStr.substring(0, 10);
                                 }
+                            } else if (field.type === 'time' && data[key]) {
+                                field.value = data[key];
                             } else {
                                 field.value = data[key];
                             }
                         }
                     });
-                    
-                    if (section === 'danos') {
-                        const motivoSelect = document.getElementById('motivo');
-                        const outroInput = document.getElementById('outroMotivo');
-                        
-                        if (data.motivo) {
-                            const opcoes = ['Perda de ferramenta', 'Conserto do celular', 'Perda de equipamento', 
-                                          'Perda cartão sólides', 'Conserto do carro', 'Perda EPI', 'Outro'];
-                            
-                            if (opcoes.includes(data.motivo)) {
-                                if (motivoSelect) motivoSelect.value = data.motivo;
-                            } else {
-                                if (motivoSelect) motivoSelect.value = 'Outro';
-                                if (outroInput) outroInput.value = data.motivo;
-                                const outroContainer = document.getElementById('outro-motivo-container');
-                                if (outroContainer) outroContainer.style.display = 'block';
-                            }
-                        }
-                    }
-                    
-                    if (section === 'multas') {
-                        const motivoSelect = document.getElementById('motivo');
-                        const outroInput = document.getElementById('outroMotivo');
-                        
-                        if (data.motivo) {
-                            const opcoes = ['Atraso', 'Falta não justificada', 'Dano a equipamento', 
-                                          'Descumprimento de normas', 'Uso indevido de celular', 'Saída antecipada', 'Outro'];
-                            
-                            if (opcoes.includes(data.motivo)) {
-                                if (motivoSelect) motivoSelect.value = data.motivo;
-                            } else {
-                                if (motivoSelect) motivoSelect.value = 'Outro';
-                                if (outroInput) outroInput.value = data.motivo;
-                                const outroContainer = document.getElementById('outro-motivo-multa-container');
-                                if (outroContainer) outroContainer.style.display = 'block';
-                            }
-                        }
-                    }
                 }
             } catch (error) {
                 console.error(`Erro ao preencher formulário: ${error.message}`);
@@ -3048,23 +3176,51 @@
             }
         }
 
-        // Salvar multa - ATUALIZADO
+        // Salvar tipo de multa - NOVO
+        async function saveTipoMulta(formData, mode, id) {
+            try {
+                const collectionName = 'tiposMulta';
+                const tipoData = {
+                    nome: formData.nome,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                if (mode === 'add') {
+                    const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                    const docRef = await firebaseApp.firestore.addDoc(collectionRef, tipoData);
+                    console.log(`✅ Tipo de multa adicionado com ID: ${docRef.id}`);
+                    return true;
+                } else if (mode === 'edit' && id) {
+                    const docRef = firebaseApp.firestore.doc(firebaseApp.db, collectionName, id);
+                    await firebaseApp.firestore.updateDoc(docRef, tipoData);
+                    console.log(`✅ Tipo de multa atualizado: ${id}`);
+                    return true;
+                }
+            } catch (error) {
+                console.error(`❌ Erro ao salvar tipo de multa: ${error.message}`);
+                return false;
+            }
+        }
+
+        // Salvar multa - REFATORADO
         async function saveMulta(formData, mode, id) {
             try {
                 const collectionName = 'multas';
                 
-                let motivoFinal = formData.motivo;
-                if (formData.motivo === 'Outro' && formData.outroMotivo) {
-                    motivoFinal = formData.outroMotivo;
-                }
-                
                 const multaData = {
                     colaborador: formData.colaborador,
                     data: formData.data,
+                    hora: formData.hora,
+                    placa: formData.placa.toUpperCase(),
+                    tipo: formData.tipo,
                     valor: parseFloat(formData.valor) || 0,
-                    motivo: motivoFinal,
-                    status: formData.status || 'Pendente',
-                    observacoes: formData.observacoes || '',
+                    ait: formData.ait,
+                    orgaoAutuador: formData.orgaoAutuador,
+                    local: formData.local,
+                    municipio: formData.municipio,
+                    dataLimiteIndicacao: formData.dataLimiteIndicacao,
+                    status: formData.status || 'Colaborador ciente',
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
                 };
@@ -3101,6 +3257,7 @@
                 danos: 'Dano/Avaria',
                 faltas: 'Falta',
                 feedbacks: 'Feedbacks',
+                tiposMulta: 'Tipo de Multa',
                 multas: 'Multa'
             };
             
@@ -3121,6 +3278,8 @@
                 loadFaltaForm(mode, id);
             } else if (section === 'feedbacks') {
                 loadFeedbackForm(mode, id);
+            } else if (section === 'tiposMulta') {
+                loadTipoMultaForm(mode, id);
             } else if (section === 'multas') {
                 loadMultaForm(mode, id);
             }
@@ -3213,16 +3372,36 @@
                     alert('Por favor, selecione um colaborador.');
                     return;
                 }
-                if (!formData.motivo) {
-                    alert('Por favor, selecione um motivo.');
-                    return;
-                }
-                if (formData.motivo === 'Outro' && (!formData.outroMotivo || !formData.outroMotivo.trim())) {
-                    alert('Por favor, especifique o motivo da multa.');
+                if (!formData.tipo) {
+                    alert('Por favor, selecione o tipo de multa.');
                     return;
                 }
                 if (!formData.valor || parseFloat(formData.valor) <= 0) {
                     alert('Por favor, informe um valor válido para a multa.');
+                    return;
+                }
+                if (!formData.placa) {
+                    alert('Por favor, informe a placa do veículo.');
+                    return;
+                }
+                if (!formData.ait) {
+                    alert('Por favor, informe o número do AIT.');
+                    return;
+                }
+                if (!formData.orgaoAutuador) {
+                    alert('Por favor, informe o órgão autuador.');
+                    return;
+                }
+                if (!formData.local) {
+                    alert('Por favor, informe o local da infração.');
+                    return;
+                }
+                if (!formData.municipio) {
+                    alert('Por favor, informe o município.');
+                    return;
+                }
+                if (!formData.dataLimiteIndicacao) {
+                    alert('Por favor, informe a data limite para indicação.');
                     return;
                 }
             }
@@ -3244,6 +3423,8 @@
                     success = await saveFalta(formData, currentAction, currentItemId);
                 } else if (currentSection === 'feedbacks') {
                     success = await saveFeedback(formData, currentAction, currentItemId);
+                } else if (currentSection === 'tiposMulta') {
+                    success = await saveTipoMulta(formData, currentAction, currentItemId);
                 } else if (currentSection === 'multas') {
                     success = await saveMulta(formData, currentAction, currentItemId);
                 }
@@ -3435,6 +3616,7 @@
             multasFiltroAtual.nome = document.getElementById('filtro-nome-multa').value;
             multasFiltroAtual.departamento = document.getElementById('filtro-departamento-multa').value;
             multasFiltroAtual.status = document.getElementById('filtro-status-multa').value;
+            multasFiltroAtual.placa = document.getElementById('filtro-placa-multa').value;
             multasFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio-multa').value;
             multasFiltroAtual.dataFim = document.getElementById('filtro-data-fim-multa').value;
             
@@ -3454,6 +3636,7 @@
             document.getElementById('filtro-nome-multa').value = '';
             document.getElementById('filtro-departamento-multa').value = '';
             document.getElementById('filtro-status-multa').value = '';
+            document.getElementById('filtro-placa-multa').value = '';
             document.getElementById('filtro-data-inicio-multa').value = '';
             document.getElementById('filtro-data-fim-multa').value = '';
             
@@ -3461,6 +3644,7 @@
                 nome: '',
                 departamento: '',
                 status: '',
+                placa: '',
                 dataInicio: '',
                 dataFim: ''
             };
@@ -3479,22 +3663,20 @@
         // Gerar relatório de multas
         function gerarRelatorioMultas() {
             try {
-                // Coletar dados dos filtros atuais
                 const filtros = {
                     colaborador: multasFiltroAtual.nome || 'Todos',
                     departamento: multasFiltroAtual.departamento || 'Todos',
                     status: multasFiltroAtual.status || 'Todos',
+                    placa: multasFiltroAtual.placa || 'Todas',
                     periodo: multasFiltroAtual.dataInicio || multasFiltroAtual.dataFim ? 
                              `${multasFiltroAtual.dataInicio || 'Início'} até ${multasFiltroAtual.dataFim || 'Fim'}` : 'Todo período'
                 };
                 
-                // Criar conteúdo do relatório
                 let relatorio = 'RELATÓRIO DE MULTAS\n';
                 relatorio += '=====================\n\n';
                 relatorio += `Data: ${new Date().toLocaleDateString('pt-BR')}\n`;
-                relatorio += `Filtros: Colaborador: ${filtros.colaborador} | Departamento: ${filtros.departamento} | Status: ${filtros.status} | Período: ${filtros.periodo}\n\n`;
+                relatorio += `Filtros: Colaborador: ${filtros.colaborador} | Departamento: ${filtros.departamento} | Status: ${filtros.status} | Placa: ${filtros.placa} | Período: ${filtros.periodo}\n\n`;
                 
-                // Obter dados da tabela atual
                 const tableBody = document.getElementById('multas-table-body');
                 const rows = tableBody.querySelectorAll('tr');
                 
@@ -3506,32 +3688,34 @@
                     
                     rows.forEach(row => {
                         const cols = row.querySelectorAll('td');
-                        if (cols.length >= 6) {
+                        if (cols.length >= 11) {
                             relatorio += `Colaborador: ${cols[0].textContent}\n`;
                             relatorio += `Departamento: ${cols[1].textContent}\n`;
-                            relatorio += `Data: ${cols[2].textContent}\n`;
-                            relatorio += `Motivo: ${cols[3].textContent}\n`;
-                            relatorio += `Valor: ${cols[4].textContent}\n`;
-                            relatorio += `Status: ${cols[5].textContent}\n`;
+                            relatorio += `Data/Hora: ${cols[2].textContent}\n`;
+                            relatorio += `Tipo: ${cols[3].textContent}\n`;
+                            relatorio += `Placa: ${cols[4].textContent}\n`;
+                            relatorio += `AIT: ${cols[5].textContent}\n`;
+                            relatorio += `Local: ${cols[6].textContent}\n`;
+                            relatorio += `Valor: ${cols[7].textContent}\n`;
+                            relatorio += `Status: ${cols[8].textContent}\n`;
+                            relatorio += `Data Limite: ${cols[9].textContent}\n`;
                             relatorio += '---\n\n';
                         }
                     });
                 }
                 
-                // Adicionar estatísticas
                 const pendentes = document.getElementById('stat-multas-pendentes').textContent;
                 const valorPendente = document.getElementById('stat-valor-pendente').textContent;
-                const pagas = document.getElementById('stat-multas-pagas').textContent;
+                const concluidas = document.getElementById('stat-multas-concluidas').textContent;
                 const valorRecebido = document.getElementById('stat-valor-recebido').textContent;
                 
                 relatorio += '\nESTATÍSTICAS:\n';
                 relatorio += '==============\n';
                 relatorio += `Multas Pendentes: ${pendentes}\n`;
                 relatorio += `Valor Total Pendente: ${valorPendente}\n`;
-                relatorio += `Multas Pagas: ${pagas}\n`;
+                relatorio += `Multas Concluídas: ${concluidas}\n`;
                 relatorio += `Valor Total Recebido: ${valorRecebido}\n`;
                 
-                // Criar arquivo para download
                 const blob = new Blob([relatorio], { type: 'text/plain;charset=utf-8' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -3574,6 +3758,7 @@
                         danos: 'Danos e Avarias',
                         faltas: 'Faltas',
                         feedbacks: 'Feedbacks',
+                        tiposMulta: 'Tipos de Multa',
                         multas: 'Multas'
                     };
                     document.getElementById('page-title').textContent = titles[targetSection] || 'Dashboard';
@@ -3670,6 +3855,7 @@
             document.getElementById('add-dano-btn').addEventListener('click', () => openModal('danos', 'add'));
             document.getElementById('add-falta-btn').addEventListener('click', () => openModal('faltas', 'add'));
             document.getElementById('add-feedback-btn').addEventListener('click', () => openModal('feedbacks', 'add'));
+            document.getElementById('add-tipo-multa-btn').addEventListener('click', () => openModal('tiposMulta', 'add'));
             document.getElementById('add-multa-btn').addEventListener('click', () => openModal('multas', 'add'));
 
             // Modal
@@ -3733,7 +3919,7 @@
                 console.log(`✅ ${section} excluído: ${id}`);
                 showAlert('Item excluído com sucesso!', 'success', `${section}-alert`);
                 
-                if (['colaboradores', 'advertencias', 'faltas', 'multas', 'feedbacks', 'danos'].includes(section)) {
+                if (['colaboradores', 'advertencias', 'faltas', 'multas', 'feedbacks', 'danos', 'tiposMulta'].includes(section)) {
                     await updateDashboardCounts();
                     if (section === 'multas') {
                         await updateMultasStats();
