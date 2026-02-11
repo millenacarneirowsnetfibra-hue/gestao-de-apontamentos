@@ -1143,16 +1143,16 @@
                     
                     <div class="dashboard-filters-date-row">
                         <div class="dashboard-filter-group">
-                            <label for="dashboard-filtro-data-inicio"><i class="fas fa-calendar"></i> Data Início</label>
-                            <input type="date" id="dashboard-filtro-data-inicio" class="dashboard-filter-input">
+                            <label for="dashboard-filtro-mes-inicio"><i class="fas fa-calendar"></i> Mês Início (MM/AAAA)</label>
+                            <input type="month" id="dashboard-filtro-mes-inicio" class="dashboard-filter-input">
                         </div>
                         <div class="dashboard-filter-group">
-                            <label for="dashboard-filtro-data-fim"><i class="fas fa-calendar"></i> Data Fim</label>
-                            <input type="date" id="dashboard-filtro-data-fim" class="dashboard-filter-input">
+                            <label for="dashboard-filtro-mes-fim"><i class="fas fa-calendar"></i> Mês Fim (MM/AAAA)</label>
+                            <input type="month" id="dashboard-filtro-mes-fim" class="dashboard-filter-input">
                         </div>
                         <div class="dashboard-filter-group">
                             <label>&nbsp;</label>
-                            <button class="btn btn-secondary" id="dashboard-limpar-filtros-data" style="width: 100%;">
+                            <button class="btn btn-secondary" id="dashboard-limpar-filtros-mes" style="width: 100%;">
                                 <i class="fas fa-times"></i> Limpar
                             </button>
                         </div>
@@ -1525,12 +1525,12 @@
                         </div>
                         <div class="filters-row">
                             <div class="filter-group">
-                                <label for="filtro-data-inicio">Data Início</label>
-                                <input type="date" id="filtro-data-inicio" class="filter-input">
+                                <label for="filtro-mes-inicio">Mês Início (MM/AAAA)</label>
+                                <input type="month" id="filtro-mes-inicio" class="filter-input">
                             </div>
                             <div class="filter-group">
-                                <label for="filtro-data-fim">Data Fim</label>
-                                <input type="date" id="filtro-data-fim" class="filter-input">
+                                <label for="filtro-mes-fim">Mês Fim (MM/AAAA)</label>
+                                <input type="month" id="filtro-mes-fim" class="filter-input">
                             </div>
                         </div>
                     </div>
@@ -1542,7 +1542,7 @@
                                 <tr>
                                     <th>Colaborador</th>
                                     <th>Departamento</th>
-                                    <th>Data</th>
+                                    <th>Mês/Ano</th>
                                     <th>Motivo</th>
                                     <th>Ações</th>
                                 </tr>
@@ -1593,12 +1593,12 @@
                         </div>
                         <div class="filters-row">
                             <div class="filter-group">
-                                <label for="filtro-data-inicio-dano">Data Início</label>
-                                <input type="date" id="filtro-data-inicio-dano" class="filter-input">
+                                <label for="filtro-mes-inicio-dano">Mês Início (MM/AAAA)</label>
+                                <input type="month" id="filtro-mes-inicio-dano" class="filter-input">
                             </div>
                             <div class="filter-group">
-                                <label for="filtro-data-fim-dano">Data Fim</label>
-                                <input type="date" id="filtro-data-fim-dano" class="filter-input">
+                                <label for="filtro-mes-fim-dano">Mês Fim (MM/AAAA)</label>
+                                <input type="month" id="filtro-mes-fim-dano" class="filter-input">
                             </div>
                         </div>
                     </div>
@@ -1623,7 +1623,7 @@
                                 <tr>
                                     <th>Colaborador</th>
                                     <th>Departamento</th>
-                                    <th>Data</th>
+                                    <th>Mês/Ano</th>
                                     <th>Motivo</th>
                                     <th>Valor (R$)</th>
                                     <th>Ações</th>
@@ -1675,12 +1675,12 @@
                         </div>
                         <div class="filters-row">
                             <div class="filter-group">
-                                <label for="filtro-data-inicio-falta">Data Início</label>
-                                <input type="date" id="filtro-data-inicio-falta" class="filter-input">
+                                <label for="filtro-mes-inicio-falta">Mês Início (MM/AAAA)</label>
+                                <input type="month" id="filtro-mes-inicio-falta" class="filter-input">
                             </div>
                             <div class="filter-group">
-                                <label for="filtro-data-fim-falta">Data Fim</label>
-                                <input type="date" id="filtro-data-fim-falta" class="filter-input">
+                                <label for="filtro-mes-fim-falta">Mês Fim (MM/AAAA)</label>
+                                <input type="month" id="filtro-mes-fim-falta" class="filter-input">
                             </div>
                         </div>
                     </div>
@@ -1700,7 +1700,7 @@
                                 <tr>
                                     <th>Colaborador</th>
                                     <th>Departamento</th>
-                                    <th>Data</th>
+                                    <th>Mês/Ano</th>
                                     <th>Justificativa</th>
                                     <th>Ações</th>
                                 </tr>
@@ -1739,33 +1739,8 @@
                         </div>
                         <div class="filters-row">
                             <div class="filter-group">
-                                <label for="filtro-mes-feedback">Mês</label>
-                                <select id="filtro-mes-feedback" class="filter-input">
-                                    <option value="">Todos os meses</option>
-                                    <option value="01">Janeiro</option>
-                                    <option value="02">Fevereiro</option>
-                                    <option value="03">Março</option>
-                                    <option value="04">Abril</option>
-                                    <option value="05">Maio</option>
-                                    <option value="06">Junho</option>
-                                    <option value="07">Julho</option>
-                                    <option value="08">Agosto</option>
-                                    <option value="09">Setembro</option>
-                                    <option value="10">Outubro</option>
-                                    <option value="11">Novembro</option>
-                                    <option value="12">Dezembro</option>
-                                </select>
-                            </div>
-                            <div class="filter-group">
-                                <label for="filtro-ano-feedback">Ano</label>
-                                <select id="filtro-ano-feedback" class="filter-input">
-                                    <option value="">Todos os anos</option>
-                                    <option value="2024">2024</option>
-                                    <option value="2025">2025</option>
-                                    <option value="2026">2026</option>
-                                    <option value="2027">2027</option>
-                                    <option value="2028">2028</option>
-                                </select>
+                                <label for="filtro-mes-feedback">Mês/Ano</label>
+                                <input type="month" id="filtro-mes-feedback" class="filter-input">
                             </div>
                             <div class="filter-group">
                                 <label for="filtro-departamento-feedback">Departamento</label>
@@ -1885,12 +1860,12 @@
                                 <input type="text" id="filtro-ait-multa" class="filter-input" placeholder="Digite o AIT...">
                             </div>
                             <div class="filter-group">
-                                <label for="filtro-data-inicio-multa">Data Início</label>
-                                <input type="date" id="filtro-data-inicio-multa" class="filter-input">
+                                <label for="filtro-mes-inicio-multa">Mês Início (MM/AAAA)</label>
+                                <input type="month" id="filtro-mes-inicio-multa" class="filter-input">
                             </div>
                             <div class="filter-group">
-                                <label for="filtro-data-fim-multa">Data Fim</label>
-                                <input type="date" id="filtro-data-fim-multa" class="filter-input">
+                                <label for="filtro-mes-fim-multa">Mês Fim (MM/AAAA)</label>
+                                <input type="month" id="filtro-mes-fim-multa" class="filter-input">
                             </div>
                         </div>
                     </div>
@@ -1988,8 +1963,8 @@
         let dashboardFiltroAtual = {
             departamento: '',
             colaborador: '',
-            dataInicio: '',
-            dataFim: ''
+            mesInicio: '',
+            mesFim: ''
         };
         
         // Filtros das outras seções
@@ -2003,27 +1978,26 @@
         let advertenciasFiltroAtual = {
             nome: '',
             departamento: '',
-            dataInicio: '',
-            dataFim: ''
+            mesInicio: '',
+            mesFim: ''
         };
         
         let faltasFiltroAtual = {
             nome: '',
             departamento: '',
-            dataInicio: '',
-            dataFim: ''
+            mesInicio: '',
+            mesFim: ''
         };
         
         let danosFiltroAtual = {
             nome: '',
             departamento: '',
-            dataInicio: '',
-            dataFim: ''
+            mesInicio: '',
+            mesFim: ''
         };
         
         let feedbacksFiltroAtual = {
-            mes: '',
-            ano: '',
+            mesAno: '',
             departamento: ''
         };
         
@@ -2033,8 +2007,8 @@
             status: '',
             placa: '',
             ait: '',
-            dataInicio: '',
-            dataFim: ''
+            mesInicio: '',
+            mesFim: ''
         };
 
         // Elementos DOM
@@ -2310,6 +2284,35 @@
             if (statFaltasTotal) statFaltasTotal.textContent = faltas.length;
         }
 
+        // Função para converter mês/ano para data de início e fim
+        function mesAnoParaIntervalo(mesAno) {
+            if (!mesAno) return null;
+            const [ano, mes] = mesAno.split('-');
+            const dataInicio = new Date(parseInt(ano), parseInt(mes) - 1, 1);
+            const dataFim = new Date(parseInt(ano), parseInt(mes), 0, 23, 59, 59, 999);
+            return { inicio: dataInicio, fim: dataFim };
+        }
+
+        // Função para verificar se uma data está no intervalo de meses
+        function dataEstaNoIntervaloMes(dataStr, mesInicio, mesFim) {
+            if (!dataStr) return false;
+            
+            const data = parseDateExactly(dataStr);
+            if (!data) return false;
+            
+            if (mesInicio) {
+                const intervaloInicio = mesAnoParaIntervalo(mesInicio);
+                if (intervaloInicio && data < intervaloInicio.inicio) return false;
+            }
+            
+            if (mesFim) {
+                const intervaloFim = mesAnoParaIntervalo(mesFim);
+                if (intervaloFim && data > intervaloFim.fim) return false;
+            }
+            
+            return true;
+        }
+
         // Aplicar filtros automáticos do dashboard
         async function aplicarFiltrosDashboardAutomatico() {
             updateDashboardCounts();
@@ -2324,9 +2327,8 @@
                 
                 let filtroDepartamento = dashboardFiltroAtual.departamento;
                 let filtroColaborador = dashboardFiltroAtual.colaborador;
-                let dataInicio = dashboardFiltroAtual.dataInicio ? new Date(dashboardFiltroAtual.dataInicio) : null;
-                let dataFim = dashboardFiltroAtual.dataFim ? new Date(dashboardFiltroAtual.dataFim) : null;
-                if (dataFim) dataFim.setHours(23, 59, 59, 999);
+                let mesInicio = dashboardFiltroAtual.mesInicio;
+                let mesFim = dashboardFiltroAtual.mesFim;
                 
                 const advertenciasRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
                 const advertenciasSnapshot = await firebaseApp.firestore.getDocs(advertenciasRef);
@@ -2338,17 +2340,14 @@
                         const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
                         if (!colaboradorInfo || colaboradorInfo.departamento !== filtroDepartamento) return false;
                     }
-                    if (dataInicio || dataFim) {
-                        if (!item.data) return false;
-                        const dataItem = parseDateExactly(item.data);
-                        if (dataInicio && dataItem < dataInicio) return false;
-                        if (dataFim && dataItem > dataFim) return false;
+                    if (mesInicio || mesFim) {
+                        return dataEstaNoIntervaloMes(item.data, mesInicio, mesFim);
                     }
                     return true;
                 });
                 
                 document.getElementById('total-advertencias').textContent = advertenciasDocs.length;
-                document.getElementById('advertencias-periodo').textContent = filtroDepartamento || filtroColaborador || dataInicio || dataFim ? 'com filtros' : 'total geral';
+                document.getElementById('advertencias-periodo').textContent = filtroDepartamento || filtroColaborador || mesInicio || mesFim ? 'com filtros' : 'total geral';
                 
                 const faltasRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
                 const faltasSnapshot = await firebaseApp.firestore.getDocs(faltasRef);
@@ -2360,17 +2359,14 @@
                         const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
                         if (!colaboradorInfo || colaboradorInfo.departamento !== filtroDepartamento) return false;
                     }
-                    if (dataInicio || dataFim) {
-                        if (!item.data) return false;
-                        const dataItem = parseDateExactly(item.data);
-                        if (dataInicio && dataItem < dataInicio) return false;
-                        if (dataFim && dataItem > dataFim) return false;
+                    if (mesInicio || mesFim) {
+                        return dataEstaNoIntervaloMes(item.data, mesInicio, mesFim);
                     }
                     return true;
                 });
                 
                 document.getElementById('total-faltas').textContent = faltasDocs.length;
-                document.getElementById('faltas-periodo').textContent = filtroDepartamento || filtroColaborador || dataInicio || dataFim ? 'com filtros' : 'total geral';
+                document.getElementById('faltas-periodo').textContent = filtroDepartamento || filtroColaborador || mesInicio || mesFim ? 'com filtros' : 'total geral';
                 
                 const multasRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
                 const multasSnapshot = await firebaseApp.firestore.getDocs(multasRef);
@@ -2382,11 +2378,8 @@
                         const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
                         if (!colaboradorInfo || colaboradorInfo.departamento !== filtroDepartamento) return false;
                     }
-                    if (dataInicio || dataFim) {
-                        if (!item.data) return false;
-                        const dataItem = parseDateExactly(item.data);
-                        if (dataInicio && dataItem < dataInicio) return false;
-                        if (dataFim && dataItem > dataFim) return false;
+                    if (mesInicio || mesFim) {
+                        return dataEstaNoIntervaloMes(item.data, mesInicio, mesFim);
                     }
                     return true;
                 });
@@ -2397,7 +2390,7 @@
                 });
                 
                 document.getElementById('total-multas').textContent = `R$ ${totalMultas.toFixed(2)}`;
-                document.getElementById('multas-periodo').textContent = filtroDepartamento || filtroColaborador || dataInicio || dataFim ? 'com filtros' : 'total geral';
+                document.getElementById('multas-periodo').textContent = filtroDepartamento || filtroColaborador || mesInicio || mesFim ? 'com filtros' : 'total geral';
                 
                 await updateTop5Advertencias();
                 await updateTop5Danos();
@@ -2424,16 +2417,8 @@
                         const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
                         if (!colaboradorInfo || colaboradorInfo.departamento !== dashboardFiltroAtual.departamento) return false;
                     }
-                    
-                    let dataInicio = dashboardFiltroAtual.dataInicio ? new Date(dashboardFiltroAtual.dataInicio) : null;
-                    let dataFim = dashboardFiltroAtual.dataFim ? new Date(dashboardFiltroAtual.dataFim) : null;
-                    if (dataFim) dataFim.setHours(23, 59, 59, 999);
-                    
-                    if (dataInicio || dataFim) {
-                        if (!item.data) return false;
-                        const dataItem = parseDateExactly(item.data);
-                        if (dataInicio && dataItem < dataInicio) return false;
-                        if (dataFim && dataItem > dataFim) return false;
+                    if (dashboardFiltroAtual.mesInicio || dashboardFiltroAtual.mesFim) {
+                        return dataEstaNoIntervaloMes(item.data, dashboardFiltroAtual.mesInicio, dashboardFiltroAtual.mesFim);
                     }
                     return true;
                 });
@@ -2514,16 +2499,8 @@
                         const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
                         if (!colaboradorInfo || colaboradorInfo.departamento !== dashboardFiltroAtual.departamento) return false;
                     }
-                    
-                    let dataInicio = dashboardFiltroAtual.dataInicio ? new Date(dashboardFiltroAtual.dataInicio) : null;
-                    let dataFim = dashboardFiltroAtual.dataFim ? new Date(dashboardFiltroAtual.dataFim) : null;
-                    if (dataFim) dataFim.setHours(23, 59, 59, 999);
-                    
-                    if (dataInicio || dataFim) {
-                        if (!item.data) return false;
-                        const dataItem = parseDateExactly(item.data);
-                        if (dataInicio && dataItem < dataInicio) return false;
-                        if (dataFim && dataItem > dataFim) return false;
+                    if (dashboardFiltroAtual.mesInicio || dashboardFiltroAtual.mesFim) {
+                        return dataEstaNoIntervaloMes(item.mesAno, dashboardFiltroAtual.mesInicio, dashboardFiltroAtual.mesFim);
                     }
                     return true;
                 });
@@ -2604,16 +2581,8 @@
                         const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
                         if (!colaboradorInfo || colaboradorInfo.departamento !== dashboardFiltroAtual.departamento) return false;
                     }
-                    
-                    let dataInicio = dashboardFiltroAtual.dataInicio ? new Date(dashboardFiltroAtual.dataInicio) : null;
-                    let dataFim = dashboardFiltroAtual.dataFim ? new Date(dashboardFiltroAtual.dataFim) : null;
-                    if (dataFim) dataFim.setHours(23, 59, 59, 999);
-                    
-                    if (dataInicio || dataFim) {
-                        if (!item.data) return false;
-                        const dataItem = parseDateExactly(item.data);
-                        if (dataInicio && dataItem < dataInicio) return false;
-                        if (dataFim && dataItem > dataFim) return false;
+                    if (dashboardFiltroAtual.mesInicio || dashboardFiltroAtual.mesFim) {
+                        return dataEstaNoIntervaloMes(item.data, dashboardFiltroAtual.mesInicio, dashboardFiltroAtual.mesFim);
                     }
                     return true;
                 });
@@ -2688,18 +2657,13 @@
                 const snapshot = await firebaseApp.firestore.getDocs(feedbacksRef);
                 let feedbacks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                let dataInicio = dashboardFiltroAtual.dataInicio ? new Date(dashboardFiltroAtual.dataInicio) : null;
-                let dataFim = dashboardFiltroAtual.dataFim ? new Date(dashboardFiltroAtual.dataFim) : null;
-                if (dataFim) dataFim.setHours(23, 59, 59, 999);
+                let mesInicio = dashboardFiltroAtual.mesInicio;
+                let mesFim = dashboardFiltroAtual.mesFim;
                 
-                if (dataInicio || dataFim) {
+                if (mesInicio || mesFim) {
                     feedbacks = feedbacks.filter(item => {
                         if (!item.mesAno) return false;
-                        const [mes, ano] = item.mesAno.split('-');
-                        const dataItem = new Date(parseInt(ano), parseInt(mes) - 1, 1);
-                        if (dataInicio && dataItem < dataInicio) return false;
-                        if (dataFim && dataItem > dataFim) return false;
-                        return true;
+                        return dataEstaNoIntervaloMes(item.mesAno, mesInicio, mesFim);
                     });
                 }
                 
@@ -2832,16 +2796,8 @@
                         const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
                         if (!colaboradorInfo || colaboradorInfo.departamento !== dashboardFiltroAtual.departamento) return false;
                     }
-                    
-                    let dataInicio = dashboardFiltroAtual.dataInicio ? new Date(dashboardFiltroAtual.dataInicio) : null;
-                    let dataFim = dashboardFiltroAtual.dataFim ? new Date(dashboardFiltroAtual.dataFim) : null;
-                    if (dataFim) dataFim.setHours(23, 59, 59, 999);
-                    
-                    if (dataInicio || dataFim) {
-                        if (!item.data) return false;
-                        const dataItem = parseDateExactly(item.data);
-                        if (dataInicio && dataItem < dataInicio) return false;
-                        if (dataFim && dataItem > dataFim) return false;
+                    if (dashboardFiltroAtual.mesInicio || dashboardFiltroAtual.mesFim) {
+                        return dataEstaNoIntervaloMes(item.data, dashboardFiltroAtual.mesInicio, dashboardFiltroAtual.mesFim);
                     }
                     return true;
                 });
@@ -3016,19 +2972,23 @@
                 docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
             } else if (section === 'tiposMulta') {
                 docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
-            } else if (section === 'advertencias' || section === 'danos' || section === 'faltas' || section === 'multas') {
+            } else if (section === 'advertencias' || section === 'faltas' || section === 'multas') {
                 docs.sort((a, b) => {
                     const dataA = parseDateExactly(a.data) || new Date(0);
                     const dataB = parseDateExactly(b.data) || new Date(0);
                     return dataB - dataA;
                 });
+            } else if (section === 'danos') {
+                docs.sort((a, b) => {
+                    if (!a.mesAno) return 1;
+                    if (!b.mesAno) return -1;
+                    return b.mesAno.localeCompare(a.mesAno);
+                });
             } else if (section === 'feedbacks') {
                 docs.sort((a, b) => {
-                    const [mesA, anoA] = (a.mesAno || '01-2024').split('-');
-                    const [mesB, anoB] = (b.mesAno || '01-2024').split('-');
-                    const dataA = new Date(parseInt(anoA), parseInt(mesA) - 1, 1);
-                    const dataB = new Date(parseInt(anoB), parseInt(mesB) - 1, 1);
-                    return dataB - dataA;
+                    if (!a.mesAno) return 1;
+                    if (!b.mesAno) return -1;
+                    return b.mesAno.localeCompare(a.mesAno);
                 });
             }
             
@@ -3085,10 +3045,14 @@
                     const colaboradorInfo = colaboradoresData.find(c => c.nome === data.colaborador);
                     const departamento = colaboradorInfo ? colaboradorInfo.departamento : 'Não especificado';
                     
+                    const mesAno = data.data ? data.data.substring(0, 7) : 'Não especificado';
+                    const [ano, mes] = mesAno.split('-');
+                    const mesAnoFormatado = mes && ano ? `${mes}/${ano}` : mesAno;
+                    
                     row.innerHTML = `
                         <td>${data.colaborador || 'Não especificado'}</td>
                         <td>${departamento}</td>
-                        <td>${formatDateExactly(data.data) || 'Não especificada'}</td>
+                        <td>${mesAnoFormatado}</td>
                         <td>${data.motivo || 'Não especificado'}</td>
                         <td>
                             <div class="action-buttons">
@@ -3105,10 +3069,17 @@
                     const colaboradorInfo = colaboradoresData.find(c => c.nome === data.colaborador);
                     const departamento = colaboradorInfo ? colaboradorInfo.departamento : 'Não especificado';
                     
+                    const mesAno = data.mesAno || 'Não especificado';
+                    let mesAnoFormatado = mesAno;
+                    if (mesAno && mesAno.includes('-')) {
+                        const [ano, mes] = mesAno.split('-');
+                        mesAnoFormatado = `${mes}/${ano}`;
+                    }
+                    
                     row.innerHTML = `
                         <td>${data.colaborador || 'Não especificado'}</td>
                         <td>${departamento}</td>
-                        <td>${formatDateExactly(data.data) || 'Não especificada'}</td>
+                        <td>${mesAnoFormatado}</td>
                         <td>${data.motivo || 'Não especificado'}</td>
                         <td><strong>R$ ${parseFloat(data.valor || 0).toFixed(2)}</strong></td>
                         <td>
@@ -3126,10 +3097,14 @@
                     const colaboradorInfo = colaboradoresData.find(c => c.nome === data.colaborador);
                     const departamento = colaboradorInfo ? colaboradorInfo.departamento : 'Não especificado';
                     
+                    const mesAno = data.data ? data.data.substring(0, 7) : 'Não especificado';
+                    const [ano, mes] = mesAno.split('-');
+                    const mesAnoFormatado = mes && ano ? `${mes}/${ano}` : mesAno;
+                    
                     row.innerHTML = `
                         <td>${data.colaborador || 'Não especificado'}</td>
                         <td>${departamento}</td>
-                        <td>${formatDateExactly(data.data) || 'Não especificada'}</td>
+                        <td>${mesAnoFormatado}</td>
                         <td>${data.justificativa ? (data.justificativa.substring(0, 30) + '...') : 'Nenhuma'}</td>
                         <td>
                             <div class="action-buttons">
@@ -3143,14 +3118,19 @@
                         </td>
                     `;
                 } else if (section === 'feedbacks') {
-                    const [mes, ano] = (data.mesAno || '01-2024').split('-');
-                    const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
-                                  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-                    const mesFormatado = meses[parseInt(mes) - 1] || 'Mês inválido';
+                    const mesAno = data.mesAno || '01-2024';
+                    let mesAnoFormatado = mesAno;
+                    if (mesAno.includes('-')) {
+                        const [ano, mes] = mesAno.split('-');
+                        const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+                                      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                        const mesNome = meses[parseInt(mes) - 1] || mes;
+                        mesAnoFormatado = `${mesNome}/${ano}`;
+                    }
                     const total = (parseInt(data.positivos || 0) + parseInt(data.neutros || 0) + parseInt(data.melhorar || 0));
                     
                     row.innerHTML = `
-                        <td><strong>${mesFormatado}/${ano}</strong></td>
+                        <td><strong>${mesAnoFormatado}</strong></td>
                         <td>${data.departamento || 'Não especificado'}</td>
                         <td><span class="badge badge-positivo">${data.positivos || 0}</span></td>
                         <td><span class="badge badge-neutro">${data.neutros || 0}</span></td>
@@ -3298,7 +3278,7 @@
             const hoje = new Date();
             const mesAtual = String(hoje.getMonth() + 1).padStart(2, '0');
             const anoAtual = hoje.getFullYear();
-            const mesAnoAtual = `${mesAtual}-${anoAtual}`;
+            const mesAnoAtual = `${anoAtual}-${mesAtual}`;
             
             let positivos = 0;
             let neutros = 0;
@@ -3371,24 +3351,9 @@
                 });
             }
             
-            if (advertenciasFiltroAtual.dataInicio || advertenciasFiltroAtual.dataFim) {
+            if (advertenciasFiltroAtual.mesInicio || advertenciasFiltroAtual.mesFim) {
                 filtered = filtered.filter(item => {
-                    if (!item.data) return false;
-                    
-                    const dataAdvertencia = parseDateExactly(item.data);
-                    
-                    if (advertenciasFiltroAtual.dataInicio) {
-                        const dataInicio = new Date(advertenciasFiltroAtual.dataInicio);
-                        if (dataAdvertencia < dataInicio) return false;
-                    }
-                    
-                    if (advertenciasFiltroAtual.dataFim) {
-                        const dataFim = new Date(advertenciasFiltroAtual.dataFim);
-                        dataFim.setHours(23, 59, 59, 999);
-                        if (dataAdvertencia > dataFim) return false;
-                    }
-                    
-                    return true;
+                    return dataEstaNoIntervaloMes(item.data, advertenciasFiltroAtual.mesInicio, advertenciasFiltroAtual.mesFim);
                 });
             }
             
@@ -3412,24 +3377,9 @@
                 });
             }
             
-            if (faltasFiltroAtual.dataInicio || faltasFiltroAtual.dataFim) {
+            if (faltasFiltroAtual.mesInicio || faltasFiltroAtual.mesFim) {
                 filtered = filtered.filter(item => {
-                    if (!item.data) return false;
-                    
-                    const dataFalta = parseDateExactly(item.data);
-                    
-                    if (faltasFiltroAtual.dataInicio) {
-                        const dataInicio = new Date(faltasFiltroAtual.dataInicio);
-                        if (dataFalta < dataInicio) return false;
-                    }
-                    
-                    if (faltasFiltroAtual.dataFim) {
-                        const dataFim = new Date(faltasFiltroAtual.dataFim);
-                        dataFim.setHours(23, 59, 59, 999);
-                        if (dataFalta > dataFim) return false;
-                    }
-                    
-                    return true;
+                    return dataEstaNoIntervaloMes(item.data, faltasFiltroAtual.mesInicio, faltasFiltroAtual.mesFim);
                 });
             }
             
@@ -3453,24 +3403,9 @@
                 });
             }
             
-            if (danosFiltroAtual.dataInicio || danosFiltroAtual.dataFim) {
+            if (danosFiltroAtual.mesInicio || danosFiltroAtual.mesFim) {
                 filtered = filtered.filter(item => {
-                    if (!item.data) return false;
-                    
-                    const dataDano = parseDateExactly(item.data);
-                    
-                    if (danosFiltroAtual.dataInicio) {
-                        const dataInicio = new Date(danosFiltroAtual.dataInicio);
-                        if (dataDano < dataInicio) return false;
-                    }
-                    
-                    if (danosFiltroAtual.dataFim) {
-                        const dataFim = new Date(danosFiltroAtual.dataFim);
-                        dataFim.setHours(23, 59, 59, 999);
-                        if (dataDano > dataFim) return false;
-                    }
-                    
-                    return true;
+                    return dataEstaNoIntervaloMes(item.mesAno, danosFiltroAtual.mesInicio, danosFiltroAtual.mesFim);
                 });
             }
             
@@ -3480,16 +3415,8 @@
         function applyFeedbacksFilters(docs) {
             let filtered = [...docs];
             
-            if (feedbacksFiltroAtual.mes || feedbacksFiltroAtual.ano) {
-                filtered = filtered.filter(item => {
-                    if (!item.mesAno) return false;
-                    const [mes, ano] = item.mesAno.split('-');
-                    
-                    if (feedbacksFiltroAtual.mes && mes !== feedbacksFiltroAtual.mes) return false;
-                    if (feedbacksFiltroAtual.ano && ano !== feedbacksFiltroAtual.ano) return false;
-                    
-                    return true;
-                });
+            if (feedbacksFiltroAtual.mesAno) {
+                filtered = filtered.filter(item => item.mesAno === feedbacksFiltroAtual.mesAno);
             }
             
             if (feedbacksFiltroAtual.departamento) {
@@ -3534,24 +3461,9 @@
                 );
             }
             
-            if (multasFiltroAtual.dataInicio || multasFiltroAtual.dataFim) {
+            if (multasFiltroAtual.mesInicio || multasFiltroAtual.mesFim) {
                 filtered = filtered.filter(item => {
-                    if (!item.data) return false;
-                    
-                    const dataMulta = parseDateExactly(item.data);
-                    
-                    if (multasFiltroAtual.dataInicio) {
-                        const dataInicio = new Date(multasFiltroAtual.dataInicio);
-                        if (dataMulta < dataInicio) return false;
-                    }
-                    
-                    if (multasFiltroAtual.dataFim) {
-                        const dataFim = new Date(multasFiltroAtual.dataFim);
-                        dataFim.setHours(23, 59, 59, 999);
-                        if (dataMulta > dataFim) return false;
-                    }
-                    
-                    return true;
+                    return dataEstaNoIntervaloMes(item.data, multasFiltroAtual.mesInicio, multasFiltroAtual.mesFim);
                 });
             }
             
@@ -3635,6 +3547,11 @@
         }
 
         function loadAdvertenciaForm(mode = 'add', id = null) {
+            const hoje = new Date();
+            const ano = hoje.getFullYear();
+            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+            const mesAnoAtual = `${ano}-${mes}`;
+            
             let formHTML = `
                 <div class="form-row">
                     <div class="form-group">
@@ -3644,8 +3561,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="data">Data da Advertência *</label>
-                        <input type="date" id="data" class="form-control" required>
+                        <label for="data">Mês/Ano da Advertência *</label>
+                        <input type="month" id="data" class="form-control" value="${mesAnoAtual}" required>
                     </div>
                 </div>
                 <div class="form-row">
@@ -3671,18 +3588,17 @@
                 });
             }
             
-            const today = new Date().toISOString().split('T')[0];
-            const dataInput = document.getElementById('data');
-            if (dataInput) {
-                dataInput.value = today;
-            }
-            
             if (mode === 'edit' && id) {
                 fillFormWithData('advertencias', id);
             }
         }
 
         function loadDanoForm(mode = 'add', id = null) {
+            const hoje = new Date();
+            const ano = hoje.getFullYear();
+            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+            const mesAnoAtual = `${ano}-${mes}`;
+            
             let formHTML = `
                 <div class="form-row">
                     <div class="form-group">
@@ -3692,8 +3608,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="data">Data *</label>
-                        <input type="date" id="data" class="form-control" required>
+                        <label for="mesAno">Mês/Ano *</label>
+                        <input type="month" id="mesAno" class="form-control" value="${mesAnoAtual}" required>
                     </div>
                 </div>
                 <div class="form-row">
@@ -3751,12 +3667,6 @@
                 });
             }
             
-            const today = new Date().toISOString().split('T')[0];
-            const dataInput = document.getElementById('data');
-            if (dataInput) {
-                dataInput.value = today;
-            }
-            
             if (mode === 'edit' && id) {
                 fillFormWithData('danos', id);
                 
@@ -3771,6 +3681,11 @@
         }
 
         function loadFaltaForm(mode = 'add', id = null) {
+            const hoje = new Date();
+            const ano = hoje.getFullYear();
+            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+            const mesAnoAtual = `${ano}-${mes}`;
+            
             let formHTML = `
                 <div class="form-row">
                     <div class="form-group">
@@ -3780,8 +3695,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="data">Data da Falta *</label>
-                        <input type="date" id="data" class="form-control" required>
+                        <label for="data">Mês/Ano da Falta *</label>
+                        <input type="month" id="data" class="form-control" value="${mesAnoAtual}" required>
                     </div>
                 </div>
                 <div class="form-row">
@@ -3810,12 +3725,6 @@
                 }
             }
             
-            const today = new Date().toISOString().split('T')[0];
-            const dataInput = document.getElementById('data');
-            if (dataInput) {
-                dataInput.value = today;
-            }
-            
             if (mode === 'edit' && id) {
                 fillFormWithData('faltas', id);
             }
@@ -3823,28 +3732,15 @@
 
         function loadFeedbackForm(mode = 'add', id = null) {
             const hoje = new Date();
-            const mesAtual = String(hoje.getMonth() + 1).padStart(2, '0');
-            const anoAtual = hoje.getFullYear();
+            const ano = hoje.getFullYear();
+            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+            const mesAnoAtual = `${ano}-${mes}`;
             
             let formHTML = `
                 <div class="form-row">
                     <div class="form-group">
                         <label for="mesAno">Mês/Ano *</label>
-                        <select id="mesAno" class="form-control" required>
-                            <option value="${mesAtual}-${anoAtual}">${getNomeMes(mesAtual)}/${anoAtual}</option>
-                            <option value="01-${anoAtual}">Janeiro/${anoAtual}</option>
-                            <option value="02-${anoAtual}">Fevereiro/${anoAtual}</option>
-                            <option value="03-${anoAtual}">Março/${anoAtual}</option>
-                            <option value="04-${anoAtual}">Abril/${anoAtual}</option>
-                            <option value="05-${anoAtual}">Maio/${anoAtual}</option>
-                            <option value="06-${anoAtual}">Junho/${anoAtual}</option>
-                            <option value="07-${anoAtual}">Julho/${anoAtual}</option>
-                            <option value="08-${anoAtual}">Agosto/${anoAtual}</option>
-                            <option value="09-${anoAtual}">Setembro/${anoAtual}</option>
-                            <option value="10-${anoAtual}">Outubro/${anoAtual}</option>
-                            <option value="11-${anoAtual}">Novembro/${anoAtual}</option>
-                            <option value="12-${anoAtual}">Dezembro/${anoAtual}</option>
-                        </select>
+                        <input type="month" id="mesAno" class="form-control" value="${mesAnoAtual}" required>
                     </div>
                     <div class="form-group">
                         <label for="departamento">Departamento *</label>
@@ -3905,6 +3801,11 @@
         }
 
         function loadMultaForm(mode = 'add', id = null) {
+            const hoje = new Date();
+            const ano = hoje.getFullYear();
+            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+            const mesAnoAtual = `${ano}-${mes}`;
+            
             let statusOptions = [
                 'Colaborador ciente',
                 'Aguardando CNH',
@@ -3930,8 +3831,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="data">Data da Autuação *</label>
-                        <input type="date" id="data" class="form-control" required>
+                        <label for="data">Mês/Ano da Autuação *</label>
+                        <input type="month" id="data" class="form-control" value="${mesAnoAtual}" required>
                     </div>
                 </div>
                 <div class="form-row">
@@ -4007,10 +3908,6 @@
                 });
             }
             
-            const today = new Date().toISOString().split('T')[0];
-            const dataInput = document.getElementById('data');
-            if (dataInput) dataInput.value = today;
-            
             const dataLimite = new Date();
             dataLimite.setDate(dataLimite.getDate() + 30);
             const dataLimiteInput = document.getElementById('dataLimiteIndicacao');
@@ -4029,12 +3926,6 @@
             if (mode === 'edit' && id) {
                 fillFormWithData('multas', id);
             }
-        }
-
-        function getNomeMes(mesNumero) {
-            const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
-                          'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-            return meses[parseInt(mesNumero) - 1] || 'Mês inválido';
         }
 
         function populateSelectOptions() {
@@ -4079,7 +3970,17 @@
                     Object.keys(data).forEach(key => {
                         const field = document.getElementById(key);
                         if (field) {
-                            if (field.type === 'date' && data[key]) {
+                            if (field.type === 'month' && data[key]) {
+                                const dateStr = data[key];
+                                if (dateStr.includes('T')) {
+                                    const date = new Date(dateStr);
+                                    const year = date.getFullYear();
+                                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                                    field.value = `${year}-${month}`;
+                                } else {
+                                    field.value = dateStr;
+                                }
+                            } else if (field.type === 'date' && data[key]) {
                                 const dateStr = data[key];
                                 if (dateStr.includes('T')) {
                                     const date = new Date(dateStr);
@@ -4188,9 +4089,12 @@
         async function saveAdvertencia(formData, mode, id) {
             try {
                 const collectionName = 'advertencias';
+                
+                const dataCompleta = formData.data ? `${formData.data}-01` : null;
+                
                 const advertenciaData = {
                     colaborador: formData.colaborador,
-                    data: formData.data,
+                    data: dataCompleta,
                     motivo: formData.motivo,
                     status: 'Ativa',
                     createdAt: new Date().toISOString(),
@@ -4225,7 +4129,7 @@
                 
                 const danoData = {
                     colaborador: formData.colaborador,
-                    data: formData.data,
+                    mesAno: formData.mesAno,
                     motivo: motivoFinal,
                     valor: parseFloat(formData.valor) || 0,
                     createdAt: new Date().toISOString(),
@@ -4258,12 +4162,14 @@
                 }
                 
                 if (!formData.data) {
-                    throw new Error('Selecione a data da falta');
+                    throw new Error('Selecione o mês/ano da falta');
                 }
+                
+                const dataCompleta = `${formData.data}-01`;
                 
                 const faltaData = {
                     colaborador: formData.colaborador,
-                    data: formData.data,
+                    data: dataCompleta,
                     justificativa: formData.justificativa || '',
                     createdAt: new Date().toISOString(),
                     updatedAt: new Date().toISOString()
@@ -4310,7 +4216,7 @@
                     const existingSnapshot = await firebaseApp.firestore.getDocs(q);
                     
                     if (!existingSnapshot.empty) {
-                        throw new Error(`Já existe um registro de feedbacks para ${formData.departamento} em ${getNomeMes(formData.mesAno.split('-')[0])}/${formData.mesAno.split('-')[1]}.`);
+                        throw new Error(`Já existe um registro de feedbacks para ${formData.departamento} em ${formData.mesAno}.`);
                     }
                 }
                 
@@ -4361,9 +4267,11 @@
             try {
                 const collectionName = 'multas';
                 
+                const dataCompleta = formData.data ? `${formData.data}-01` : null;
+                
                 const multaData = {
                     colaborador: formData.colaborador,
-                    data: formData.data,
+                    data: dataCompleta,
                     hora: formData.hora,
                     placa: formData.placa.toUpperCase(),
                     tipo: formData.tipo,
@@ -4497,6 +4405,10 @@
                     alert('Por favor, informe um valor válido.');
                     return;
                 }
+                if (!formData.mesAno) {
+                    alert('Por favor, selecione o mês/ano.');
+                    return;
+                }
             }
             
             if (currentSection === 'faltas') {
@@ -4505,7 +4417,7 @@
                     return;
                 }
                 if (!formData.data) {
-                    alert('Por favor, selecione a data da falta.');
+                    alert('Por favor, selecione o mês/ano da falta.');
                     return;
                 }
             }
@@ -4619,8 +4531,8 @@
         function aplicarFiltrosAdvertenciasAutomatico() {
             advertenciasFiltroAtual.nome = document.getElementById('filtro-nome').value;
             advertenciasFiltroAtual.departamento = document.getElementById('filtro-departamento').value;
-            advertenciasFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio').value;
-            advertenciasFiltroAtual.dataFim = document.getElementById('filtro-data-fim').value;
+            advertenciasFiltroAtual.mesInicio = document.getElementById('filtro-mes-inicio').value;
+            advertenciasFiltroAtual.mesFim = document.getElementById('filtro-mes-fim').value;
             
             loadTableData('advertencias');
         }
@@ -4628,8 +4540,8 @@
         function aplicarFiltrosFaltasAutomatico() {
             faltasFiltroAtual.nome = document.getElementById('filtro-nome-falta').value;
             faltasFiltroAtual.departamento = document.getElementById('filtro-departamento-falta').value;
-            faltasFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio-falta').value;
-            faltasFiltroAtual.dataFim = document.getElementById('filtro-data-fim-falta').value;
+            faltasFiltroAtual.mesInicio = document.getElementById('filtro-mes-inicio-falta').value;
+            faltasFiltroAtual.mesFim = document.getElementById('filtro-mes-fim-falta').value;
             
             loadTableData('faltas');
         }
@@ -4637,15 +4549,14 @@
         function aplicarFiltrosDanosAutomatico() {
             danosFiltroAtual.nome = document.getElementById('filtro-nome-dano').value;
             danosFiltroAtual.departamento = document.getElementById('filtro-departamento-dano').value;
-            danosFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio-dano').value;
-            danosFiltroAtual.dataFim = document.getElementById('filtro-data-fim-dano').value;
+            danosFiltroAtual.mesInicio = document.getElementById('filtro-mes-inicio-dano').value;
+            danosFiltroAtual.mesFim = document.getElementById('filtro-mes-fim-dano').value;
             
             loadTableData('danos');
         }
 
         function aplicarFiltrosFeedbacksAutomatico() {
-            feedbacksFiltroAtual.mes = document.getElementById('filtro-mes-feedback').value;
-            feedbacksFiltroAtual.ano = document.getElementById('filtro-ano-feedback').value;
+            feedbacksFiltroAtual.mesAno = document.getElementById('filtro-mes-feedback').value;
             feedbacksFiltroAtual.departamento = document.getElementById('filtro-departamento-feedback').value;
             
             loadTableData('feedbacks');
@@ -4657,8 +4568,8 @@
             multasFiltroAtual.status = document.getElementById('filtro-status-multa').value;
             multasFiltroAtual.placa = document.getElementById('filtro-placa-multa').value;
             multasFiltroAtual.ait = document.getElementById('filtro-ait-multa').value;
-            multasFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio-multa').value;
-            multasFiltroAtual.dataFim = document.getElementById('filtro-data-fim-multa').value;
+            multasFiltroAtual.mesInicio = document.getElementById('filtro-mes-inicio-multa').value;
+            multasFiltroAtual.mesFim = document.getElementById('filtro-mes-fim-multa').value;
             
             loadTableData('multas');
         }
@@ -4814,21 +4725,20 @@
             
             document.getElementById('filtro-nome').addEventListener('input', aplicarFiltrosAdvertenciasAutomatico);
             document.getElementById('filtro-departamento').addEventListener('change', aplicarFiltrosAdvertenciasAutomatico);
-            document.getElementById('filtro-data-inicio').addEventListener('change', aplicarFiltrosAdvertenciasAutomatico);
-            document.getElementById('filtro-data-fim').addEventListener('change', aplicarFiltrosAdvertenciasAutomatico);
+            document.getElementById('filtro-mes-inicio').addEventListener('change', aplicarFiltrosAdvertenciasAutomatico);
+            document.getElementById('filtro-mes-fim').addEventListener('change', aplicarFiltrosAdvertenciasAutomatico);
             
             document.getElementById('filtro-nome-falta').addEventListener('input', aplicarFiltrosFaltasAutomatico);
             document.getElementById('filtro-departamento-falta').addEventListener('change', aplicarFiltrosFaltasAutomatico);
-            document.getElementById('filtro-data-inicio-falta').addEventListener('change', aplicarFiltrosFaltasAutomatico);
-            document.getElementById('filtro-data-fim-falta').addEventListener('change', aplicarFiltrosFaltasAutomatico);
+            document.getElementById('filtro-mes-inicio-falta').addEventListener('change', aplicarFiltrosFaltasAutomatico);
+            document.getElementById('filtro-mes-fim-falta').addEventListener('change', aplicarFiltrosFaltasAutomatico);
             
             document.getElementById('filtro-nome-dano').addEventListener('input', aplicarFiltrosDanosAutomatico);
             document.getElementById('filtro-departamento-dano').addEventListener('change', aplicarFiltrosDanosAutomatico);
-            document.getElementById('filtro-data-inicio-dano').addEventListener('change', aplicarFiltrosDanosAutomatico);
-            document.getElementById('filtro-data-fim-dano').addEventListener('change', aplicarFiltrosDanosAutomatico);
+            document.getElementById('filtro-mes-inicio-dano').addEventListener('change', aplicarFiltrosDanosAutomatico);
+            document.getElementById('filtro-mes-fim-dano').addEventListener('change', aplicarFiltrosDanosAutomatico);
             
             document.getElementById('filtro-mes-feedback').addEventListener('change', aplicarFiltrosFeedbacksAutomatico);
-            document.getElementById('filtro-ano-feedback').addEventListener('change', aplicarFiltrosFeedbacksAutomatico);
             document.getElementById('filtro-departamento-feedback').addEventListener('change', aplicarFiltrosFeedbacksAutomatico);
             
             document.getElementById('filtro-nome-multa').addEventListener('input', aplicarFiltrosMultasAutomatico);
@@ -4836,8 +4746,8 @@
             document.getElementById('filtro-status-multa').addEventListener('change', aplicarFiltrosMultasAutomatico);
             document.getElementById('filtro-placa-multa').addEventListener('input', aplicarFiltrosMultasAutomatico);
             document.getElementById('filtro-ait-multa').addEventListener('input', aplicarFiltrosMultasAutomatico);
-            document.getElementById('filtro-data-inicio-multa').addEventListener('change', aplicarFiltrosMultasAutomatico);
-            document.getElementById('filtro-data-fim-multa').addEventListener('change', aplicarFiltrosMultasAutomatico);
+            document.getElementById('filtro-mes-inicio-multa').addEventListener('change', aplicarFiltrosMultasAutomatico);
+            document.getElementById('filtro-mes-fim-multa').addEventListener('change', aplicarFiltrosMultasAutomatico);
             
             document.getElementById('dashboard-filtro-departamento').addEventListener('change', function() {
                 dashboardFiltroAtual.departamento = this.value;
@@ -4849,23 +4759,23 @@
                 aplicarFiltrosDashboardAutomatico();
             });
             
-            document.getElementById('dashboard-filtro-data-inicio').addEventListener('change', function() {
-                dashboardFiltroAtual.dataInicio = this.value;
+            document.getElementById('dashboard-filtro-mes-inicio').addEventListener('change', function() {
+                dashboardFiltroAtual.mesInicio = this.value;
                 aplicarFiltrosDashboardAutomatico();
             });
             
-            document.getElementById('dashboard-filtro-data-fim').addEventListener('change', function() {
-                dashboardFiltroAtual.dataFim = this.value;
+            document.getElementById('dashboard-filtro-mes-fim').addEventListener('change', function() {
+                dashboardFiltroAtual.mesFim = this.value;
                 aplicarFiltrosDashboardAutomatico();
             });
             
-            document.getElementById('dashboard-limpar-filtros-data').addEventListener('click', function() {
-                document.getElementById('dashboard-filtro-data-inicio').value = '';
-                document.getElementById('dashboard-filtro-data-fim').value = '';
-                dashboardFiltroAtual.dataInicio = '';
-                dashboardFiltroAtual.dataFim = '';
+            document.getElementById('dashboard-limpar-filtros-mes').addEventListener('click', function() {
+                document.getElementById('dashboard-filtro-mes-inicio').value = '';
+                document.getElementById('dashboard-filtro-mes-fim').value = '';
+                dashboardFiltroAtual.mesInicio = '';
+                dashboardFiltroAtual.mesFim = '';
                 aplicarFiltrosDashboardAutomatico();
-                showAlert('Filtros de data limpos!', 'success', '');
+                showAlert('Filtros de mês/ano limpos!', 'success', '');
             });
             
             document.getElementById('modal').addEventListener('click', function(e) {
@@ -4922,6 +4832,11 @@
                 
                 if (dateString.includes('T')) {
                     return new Date(dateString);
+                }
+                
+                if (dateString.includes('-') && dateString.length === 7) {
+                    const [year, month] = dateString.split('-');
+                    return new Date(year, month - 1, 1);
                 }
                 
                 return new Date(dateString);
