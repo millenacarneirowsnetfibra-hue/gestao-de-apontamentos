@@ -65,6 +65,12 @@
             --gray-color: #95a5a6;
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             --border-radius: 8px;
+            
+            /* Cores leves para os cards */
+            --card-advertencia: rgba(243, 156, 18, 0.15);
+            --card-falta: rgba(231, 76, 60, 0.15);
+            --card-multa: rgba(52, 152, 219, 0.15);
+            --card-colaborador: rgba(46, 204, 113, 0.15);
         }
 
         * {
@@ -204,7 +210,7 @@
             color: var(--accent-color);
         }
 
-        /* Cards */
+        /* Cards com cores diferenciadas */
         .cards-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -218,10 +224,31 @@
             padding: 20px;
             box-shadow: var(--shadow);
             transition: transform 0.3s ease;
+            border-left: 6px solid transparent;
         }
 
         .card:hover {
             transform: translateY(-5px);
+        }
+
+        .card-advertencia {
+            background: linear-gradient(135deg, #fff9e6, white);
+            border-left-color: var(--warning-color);
+        }
+
+        .card-falta {
+            background: linear-gradient(135deg, #fef5f5, white);
+            border-left-color: var(--accent-color);
+        }
+
+        .card-multa {
+            background: linear-gradient(135deg, #ebf5ff, white);
+            border-left-color: var(--secondary-color);
+        }
+
+        .card-colaborador {
+            background: linear-gradient(135deg, #e8f8f0, white);
+            border-left-color: var(--success-color);
         }
 
         .card-header {
@@ -257,6 +284,7 @@
         .card-change {
             font-size: 0.9rem;
             margin-top: 5px;
+            color: var(--gray-color);
         }
 
         .positive {
@@ -301,6 +329,18 @@
 
         .filters-container.show {
             display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .filters-header {
@@ -370,12 +410,6 @@
         .filter-input:focus {
             outline: none;
             border-color: var(--secondary-color);
-        }
-
-        .filter-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
         }
 
         .btn-filters {
@@ -877,6 +911,11 @@
             padding: 20px;
             margin-bottom: 20px;
             border: 1px solid #eee;
+            display: none;
+        }
+
+        .dashboard-filters-container.show {
+            display: block;
         }
 
         .dashboard-filters-row {
@@ -1096,66 +1135,67 @@
 
             <!-- Dashboard -->
             <div id="dashboard" class="section-content">
-                <!-- Filtros automáticos do Dashboard com datas manuais -->
-                <div class="section">
-                    <div class="section-header">
-                        <h3 class="section-title">Filtros do Dashboard</h3>
+                <!-- Filtros do Dashboard - Ocultos por padrão, estilo igual às demais abas -->
+                <div class="btn-filters">
+                    <button class="btn-toggle-filters" id="toggle-filters-dashboard">
+                        <i class="fas fa-filter"></i> Mostrar Filtros
+                    </button>
+                </div>
+                
+                <div class="dashboard-filters-container" id="filters-dashboard">
+                    <div class="filters-header">
+                        <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros do Dashboard</h4>
+                        <button class="close-filters-btn" onclick="closeFilters('dashboard')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="dashboard-filters-row">
+                        <div class="dashboard-filter-group">
+                            <label for="dashboard-filtro-departamento"><i class="fas fa-sitemap"></i> Departamento</label>
+                            <select id="dashboard-filtro-departamento" class="dashboard-filter-input">
+                                <option value="">Todos os departamentos</option>
+                            </select>
+                        </div>
+                        <div class="dashboard-filter-group">
+                            <label for="dashboard-filtro-colaborador"><i class="fas fa-user"></i> Colaborador</label>
+                            <select id="dashboard-filtro-colaborador" class="dashboard-filter-input">
+                                <option value="">Todos os colaboradores</option>
+                            </select>
+                        </div>
                     </div>
                     
-                    <div class="dashboard-filters-container">
-                        <div class="dashboard-filters-row">
-                            <div class="dashboard-filter-group">
-                                <label for="dashboard-filtro-departamento"><i class="fas fa-sitemap"></i> Departamento</label>
-                                <select id="dashboard-filtro-departamento" class="dashboard-filter-input">
-                                    <option value="">Todos os departamentos</option>
-                                </select>
-                            </div>
-                            <div class="dashboard-filter-group">
-                                <label for="dashboard-filtro-colaborador"><i class="fas fa-user"></i> Colaborador</label>
-                                <select id="dashboard-filtro-colaborador" class="dashboard-filter-input">
-                                    <option value="">Todos os colaboradores</option>
-                                </select>
-                            </div>
+                    <!-- Filtros de data manual -->
+                    <div class="dashboard-filters-date-row">
+                        <div class="dashboard-filter-group">
+                            <label for="dashboard-filtro-data-inicio"><i class="fas fa-calendar"></i> Data Início</label>
+                            <input type="date" id="dashboard-filtro-data-inicio" class="dashboard-filter-input">
                         </div>
-                        
-                        <!-- Filtros de data manual -->
-                        <div class="dashboard-filters-date-row">
-                            <div class="dashboard-filter-group">
-                                <label for="dashboard-filtro-data-inicio"><i class="fas fa-calendar"></i> Data Início</label>
-                                <input type="date" id="dashboard-filtro-data-inicio" class="dashboard-filter-input">
-                            </div>
-                            <div class="dashboard-filter-group">
-                                <label for="dashboard-filtro-data-fim"><i class="fas fa-calendar"></i> Data Fim</label>
-                                <input type="date" id="dashboard-filtro-data-fim" class="dashboard-filter-input">
-                            </div>
-                            <div class="dashboard-filter-group">
-                                <label>&nbsp;</label>
-                                <button class="btn btn-primary" id="dashboard-aplicar-filtros-data" style="width: 100%;">
-                                    <i class="fas fa-search"></i> Aplicar Filtros
-                                </button>
-                            </div>
-                            <div class="dashboard-filter-group">
-                                <label>&nbsp;</label>
-                                <button class="btn btn-secondary" id="dashboard-limpar-filtros-data" style="width: 100%;">
-                                    <i class="fas fa-times"></i> Limpar
-                                </button>
-                            </div>
+                        <div class="dashboard-filter-group">
+                            <label for="dashboard-filtro-data-fim"><i class="fas fa-calendar"></i> Data Fim</label>
+                            <input type="date" id="dashboard-filtro-data-fim" class="dashboard-filter-input">
+                        </div>
+                        <div class="dashboard-filter-group">
+                            <label>&nbsp;</label>
+                            <button class="btn btn-secondary" id="dashboard-limpar-filtros-data" style="width: 100%;">
+                                <i class="fas fa-times"></i> Limpar
+                            </button>
                         </div>
                     </div>
                 </div>
 
+                <!-- Cards com cores diferenciadas -->
                 <div class="cards-container">
-                    <div class="card">
+                    <div class="card card-colaborador">
                         <div class="card-header">
                             <div class="card-title">Total de Colaboradores</div>
-                            <div class="card-icon" style="background-color: var(--secondary-color);">
+                            <div class="card-icon" style="background-color: var(--success-color);">
                                 <i class="fas fa-users"></i>
                             </div>
                         </div>
                         <div class="card-value" id="total-colaboradores">0</div>
                         <div class="card-change positive"><i class="fas fa-sync"></i> Em tempo real</div>
                     </div>
-                    <div class="card">
+                    <div class="card card-advertencia">
                         <div class="card-header">
                             <div class="card-title">Advertências</div>
                             <div class="card-icon" style="background-color: var(--warning-color);">
@@ -1163,9 +1203,9 @@
                             </div>
                         </div>
                         <div class="card-value" id="total-advertencias">0</div>
-                        <div class="card-change positive"><span id="advertencias-periodo">com filtros</span></div>
+                        <div class="card-change"><span id="advertencias-periodo">com filtros</span></div>
                     </div>
-                    <div class="card">
+                    <div class="card card-falta">
                         <div class="card-header">
                             <div class="card-title">Faltas</div>
                             <div class="card-icon" style="background-color: var(--accent-color);">
@@ -1173,17 +1213,17 @@
                             </div>
                         </div>
                         <div class="card-value" id="total-faltas">0</div>
-                        <div class="card-change positive"><span id="faltas-periodo">com filtros</span></div>
+                        <div class="card-change"><span id="faltas-periodo">com filtros</span></div>
                     </div>
-                    <div class="card">
+                    <div class="card card-multa">
                         <div class="card-header">
                             <div class="card-title">Valor Total Multas</div>
-                            <div class="card-icon" style="background-color: var(--gray-color);">
+                            <div class="card-icon" style="background-color: var(--secondary-color);">
                                 <i class="fas fa-money-bill-wave"></i>
                             </div>
                         </div>
                         <div class="card-value" id="total-multas">R$ 0,00</div>
-                        <div class="card-change positive"><span id="multas-periodo">total geral</span></div>
+                        <div class="card-change"><span id="multas-periodo">com filtros</span></div>
                     </div>
                 </div>
 
@@ -1191,7 +1231,7 @@
                 <div class="top5-grid">
                     <div class="top5-card">
                         <div class="top5-header">
-                            <i class="fas fa-exclamation-triangle"></i>
+                            <i class="fas fa-exclamation-triangle" style="color: var(--warning-color);"></i>
                             <div class="top5-title">Top 5 - Advertências por Colaborador</div>
                         </div>
                         <ul class="top5-list" id="top5-advertencias-colaboradores">
@@ -1201,7 +1241,7 @@
                     
                     <div class="top5-card">
                         <div class="top5-header">
-                            <i class="fas fa-sitemap"></i>
+                            <i class="fas fa-sitemap" style="color: var(--warning-color);"></i>
                             <div class="top5-title">Top 5 - Advertências por Setor</div>
                         </div>
                         <ul class="top5-list" id="top5-advertencias-setores">
@@ -1214,7 +1254,7 @@
                 <div class="top5-grid">
                     <div class="top5-card">
                         <div class="top5-header">
-                            <i class="fas fa-tools"></i>
+                            <i class="fas fa-tools" style="color: #e67e22;"></i>
                             <div class="top5-title">Top 5 - Danos/Avarias por Colaborador</div>
                         </div>
                         <ul class="top5-list" id="top5-danos-colaboradores">
@@ -1224,7 +1264,7 @@
                     
                     <div class="top5-card">
                         <div class="top5-header">
-                            <i class="fas fa-sitemap"></i>
+                            <i class="fas fa-sitemap" style="color: #e67e22;"></i>
                             <div class="top5-title">Top 5 - Danos/Avarias por Setor</div>
                         </div>
                         <ul class="top5-list" id="top5-danos-setores">
@@ -1237,7 +1277,7 @@
                 <div class="top5-grid">
                     <div class="top5-card">
                         <div class="top5-header">
-                            <i class="fas fa-calendar-times"></i>
+                            <i class="fas fa-calendar-times" style="color: var(--accent-color);"></i>
                             <div class="top5-title">Top 5 - Faltas por Colaborador</div>
                         </div>
                         <ul class="top5-list" id="top5-faltas-colaboradores">
@@ -1247,7 +1287,7 @@
                     
                     <div class="top5-card">
                         <div class="top5-header">
-                            <i class="fas fa-sitemap"></i>
+                            <i class="fas fa-sitemap" style="color: var(--accent-color);"></i>
                             <div class="top5-title">Top 5 - Faltas por Setor</div>
                         </div>
                         <ul class="top5-list" id="top5-faltas-setores">
@@ -1260,7 +1300,7 @@
                 <div class="top5-grid">
                     <div class="top5-card">
                         <div class="top5-header">
-                            <i class="fas fa-comment-dots"></i>
+                            <i class="fas fa-comment-dots" style="color: var(--success-color);"></i>
                             <div class="top5-title">Top 5 - Feedbacks Totais por Setor</div>
                         </div>
                         <ul class="top5-list" id="top5-feedbacks-total">
@@ -1270,7 +1310,7 @@
                     
                     <div class="top5-card">
                         <div class="top5-header">
-                            <i class="fas fa-smile"></i>
+                            <i class="fas fa-smile" style="color: var(--success-color);"></i>
                             <div class="top5-title">Top 5 - Feedbacks Positivos por Setor</div>
                         </div>
                         <ul class="top5-list" id="top5-feedbacks-positivos">
@@ -1280,7 +1320,7 @@
                     
                     <div class="top5-card">
                         <div class="top5-header">
-                            <i class="fas fa-meh"></i>
+                            <i class="fas fa-meh" style="color: var(--secondary-color);"></i>
                             <div class="top5-title">Top 5 - Feedbacks Neutros por Setor</div>
                         </div>
                         <ul class="top5-list" id="top5-feedbacks-neutros">
@@ -1290,7 +1330,7 @@
                     
                     <div class="top5-card">
                         <div class="top5-header">
-                            <i class="fas fa-frown"></i>
+                            <i class="fas fa-frown" style="color: var(--warning-color);"></i>
                             <div class="top5-title">Top 5 - A Melhorar por Setor</div>
                         </div>
                         <ul class="top5-list" id="top5-feedbacks-melhorar">
@@ -1303,7 +1343,7 @@
                 <div class="top5-grid">
                     <div class="top5-card">
                         <div class="top5-header">
-                            <i class="fas fa-money-bill-wave"></i>
+                            <i class="fas fa-money-bill-wave" style="color: var(--secondary-color);"></i>
                             <div class="top5-title">Top 5 - Multas por Colaborador</div>
                         </div>
                         <ul class="top5-list" id="top5-multas-colaboradores">
@@ -1313,7 +1353,7 @@
                     
                     <div class="top5-card">
                         <div class="top5-header">
-                            <i class="fas fa-sitemap"></i>
+                            <i class="fas fa-sitemap" style="color: var(--secondary-color);"></i>
                             <div class="top5-title">Top 5 - Multas por Setor</div>
                         </div>
                         <ul class="top5-list" id="top5-multas-setores">
@@ -1323,7 +1363,7 @@
                 </div>
             </div>
 
-            <!-- Empresas Section - SEM DATA DE CRIAÇÃO, ORDEM ALFABÉTICA -->
+            <!-- Empresas Section -->
             <div id="empresas" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1351,7 +1391,7 @@
                 </div>
             </div>
 
-            <!-- Departamentos Section - SEM DATA DE CRIAÇÃO, ORDEM ALFABÉTICA -->
+            <!-- Departamentos Section -->
             <div id="departamentos" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1379,7 +1419,7 @@
                 </div>
             </div>
 
-            <!-- Colaboradores Section - ORDEM ALFABÉTICA -->
+            <!-- Colaboradores Section -->
             <div id="colaboradores" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1428,14 +1468,6 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="filter-buttons">
-                            <button class="btn btn-primary" id="aplicar-filtros-colaboradores">
-                                <i class="fas fa-search"></i> Aplicar Filtros
-                            </button>
-                            <button class="btn btn-secondary" id="limpar-filtros-colaboradores">
-                                <i class="fas fa-times"></i> Limpar Filtros
-                            </button>
-                        </div>
                     </div>
                     
                     <div id="colaboradores-alert"></div>
@@ -1463,7 +1495,7 @@
                 </div>
             </div>
 
-            <!-- Tipos de Multa Section - ORDEM ALFABÉTICA -->
+            <!-- Tipos de Multa Section -->
             <div id="tipos-multa" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1493,7 +1525,7 @@
                 </div>
             </div>
 
-            <!-- Advertências Section - ÚLTIMOS REGISTROS PRIMEIRO -->
+            <!-- Advertências Section -->
             <div id="advertencias" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1536,14 +1568,6 @@
                                 <input type="date" id="filtro-data-fim" class="filter-input">
                             </div>
                         </div>
-                        <div class="filter-buttons">
-                            <button class="btn btn-primary" id="aplicar-filtros">
-                                <i class="fas fa-search"></i> Aplicar Filtros
-                            </button>
-                            <button class="btn btn-secondary" id="limpar-filtros">
-                                <i class="fas fa-times"></i> Limpar Filtros
-                            </button>
-                        </div>
                     </div>
                     
                     <div id="advertencias-alert"></div>
@@ -1570,7 +1594,7 @@
                 </div>
             </div>
 
-            <!-- Danos e Avarias Section - ÚLTIMOS REGISTROS PRIMEIRO -->
+            <!-- Danos e Avarias Section -->
             <div id="danos" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1613,17 +1637,8 @@
                                 <input type="date" id="filtro-data-fim-dano" class="filter-input">
                             </div>
                         </div>
-                        <div class="filter-buttons">
-                            <button class="btn btn-primary" id="aplicar-filtros-dano">
-                                <i class="fas fa-search"></i> Aplicar Filtros
-                            </button>
-                            <button class="btn btn-secondary" id="limpar-filtros-dano">
-                                <i class="fas fa-times"></i> Limpar Filtros
-                            </button>
-                        </div>
                     </div>
 
-                    <!-- Estatísticas de Danos - Atualiza com filtros -->
                     <div class="danos-stats-container">
                         <div class="danos-stat-card">
                             <div class="stat-title">Valor Total Gastos</div>
@@ -1662,7 +1677,7 @@
                 </div>
             </div>
 
-            <!-- Faltas Section - ÚLTIMOS REGISTROS PRIMEIRO -->
+            <!-- Faltas Section -->
             <div id="faltas" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1705,17 +1720,8 @@
                                 <input type="date" id="filtro-data-fim-falta" class="filter-input">
                             </div>
                         </div>
-                        <div class="filter-buttons">
-                            <button class="btn btn-primary" id="aplicar-filtros-falta">
-                                <i class="fas fa-search"></i> Aplicar Filtros
-                            </button>
-                            <button class="btn btn-secondary" id="limpar-filtros-falta">
-                                <i class="fas fa-times"></i> Limpar Filtros
-                            </button>
-                        </div>
                     </div>
 
-                    <!-- Estatísticas de Faltas - Atualiza com filtros -->
                     <div class="faltas-stats-container">
                         <div class="faltas-stat-card">
                             <div class="stat-title">Total de Faltas</div>
@@ -1748,7 +1754,7 @@
                 </div>
             </div>
 
-            <!-- Feedbacks Section - ÚLTIMOS REGISTROS PRIMEIRO -->
+            <!-- Feedbacks Section -->
             <div id="feedbacks" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1806,14 +1812,6 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="filter-buttons">
-                            <button class="btn btn-primary" id="aplicar-filtros-feedback">
-                                <i class="fas fa-search"></i> Aplicar Filtros
-                            </button>
-                            <button class="btn btn-secondary" id="limpar-filtros-feedback">
-                                <i class="fas fa-times"></i> Limpar Filtros
-                            </button>
-                        </div>
                     </div>
 
                     <div class="stats-container">
@@ -1865,7 +1863,7 @@
                 </div>
             </div>
 
-            <!-- Multas Section - ÚLTIMOS REGISTROS PRIMEIRO -->
+            <!-- Multas Section -->
             <div id="multas" class="section-content" style="display: none;">
                 <div class="section">
                     <div class="section-header">
@@ -1933,17 +1931,6 @@
                                 <label for="filtro-data-fim-multa">Data Fim</label>
                                 <input type="date" id="filtro-data-fim-multa" class="filter-input">
                             </div>
-                        </div>
-                        <div class="filter-buttons">
-                            <button class="btn btn-primary" id="aplicar-filtros-multa">
-                                <i class="fas fa-search"></i> Aplicar Filtros
-                            </button>
-                            <button class="btn btn-secondary" id="limpar-filtros-multa">
-                                <i class="fas fa-times"></i> Limpar Filtros
-                            </button>
-                            <button class="btn btn-success" id="gerar-relatorio-multas">
-                                <i class="fas fa-file-pdf"></i> Gerar Relatório
-                            </button>
                         </div>
                     </div>
 
@@ -2037,7 +2024,7 @@
         let currentCollection = null;
         let unsubscribeListeners = {};
         
-        // Filtros do Dashboard (com datas manuais)
+        // Filtros do Dashboard
         let dashboardFiltroAtual = {
             departamento: '',
             colaborador: '',
@@ -2260,7 +2247,7 @@
             }
         }
 
-        // Atualizar filtros do dashboard (automáticos)
+        // Atualizar filtros do dashboard
         function updateDashboardFilters() {
             const deptoFilter = document.getElementById('dashboard-filtro-departamento');
             const colaboradorFilter = document.getElementById('dashboard-filtro-colaborador');
@@ -2346,8 +2333,8 @@
             document.getElementById('stat-faltas-total').textContent = faltas.length;
         }
 
-        // Aplicar filtros automáticos do dashboard com datas manuais
-        function aplicarFiltrosDashboardAutomatico() {
+        // Aplicar filtros automáticos do dashboard
+        async function aplicarFiltrosDashboardAutomatico() {
             updateDashboardCounts();
         }
 
@@ -2387,6 +2374,7 @@
                 });
                 
                 document.getElementById('total-advertencias').textContent = advertenciasDocs.length;
+                document.getElementById('advertencias-periodo').textContent = filtroDepartamento || filtroColaborador || dataInicio || dataFim ? 'com filtros' : 'total geral';
                 
                 // Faltas com filtros automáticos
                 const faltasRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
@@ -2409,6 +2397,7 @@
                 });
                 
                 document.getElementById('total-faltas').textContent = faltasDocs.length;
+                document.getElementById('faltas-periodo').textContent = filtroDepartamento || filtroColaborador || dataInicio || dataFim ? 'com filtros' : 'total geral';
                 
                 // Multas valor total (todos os status)
                 const multasRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
@@ -2436,6 +2425,7 @@
                 });
                 
                 document.getElementById('total-multas').textContent = `R$ ${totalMultas.toFixed(2)}`;
+                document.getElementById('multas-periodo').textContent = filtroDepartamento || filtroColaborador || dataInicio || dataFim ? 'com filtros' : 'total geral';
                 
                 // Atualizar todos os Top 5 com os filtros automáticos
                 await updateTop5Advertencias();
@@ -3022,7 +3012,7 @@
             }
         }
 
-        // Atualizar tabela com snapshot - COM ORDENAÇÃO ESPECÍFICA
+        // Atualizar tabela com snapshot
         function updateTableFromSnapshot(section, snapshot, filters = null) {
             const tableBody = document.getElementById(`${section}-table-body`);
             if (!tableBody) return;
@@ -3105,7 +3095,7 @@
                 return;
             }
             
-            docs.forEach((data, index) => {
+            docs.forEach((data) => {
                 const row = document.createElement('tr');
                 
                 if (section === 'empresas') {
@@ -4709,8 +4699,8 @@
             }
         }
 
-        // Aplicar filtros de colaboradores
-        function aplicarFiltrosColaboradores() {
+        // Aplicar filtros de colaboradores (automático)
+        function aplicarFiltrosColaboradoresAutomatico() {
             colaboradoresFiltroAtual.status = document.getElementById('filtro-status-colaborador').value;
             colaboradoresFiltroAtual.nome = document.getElementById('filtro-nome-colaborador').value;
             colaboradoresFiltroAtual.departamento = document.getElementById('filtro-departamento-colaborador').value;
@@ -4723,37 +4713,10 @@
                     updateTableFromSnapshot('colaboradores', snapshot);
                 }
             }
-            
-            showAlert('Filtros aplicados com sucesso!', 'success', 'colaboradores-alert');
         }
 
-        // Limpar filtros de colaboradores
-        function limparFiltrosColaboradores() {
-            document.getElementById('filtro-status-colaborador').value = 'Ativo';
-            document.getElementById('filtro-nome-colaborador').value = '';
-            document.getElementById('filtro-departamento-colaborador').value = '';
-            document.getElementById('filtro-empresa-colaborador').value = '';
-            
-            colaboradoresFiltroAtual = {
-                status: 'Ativo',
-                nome: '',
-                departamento: '',
-                empresa: ''
-            };
-            
-            if (unsubscribeListeners.colaboradores) {
-                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'colaboradores');
-                const snapshot = unsubscribeListeners.colaboradores._snapshot;
-                if (snapshot) {
-                    updateTableFromSnapshot('colaboradores', snapshot);
-                }
-            }
-            
-            showAlert('Filtros limpos com sucesso!', 'success', 'colaboradores-alert');
-        }
-
-        // Aplicar filtros de advertências
-        function aplicarFiltrosAdvertencias() {
+        // Aplicar filtros de advertências (automático)
+        function aplicarFiltrosAdvertenciasAutomatico() {
             advertenciasFiltroAtual.nome = document.getElementById('filtro-nome').value;
             advertenciasFiltroAtual.departamento = document.getElementById('filtro-departamento').value;
             advertenciasFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio').value;
@@ -4766,37 +4729,10 @@
                     updateTableFromSnapshot('advertencias', snapshot);
                 }
             }
-            
-            showAlert('Filtros aplicados com sucesso!', 'success', 'advertencias-alert');
         }
 
-        // Limpar filtros de advertências
-        function limparFiltrosAdvertencias() {
-            document.getElementById('filtro-nome').value = '';
-            document.getElementById('filtro-departamento').value = '';
-            document.getElementById('filtro-data-inicio').value = '';
-            document.getElementById('filtro-data-fim').value = '';
-            
-            advertenciasFiltroAtual = {
-                nome: '',
-                departamento: '',
-                dataInicio: '',
-                dataFim: ''
-            };
-            
-            if (unsubscribeListeners.advertencias) {
-                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
-                const snapshot = unsubscribeListeners.advertencias._snapshot;
-                if (snapshot) {
-                    updateTableFromSnapshot('advertencias', snapshot);
-                }
-            }
-            
-            showAlert('Filtros limpos com sucesso!', 'success', 'advertencias-alert');
-        }
-
-        // Aplicar filtros de faltas
-        function aplicarFiltrosFaltas() {
+        // Aplicar filtros de faltas (automático)
+        function aplicarFiltrosFaltasAutomatico() {
             faltasFiltroAtual.nome = document.getElementById('filtro-nome-falta').value;
             faltasFiltroAtual.departamento = document.getElementById('filtro-departamento-falta').value;
             faltasFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio-falta').value;
@@ -4812,40 +4748,10 @@
                     updateFaltasStats(filteredDocs);
                 }
             }
-            
-            showAlert('Filtros aplicados com sucesso!', 'success', 'faltas-alert');
         }
 
-        // Limpar filtros de faltas
-        function limparFiltrosFaltas() {
-            document.getElementById('filtro-nome-falta').value = '';
-            document.getElementById('filtro-departamento-falta').value = '';
-            document.getElementById('filtro-data-inicio-falta').value = '';
-            document.getElementById('filtro-data-fim-falta').value = '';
-            
-            faltasFiltroAtual = {
-                nome: '',
-                departamento: '',
-                dataInicio: '',
-                dataFim: ''
-            };
-            
-            if (unsubscribeListeners.faltas) {
-                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
-                const snapshot = unsubscribeListeners.faltas._snapshot;
-                if (snapshot) {
-                    const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    const filteredDocs = applyFaltasFilters(docs);
-                    updateTableFromSnapshot('faltas', snapshot);
-                    updateFaltasStats(filteredDocs);
-                }
-            }
-            
-            showAlert('Filtros limpos com sucesso!', 'success', 'faltas-alert');
-        }
-
-        // Aplicar filtros de danos
-        function aplicarFiltrosDanos() {
+        // Aplicar filtros de danos (automático)
+        function aplicarFiltrosDanosAutomatico() {
             danosFiltroAtual.nome = document.getElementById('filtro-nome-dano').value;
             danosFiltroAtual.departamento = document.getElementById('filtro-departamento-dano').value;
             danosFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio-dano').value;
@@ -4861,40 +4767,10 @@
                     updateDanosStats(filteredDocs);
                 }
             }
-            
-            showAlert('Filtros aplicados com sucesso!', 'success', 'danos-alert');
         }
 
-        // Limpar filtros de danos
-        function limparFiltrosDanos() {
-            document.getElementById('filtro-nome-dano').value = '';
-            document.getElementById('filtro-departamento-dano').value = '';
-            document.getElementById('filtro-data-inicio-dano').value = '';
-            document.getElementById('filtro-data-fim-dano').value = '';
-            
-            danosFiltroAtual = {
-                nome: '',
-                departamento: '',
-                dataInicio: '',
-                dataFim: ''
-            };
-            
-            if (unsubscribeListeners.danos) {
-                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'danos');
-                const snapshot = unsubscribeListeners.danos._snapshot;
-                if (snapshot) {
-                    const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    const filteredDocs = applyDanosFilters(docs);
-                    updateTableFromSnapshot('danos', snapshot);
-                    updateDanosStats(filteredDocs);
-                }
-            }
-            
-            showAlert('Filtros limpos com sucesso!', 'success', 'danos-alert');
-        }
-
-        // Aplicar filtros de feedbacks
-        function aplicarFiltrosFeedbacks() {
+        // Aplicar filtros de feedbacks (automático)
+        function aplicarFiltrosFeedbacksAutomatico() {
             feedbacksFiltroAtual.mes = document.getElementById('filtro-mes-feedback').value;
             feedbacksFiltroAtual.ano = document.getElementById('filtro-ano-feedback').value;
             feedbacksFiltroAtual.departamento = document.getElementById('filtro-departamento-feedback').value;
@@ -4906,35 +4782,10 @@
                     updateTableFromSnapshot('feedbacks', snapshot);
                 }
             }
-            
-            showAlert('Filtros aplicados com sucesso!', 'success', 'feedbacks-alert');
         }
 
-        // Limpar filtros de feedbacks
-        function limparFiltrosFeedbacks() {
-            document.getElementById('filtro-mes-feedback').value = '';
-            document.getElementById('filtro-ano-feedback').value = '';
-            document.getElementById('filtro-departamento-feedback').value = '';
-            
-            feedbacksFiltroAtual = {
-                mes: '',
-                ano: '',
-                departamento: ''
-            };
-            
-            if (unsubscribeListeners.feedbacks) {
-                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
-                const snapshot = unsubscribeListeners.feedbacks._snapshot;
-                if (snapshot) {
-                    updateTableFromSnapshot('feedbacks', snapshot);
-                }
-            }
-            
-            showAlert('Filtros limpos com sucesso!', 'success', 'feedbacks-alert');
-        }
-
-        // Aplicar filtros de multas
-        function aplicarFiltrosMultas() {
+        // Aplicar filtros de multas (automático)
+        function aplicarFiltrosMultasAutomatico() {
             multasFiltroAtual.nome = document.getElementById('filtro-nome-multa').value;
             multasFiltroAtual.departamento = document.getElementById('filtro-departamento-multa').value;
             multasFiltroAtual.status = document.getElementById('filtro-status-multa').value;
@@ -4950,111 +4801,6 @@
                     updateTableFromSnapshot('multas', snapshot);
                     updateMultasStats();
                 }
-            }
-            
-            showAlert('Filtros aplicados com sucesso!', 'success', 'multas-alert');
-        }
-
-        // Limpar filtros de multas
-        function limparFiltrosMultas() {
-            document.getElementById('filtro-nome-multa').value = '';
-            document.getElementById('filtro-departamento-multa').value = '';
-            document.getElementById('filtro-status-multa').value = '';
-            document.getElementById('filtro-placa-multa').value = '';
-            document.getElementById('filtro-ait-multa').value = '';
-            document.getElementById('filtro-data-inicio-multa').value = '';
-            document.getElementById('filtro-data-fim-multa').value = '';
-            
-            multasFiltroAtual = {
-                nome: '',
-                departamento: '',
-                status: '',
-                placa: '',
-                ait: '',
-                dataInicio: '',
-                dataFim: ''
-            };
-            
-            if (unsubscribeListeners.multas) {
-                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
-                const snapshot = unsubscribeListeners.multas._snapshot;
-                if (snapshot) {
-                    updateTableFromSnapshot('multas', snapshot);
-                    updateMultasStats();
-                }
-            }
-            
-            showAlert('Filtros limpos com sucesso!', 'success', 'multas-alert');
-        }
-
-        // Gerar relatório de multas
-        function gerarRelatorioMultas() {
-            try {
-                const filtros = {
-                    colaborador: multasFiltroAtual.nome || 'Todos',
-                    departamento: multasFiltroAtual.departamento || 'Todos',
-                    status: multasFiltroAtual.status || 'Todos',
-                    placa: multasFiltroAtual.placa || 'Todas',
-                    ait: multasFiltroAtual.ait || 'Todos',
-                    periodo: multasFiltroAtual.dataInicio || multasFiltroAtual.dataFim ? 
-                             `${multasFiltroAtual.dataInicio || 'Início'} até ${multasFiltroAtual.dataFim || 'Fim'}` : 'Todo período'
-                };
-                
-                let relatorio = 'RELATÓRIO DE MULTAS\n';
-                relatorio += '=====================\n\n';
-                relatorio += `Data: ${new Date().toLocaleDateString('pt-BR')}\n`;
-                relatorio += `Filtros: Colaborador: ${filtros.colaborador} | Departamento: ${filtros.departamento} | Status: ${filtros.status} | Placa: ${filtros.placa} | AIT: ${filtros.ait} | Período: ${filtros.periodo}\n\n`;
-                
-                const tableBody = document.getElementById('multas-table-body');
-                const rows = tableBody.querySelectorAll('tr');
-                
-                if (rows.length === 1 && rows[0].querySelector('td[colspan]')) {
-                    relatorio += 'Nenhum registro encontrado com os filtros aplicados.\n';
-                } else {
-                    relatorio += 'Registros:\n';
-                    relatorio += '----------\n\n';
-                    
-                    rows.forEach(row => {
-                        const cols = row.querySelectorAll('td');
-                        if (cols.length >= 11) {
-                            relatorio += `Colaborador: ${cols[0].textContent}\n`;
-                            relatorio += `Departamento: ${cols[1].textContent}\n`;
-                            relatorio += `Data/Hora: ${cols[2].textContent}\n`;
-                            relatorio += `Tipo: ${cols[3].textContent}\n`;
-                            relatorio += `Placa: ${cols[4].textContent}\n`;
-                            relatorio += `AIT: ${cols[5].textContent}\n`;
-                            relatorio += `Local: ${cols[6].textContent}\n`;
-                            relatorio += `Valor: ${cols[7].textContent}\n`;
-                            relatorio += `Status: ${cols[8].textContent}\n`;
-                            relatorio += `Data Limite: ${cols[9].textContent}\n`;
-                            relatorio += '---\n\n';
-                        }
-                    });
-                }
-                
-                const total = document.getElementById('stat-multas-total').textContent;
-                const valorTotal = document.getElementById('stat-valor-total').textContent;
-                
-                relatorio += '\nESTATÍSTICAS:\n';
-                relatorio += '==============\n';
-                relatorio += `Total de Multas: ${total}\n`;
-                relatorio += `Valor Total: ${valorTotal}\n`;
-                
-                const blob = new Blob([relatorio], { type: 'text/plain;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `relatorio_multas_${new Date().toISOString().split('T')[0]}.txt`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                showAlert('Relatório gerado com sucesso!', 'success', 'multas-alert');
-                
-            } catch (error) {
-                console.error(`Erro ao gerar relatório: ${error.message}`);
-                showAlert('Erro ao gerar relatório.', 'error', 'multas-alert');
             }
         }
 
@@ -5088,7 +4834,7 @@
                     document.getElementById('page-title').textContent = titles[targetSection] || 'Dashboard';
                     
                     // Fechar todos os filtros ao trocar de seção
-                    document.querySelectorAll('.filters-container').forEach(container => {
+                    document.querySelectorAll('.filters-container, .dashboard-filters-container').forEach(container => {
                         container.classList.remove('show');
                     });
                     
@@ -5229,38 +4975,53 @@
             document.getElementById('toggle-filters-danos').addEventListener('click', () => toggleFilters('danos'));
             document.getElementById('toggle-filters-feedbacks').addEventListener('click', () => toggleFilters('feedbacks'));
             document.getElementById('toggle-filters-multas').addEventListener('click', () => toggleFilters('multas'));
+            document.getElementById('toggle-filters-dashboard').addEventListener('click', () => toggleFilters('dashboard'));
 
             // Modal
             document.getElementById('close-modal').addEventListener('click', closeModal);
             document.getElementById('cancel-form').addEventListener('click', closeModal);
             document.getElementById('submit-form').addEventListener('click', handleFormSubmit);
             
-            // Filtros de colaboradores
-            document.getElementById('aplicar-filtros-colaboradores').addEventListener('click', aplicarFiltrosColaboradores);
-            document.getElementById('limpar-filtros-colaboradores').addEventListener('click', limparFiltrosColaboradores);
+            // FILTROS AUTOMÁTICOS - SEM BOTÕES DE CONFIRMAR
+            // Colaboradores
+            document.getElementById('filtro-status-colaborador').addEventListener('change', aplicarFiltrosColaboradoresAutomatico);
+            document.getElementById('filtro-nome-colaborador').addEventListener('input', aplicarFiltrosColaboradoresAutomatico);
+            document.getElementById('filtro-departamento-colaborador').addEventListener('change', aplicarFiltrosColaboradoresAutomatico);
+            document.getElementById('filtro-empresa-colaborador').addEventListener('change', aplicarFiltrosColaboradoresAutomatico);
             
-            // Filtros de advertências
-            document.getElementById('aplicar-filtros').addEventListener('click', aplicarFiltrosAdvertencias);
-            document.getElementById('limpar-filtros').addEventListener('click', limparFiltrosAdvertencias);
+            // Advertências
+            document.getElementById('filtro-nome').addEventListener('input', aplicarFiltrosAdvertenciasAutomatico);
+            document.getElementById('filtro-departamento').addEventListener('change', aplicarFiltrosAdvertenciasAutomatico);
+            document.getElementById('filtro-data-inicio').addEventListener('change', aplicarFiltrosAdvertenciasAutomatico);
+            document.getElementById('filtro-data-fim').addEventListener('change', aplicarFiltrosAdvertenciasAutomatico);
             
-            // Filtros de faltas
-            document.getElementById('aplicar-filtros-falta').addEventListener('click', aplicarFiltrosFaltas);
-            document.getElementById('limpar-filtros-falta').addEventListener('click', limparFiltrosFaltas);
+            // Faltas
+            document.getElementById('filtro-nome-falta').addEventListener('input', aplicarFiltrosFaltasAutomatico);
+            document.getElementById('filtro-departamento-falta').addEventListener('change', aplicarFiltrosFaltasAutomatico);
+            document.getElementById('filtro-data-inicio-falta').addEventListener('change', aplicarFiltrosFaltasAutomatico);
+            document.getElementById('filtro-data-fim-falta').addEventListener('change', aplicarFiltrosFaltasAutomatico);
             
-            // Filtros de danos
-            document.getElementById('aplicar-filtros-dano').addEventListener('click', aplicarFiltrosDanos);
-            document.getElementById('limpar-filtros-dano').addEventListener('click', limparFiltrosDanos);
+            // Danos
+            document.getElementById('filtro-nome-dano').addEventListener('input', aplicarFiltrosDanosAutomatico);
+            document.getElementById('filtro-departamento-dano').addEventListener('change', aplicarFiltrosDanosAutomatico);
+            document.getElementById('filtro-data-inicio-dano').addEventListener('change', aplicarFiltrosDanosAutomatico);
+            document.getElementById('filtro-data-fim-dano').addEventListener('change', aplicarFiltrosDanosAutomatico);
             
-            // Filtros de feedbacks
-            document.getElementById('aplicar-filtros-feedback').addEventListener('click', aplicarFiltrosFeedbacks);
-            document.getElementById('limpar-filtros-feedback').addEventListener('click', limparFiltrosFeedbacks);
+            // Feedbacks
+            document.getElementById('filtro-mes-feedback').addEventListener('change', aplicarFiltrosFeedbacksAutomatico);
+            document.getElementById('filtro-ano-feedback').addEventListener('change', aplicarFiltrosFeedbacksAutomatico);
+            document.getElementById('filtro-departamento-feedback').addEventListener('change', aplicarFiltrosFeedbacksAutomatico);
             
-            // Filtros de multas
-            document.getElementById('aplicar-filtros-multa').addEventListener('click', aplicarFiltrosMultas);
-            document.getElementById('limpar-filtros-multa').addEventListener('click', limparFiltrosMultas);
-            document.getElementById('gerar-relatorio-multas').addEventListener('click', gerarRelatorioMultas);
+            // Multas
+            document.getElementById('filtro-nome-multa').addEventListener('input', aplicarFiltrosMultasAutomatico);
+            document.getElementById('filtro-departamento-multa').addEventListener('change', aplicarFiltrosMultasAutomatico);
+            document.getElementById('filtro-status-multa').addEventListener('change', aplicarFiltrosMultasAutomatico);
+            document.getElementById('filtro-placa-multa').addEventListener('input', aplicarFiltrosMultasAutomatico);
+            document.getElementById('filtro-ait-multa').addEventListener('input', aplicarFiltrosMultasAutomatico);
+            document.getElementById('filtro-data-inicio-multa').addEventListener('change', aplicarFiltrosMultasAutomatico);
+            document.getElementById('filtro-data-fim-multa').addEventListener('change', aplicarFiltrosMultasAutomatico);
             
-            // Filtros automáticos do Dashboard com datas manuais
+            // Dashboard - Filtros automáticos
             document.getElementById('dashboard-filtro-departamento').addEventListener('change', function() {
                 dashboardFiltroAtual.departamento = this.value;
                 aplicarFiltrosDashboardAutomatico();
@@ -5271,11 +5032,14 @@
                 aplicarFiltrosDashboardAutomatico();
             });
             
-            document.getElementById('dashboard-aplicar-filtros-data').addEventListener('click', function() {
-                dashboardFiltroAtual.dataInicio = document.getElementById('dashboard-filtro-data-inicio').value;
-                dashboardFiltroAtual.dataFim = document.getElementById('dashboard-filtro-data-fim').value;
+            document.getElementById('dashboard-filtro-data-inicio').addEventListener('change', function() {
+                dashboardFiltroAtual.dataInicio = this.value;
                 aplicarFiltrosDashboardAutomatico();
-                showAlert('Filtros de data aplicados!', 'success', '');
+            });
+            
+            document.getElementById('dashboard-filtro-data-fim').addEventListener('change', function() {
+                dashboardFiltroAtual.dataFim = this.value;
+                aplicarFiltrosDashboardAutomatico();
             });
             
             document.getElementById('dashboard-limpar-filtros-data').addEventListener('click', function() {
