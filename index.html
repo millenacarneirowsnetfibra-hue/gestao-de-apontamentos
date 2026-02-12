@@ -564,6 +564,18 @@
             color: var(--secondary-color);
         }
 
+        .status-baixo {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .status-alto {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
         .action-buttons {
             display: flex;
             gap: 5px;
@@ -1185,7 +1197,7 @@
                     <div class="turnover-card">
                         <div class="stat-title">Taxa de Turnover Atual</div>
                         <div class="stat-value" id="turnover-taxa-atual">0,00%</div>
-                        <div class="stat-subtitle">Mês atual</div>
+                        <div class="stat-subtitle" id="turnover-status-atual">Mês atual</div>
                     </div>
                     
                     <div class="table-container">
@@ -1198,7 +1210,7 @@
                                     <th>Desligamentos</th>
                                     <th>Colaboradores Fim</th>
                                     <th>Taxa Turnover</th>
-                                    <th>Status</th>
+                                    <th>Classificação</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
@@ -1847,6 +1859,25 @@
         // Elementos DOM
         const firebaseStatus = document.getElementById('firebase-status');
 
+        // Função para classificar taxa de turnover
+        function classificarTurnover(taxa) {
+            const taxaNumerica = parseFloat(taxa) || 0;
+            
+            if (taxaNumerica < 5) {
+                return {
+                    texto: 'Baixo',
+                    classe: 'status-baixo',
+                    icone: 'fa-check-circle'
+                };
+            } else {
+                return {
+                    texto: 'Alto',
+                    classe: 'status-alto',
+                    icone: 'fa-exclamation-triangle'
+                };
+            }
+        }
+
         // Função para alternar visibilidade dos filtros
         window.toggleFilters = function(section) {
             const filtersContainer = document.getElementById(`filters-${section}`);
@@ -2168,9 +2199,14 @@
                     registroAtual.colaboradoresFim
                 );
                 
+                const classificacao = classificarTurnover(taxa);
+                
                 document.getElementById('turnover-taxa-atual').textContent = `${taxa}%`;
+                const statusElement = document.getElementById('turnover-status-atual');
+                statusElement.innerHTML = `Mês atual - <span style="display: inline-block; padding: 4px 12px; border-radius: 20px; background-color: ${classificacao.classe === 'status-baixo' ? 'rgba(39, 174, 96, 0.2)' : 'rgba(231, 76, 60, 0.2)'}; color: ${classificacao.classe === 'status-baixo' ? 'var(--success-color)' : 'var(--accent-color)'};">${classificacao.texto}</span>`;
             } else {
                 document.getElementById('turnover-taxa-atual').textContent = '0,00%';
+                document.getElementById('turnover-status-atual').innerHTML = 'Mês atual - Sem registro';
             }
         }
 
@@ -2840,6 +2876,8 @@
                         data.colaboradoresFim
                     );
                     
+                    const classificacao = classificarTurnover(taxa);
+                    
                     const mesAno = data.mesAno || '';
                     let mesAnoFormatado = mesAno;
                     if (mesAno.includes('-')) {
@@ -2861,7 +2899,7 @@
                         <td>${data.desligamentos || '0'}</td>
                         <td>${data.colaboradoresFim || '-'}</td>
                         <td><strong>${taxa}%</strong></td>
-                        <td>${status}</td>
+                        <td><span class="status ${classificacao.classe}"><i class="fas ${classificacao.icone}" style="margin-right: 5px;"></i>${classificacao.texto}</span></td>
                         <td>
                             <div class="action-buttons">
                                 <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
