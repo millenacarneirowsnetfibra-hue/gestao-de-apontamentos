@@ -1051,7 +1051,6 @@
                         <div class="card-value" id="total-multas">R$ 0,00</div>
                         <div class="card-change">Total geral</div>
                     </div>
-                    <!-- NOVO CARD: TAXA DE TURNOVER NO DASHBOARD -->
                     <div class="card card-turnover">
                         <div class="card-header">
                             <div class="card-title">Taxa de Turnover</div>
@@ -1204,6 +1203,35 @@
                         </button>
                     </div>
                     <div id="turnover-alert"></div>
+                    
+                    <!-- FILTRO DE MÊS/ANO PARA TURNOVER -->
+                    <div class="btn-filters">
+                        <button class="btn-toggle-filters" id="toggle-filters-turnover">
+                            <i class="fas fa-filter"></i> Pesquisar por Mês/Ano
+                        </button>
+                    </div>
+                    
+                    <div class="filters-container" id="filters-turnover">
+                        <div class="filters-header">
+                            <h4 class="filters-title"><i class="fas fa-calendar-alt"></i> Pesquisar Registro Específico</h4>
+                            <button class="close-filters-btn" onclick="closeFilters('turnover')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-mes-turnover">Mês/Ano</label>
+                                <input type="month" id="filtro-mes-turnover" class="filter-input" placeholder="Selecione o mês/ano">
+                                <small style="color: var(--gray-color);">Digite o mês e ano para filtrar</small>
+                            </div>
+                            <div class="filter-group" style="display: flex; align-items: flex-end;">
+                                <button class="btn btn-primary" id="btn-limpar-filtro-turnover" style="margin-right: 10px;">
+                                    <i class="fas fa-eraser"></i> Limpar
+                                </button>
+                                <span id="turnover-filtro-status" style="font-size: 0.9rem; color: var(--gray-color);"></span>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div class="turnover-card">
                         <div class="stat-title">Taxa de Turnover Atual</div>
@@ -1897,10 +1925,10 @@
             if (filtersContainer) {
                 filtersContainer.classList.toggle('show');
                 if (filtersContainer.classList.contains('show')) {
-                    toggleBtn.innerHTML = '<i class="fas fa-times"></i> Ocultar Filtros';
+                    toggleBtn.innerHTML = `<i class="fas fa-times"></i> ${section === 'turnover' ? 'Ocultar Pesquisa' : 'Ocultar Filtros'}`;
                     toggleBtn.classList.add('active');
                 } else {
-                    toggleBtn.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
+                    toggleBtn.innerHTML = `<i class="fas fa-filter"></i> ${section === 'turnover' ? 'Pesquisar por Mês/Ano' : 'Mostrar Filtros'}`;
                     toggleBtn.classList.remove('active');
                 }
             }
@@ -1914,7 +1942,7 @@
             if (filtersContainer) {
                 filtersContainer.classList.remove('show');
                 if (toggleBtn) {
-                    toggleBtn.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
+                    toggleBtn.innerHTML = `<i class="fas fa-filter"></i> ${section === 'turnover' ? 'Pesquisar por Mês/Ano' : 'Mostrar Filtros'}`;
                     toggleBtn.classList.remove('active');
                 }
             }
@@ -1985,10 +2013,8 @@
                         (snapshot) => {
                             console.log(`${section}: ${snapshot.size} documentos (tempo real)`);
                             
-                            // Atualizar cache primeiro
                             updateCache(section, snapshot);
                             
-                            // Depois atualizar a tabela com os filtros atuais
                             if (section === currentSection || section === 'colaboradores' || section === 'departamentos' || section === 'feedbacks' || section === 'turnover') {
                                 const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                                 
@@ -2016,15 +2042,15 @@
                                     updateMultasStats();
                                 } else if (section === 'turnover') {
                                     turnoverData = docs.sort((a, b) => b.mesAno.localeCompare(a.mesAno));
-                                    updateTableFromSnapshot(section, snapshot, turnoverData);
+                                    const filteredDocs = applyTurnoverFilters(docs);
+                                    updateTableFromSnapshot(section, snapshot, filteredDocs);
                                     updateTurnoverTaxaAtual();
-                                    updateDashboardTurnover(); // NOVA FUNÇÃO: Atualizar o card do dashboard
+                                    updateDashboardTurnover();
                                 } else {
                                     updateTableFromSnapshot(section, snapshot);
                                 }
                             }
                             
-                            // Atualizar dashboard
                             if (section === 'colaboradores' || section === 'advertencias' || section === 'faltas' || section === 'multas' || section === 'danos' || section === 'feedbacks' || section === 'turnover') {
                                 updateDashboardCounts();
                             }
@@ -2070,6 +2096,51 @@
             if (statusElement) {
                 statusElement.innerHTML = `<span class="status ${classificacao.classe}">${classificacao.texto}</span>`;
             }
+        }
+
+        // FILTRO DE TURNOVER - Variável de estado
+        let turnoverFiltroAtual = {
+            mesAno: ''
+        };
+
+        // Função para aplicar filtro de Turnover
+        function applyTurnoverFilters(docs) {
+            let filtered = [...docs];
+            
+            if (turnoverFiltroAtual.mesAno) {
+                filtered = filtered.filter(item => item.mesAno === turnoverFiltroAtual.mesAno);
+                
+                const statusElement = document.getElementById('turnover-filtro-status');
+                if (statusElement) {
+                    const [ano, mes] = turnoverFiltroAtual.mesAno.split('-');
+                    const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+                                  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                    const mesNome = meses[parseInt(mes) - 1] || mes;
+                    statusElement.innerHTML = `<i class="fas fa-filter"></i> Filtrando: ${mesNome}/${ano}`;
+                }
+            } else {
+                const statusElement = document.getElementById('turnover-filtro-status');
+                if (statusElement) statusElement.innerHTML = '';
+            }
+            
+            return filtered;
+        }
+
+        // Função para aplicar filtro de Turnover automaticamente
+        function aplicarFiltrosTurnoverAutomatico() {
+            turnoverFiltroAtual.mesAno = document.getElementById('filtro-mes-turnover').value;
+            loadTableData('turnover');
+        }
+
+        // Função para limpar filtro de Turnover
+        function limparFiltroTurnover() {
+            const filtroInput = document.getElementById('filtro-mes-turnover');
+            if (filtroInput) filtroInput.value = '';
+            turnoverFiltroAtual.mesAno = '';
+            loadTableData('turnover');
+            
+            const statusElement = document.getElementById('turnover-filtro-status');
+            if (statusElement) statusElement.innerHTML = '';
         }
 
         // Atualizar opções dos filtros de multas
@@ -2172,9 +2243,8 @@
                 updateFeedbackSelects();
                 updateMultasFilterOptions();
                 updateTurnoverTaxaAtual();
-                updateDashboardTurnover(); // NOVA FUNÇÃO: Atualizar o card do dashboard
+                updateDashboardTurnover();
                 
-                // Carregar feedbacks sem filtros para mostrar total geral
                 const feedbacksRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
                 const feedbacksSnapshot = await firebaseApp.firestore.getDocs(feedbacksRef);
                 const feedbacksDocs = feedbacksSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -2351,7 +2421,6 @@
                 
                 document.getElementById('total-multas').textContent = `R$ ${totalMultas.toFixed(2)}`;
                 
-                // NOVA FUNÇÃO: Atualizar o card de turnover do dashboard
                 updateDashboardTurnover();
                 
                 await updateTop5Advertencias();
@@ -2700,7 +2769,7 @@
             }
         }
 
-        // Atualizar Top 5 - Multas (CORRIGIDO: por quantidade, não por valor)
+        // Atualizar Top 5 - Multas
         async function updateTop5Multas() {
             try {
                 const multasRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
@@ -2712,7 +2781,6 @@
                 
                 multas.forEach(multa => {
                     if (multa.colaborador) {
-                        // Contar por quantidade, não por valor
                         colaboradoresCount[multa.colaborador] = (colaboradoresCount[multa.colaborador] || 0) + 1;
                         
                         const colaboradorInfo = colaboradoresData.find(c => c.nome === multa.colaborador);
@@ -2838,9 +2906,10 @@
                     updateMultasStats();
                 } else if (section === 'turnover') {
                     turnoverData = docs.sort((a, b) => b.mesAno.localeCompare(a.mesAno));
-                    updateTableFromSnapshot(section, snapshot, turnoverData);
+                    const filteredDocs = applyTurnoverFilters(docs);
+                    updateTableFromSnapshot(section, snapshot, filteredDocs);
                     updateTurnoverTaxaAtual();
-                    updateDashboardTurnover(); // NOVA FUNÇÃO: Atualizar o card do dashboard
+                    updateDashboardTurnover();
                 } else {
                     updateTableFromSnapshot(section, snapshot);
                 }
@@ -4747,7 +4816,7 @@
                     if (currentSection === 'turnover') {
                         await loadTableData('turnover');
                         updateTurnoverTaxaAtual();
-                        updateDashboardTurnover(); // NOVA FUNÇÃO: Atualizar o card do dashboard
+                        updateDashboardTurnover();
                     }
                 } else {
                     showAlert('Erro ao salvar. Verifique o console (F12).', 'error', `${currentSection}-alert`);
@@ -4853,7 +4922,11 @@
                     });
                     
                     document.querySelectorAll('.btn-toggle-filters').forEach(btn => {
-                        btn.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
+                        if (btn.id.includes('turnover')) {
+                            btn.innerHTML = '<i class="fas fa-filter"></i> Pesquisar por Mês/Ano';
+                        } else {
+                            btn.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
+                        }
                         btn.classList.remove('active');
                     });
                     
@@ -4952,7 +5025,7 @@
                     if (targetSection === 'turnover') {
                         loadTableData('turnover');
                         updateTurnoverTaxaAtual();
-                        updateDashboardTurnover(); // NOVA FUNÇÃO: Atualizar o card do dashboard
+                        updateDashboardTurnover();
                     }
                 });
             });
@@ -4974,6 +5047,7 @@
             document.getElementById('toggle-filters-danos').addEventListener('click', () => toggleFilters('danos'));
             document.getElementById('toggle-filters-feedbacks').addEventListener('click', () => toggleFilters('feedbacks'));
             document.getElementById('toggle-filters-multas').addEventListener('click', () => toggleFilters('multas'));
+            document.getElementById('toggle-filters-turnover').addEventListener('click', () => toggleFilters('turnover'));
 
             document.getElementById('close-modal').addEventListener('click', closeModal);
             document.getElementById('cancel-form').addEventListener('click', closeModal);
@@ -5009,6 +5083,10 @@
             document.getElementById('filtro-ait-multa').addEventListener('input', aplicarFiltrosMultasAutomatico);
             document.getElementById('filtro-data-inicio-multa').addEventListener('change', aplicarFiltrosMultasAutomatico);
             document.getElementById('filtro-data-fim-multa').addEventListener('change', aplicarFiltrosMultasAutomatico);
+            
+            document.getElementById('filtro-mes-turnover').addEventListener('change', aplicarFiltrosTurnoverAutomatico);
+            
+            document.getElementById('btn-limpar-filtro-turnover').addEventListener('click', limparFiltroTurnover);
             
             document.getElementById('modal').addEventListener('click', function(e) {
                 if (e.target === this) closeModal();
@@ -5056,7 +5134,7 @@
                     if (section === 'turnover') {
                         await loadTableData('turnover');
                         updateTurnoverTaxaAtual();
-                        updateDashboardTurnover(); // NOVA FUNÇÃO: Atualizar o card do dashboard
+                        updateDashboardTurnover();
                     }
                 }
             } catch (error) {
