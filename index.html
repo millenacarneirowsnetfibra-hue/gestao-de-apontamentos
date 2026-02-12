@@ -1051,6 +1051,17 @@
                         <div class="card-value" id="total-multas">R$ 0,00</div>
                         <div class="card-change">Total geral</div>
                     </div>
+                    <!-- NOVO CARD: TAXA DE TURNOVER NO DASHBOARD -->
+                    <div class="card card-turnover">
+                        <div class="card-header">
+                            <div class="card-title">Taxa de Turnover</div>
+                            <div class="card-icon" style="background-color: #9b59b6;">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                        <div class="card-value" id="dashboard-taxa-turnover">0,00%</div>
+                        <div class="card-change" id="dashboard-turnover-status"><span class="status status-baixo">Baixo</span></div>
+                    </div>
                 </div>
 
                 <div class="top5-grid">
@@ -2007,13 +2018,14 @@
                                     turnoverData = docs.sort((a, b) => b.mesAno.localeCompare(a.mesAno));
                                     updateTableFromSnapshot(section, snapshot, turnoverData);
                                     updateTurnoverTaxaAtual();
+                                    updateDashboardTurnover(); // NOVA FUNÇÃO: Atualizar o card do dashboard
                                 } else {
                                     updateTableFromSnapshot(section, snapshot);
                                 }
                             }
                             
                             // Atualizar dashboard
-                            if (section === 'colaboradores' || section === 'advertencias' || section === 'faltas' || section === 'multas' || section === 'danos' || section === 'feedbacks') {
+                            if (section === 'colaboradores' || section === 'advertencias' || section === 'faltas' || section === 'multas' || section === 'danos' || section === 'feedbacks' || section === 'turnover') {
                                 updateDashboardCounts();
                             }
                             
@@ -2032,6 +2044,32 @@
                     console.error(`Erro ao configurar listener ${section}: ${error.message}`);
                 }
             });
+        }
+
+        // NOVA FUNÇÃO: Atualizar card de turnover no dashboard
+        function updateDashboardTurnover() {
+            const hoje = new Date();
+            const mesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
+            
+            const registroAtual = turnoverData.find(r => r.mesAno === mesAtual);
+            let taxa = '0,00';
+            let classificacao = { texto: 'Sem registro', classe: 'status-warning' };
+            
+            if (registroAtual) {
+                taxa = registroAtual.taxaTurnover || calcularTaxaTurnover(
+                    registroAtual.colaboradoresInicio,
+                    registroAtual.admissoes,
+                    registroAtual.desligamentos,
+                    registroAtual.colaboradoresFim
+                );
+                classificacao = classificarTurnover(taxa);
+            }
+            
+            document.getElementById('dashboard-taxa-turnover').textContent = `${taxa}%`;
+            const statusElement = document.getElementById('dashboard-turnover-status');
+            if (statusElement) {
+                statusElement.innerHTML = `<span class="status ${classificacao.classe}">${classificacao.texto}</span>`;
+            }
         }
 
         // Atualizar opções dos filtros de multas
@@ -2134,6 +2172,7 @@
                 updateFeedbackSelects();
                 updateMultasFilterOptions();
                 updateTurnoverTaxaAtual();
+                updateDashboardTurnover(); // NOVA FUNÇÃO: Atualizar o card do dashboard
                 
                 // Carregar feedbacks sem filtros para mostrar total geral
                 const feedbacksRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
@@ -2311,6 +2350,9 @@
                 });
                 
                 document.getElementById('total-multas').textContent = `R$ ${totalMultas.toFixed(2)}`;
+                
+                // NOVA FUNÇÃO: Atualizar o card de turnover do dashboard
+                updateDashboardTurnover();
                 
                 await updateTop5Advertencias();
                 await updateTop5Danos();
@@ -2798,6 +2840,7 @@
                     turnoverData = docs.sort((a, b) => b.mesAno.localeCompare(a.mesAno));
                     updateTableFromSnapshot(section, snapshot, turnoverData);
                     updateTurnoverTaxaAtual();
+                    updateDashboardTurnover(); // NOVA FUNÇÃO: Atualizar o card do dashboard
                 } else {
                     updateTableFromSnapshot(section, snapshot);
                 }
@@ -4704,6 +4747,7 @@
                     if (currentSection === 'turnover') {
                         await loadTableData('turnover');
                         updateTurnoverTaxaAtual();
+                        updateDashboardTurnover(); // NOVA FUNÇÃO: Atualizar o card do dashboard
                     }
                 } else {
                     showAlert('Erro ao salvar. Verifique o console (F12).', 'error', `${currentSection}-alert`);
@@ -4908,6 +4952,7 @@
                     if (targetSection === 'turnover') {
                         loadTableData('turnover');
                         updateTurnoverTaxaAtual();
+                        updateDashboardTurnover(); // NOVA FUNÇÃO: Atualizar o card do dashboard
                     }
                 });
             });
@@ -5011,6 +5056,7 @@
                     if (section === 'turnover') {
                         await loadTableData('turnover');
                         updateTurnoverTaxaAtual();
+                        updateDashboardTurnover(); // NOVA FUNÇÃO: Atualizar o card do dashboard
                     }
                 }
             } catch (error) {
