@@ -72,6 +72,7 @@
             --card-falta: rgba(231, 76, 60, 0.15);
             --card-multa: rgba(52, 152, 219, 0.15);
             --card-colaborador: rgba(46, 204, 113, 0.15);
+            --card-turnover: rgba(155, 89, 182, 0.15);
         }
 
         * {
@@ -247,6 +248,11 @@
         .card-colaborador {
             background: linear-gradient(135deg, #e8f8f0, white);
             border-left-color: var(--success-color);
+        }
+
+        .card-turnover {
+            background: linear-gradient(135deg, #f4e8ff, white);
+            border-left-color: #9b59b6;
         }
 
         .card-header {
@@ -626,6 +632,11 @@
             border-color: var(--secondary-color);
         }
 
+        .form-control:read-only {
+            background-color: #f8f9fa;
+            color: var(--gray-color);
+        }
+
         textarea.form-control {
             min-height: 120px;
             resize: vertical;
@@ -785,40 +796,34 @@
             margin-top: 5px;
         }
 
-        .multas-stats-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
+        .turnover-card {
+            flex: 1;
+            min-width: 300px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            color: white;
             margin-bottom: 25px;
         }
 
-        .multa-stat-card {
-            flex: 1;
-            min-width: 200px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            color: white;
-        }
-
-        .multa-stat-card .stat-title {
+        .turnover-card .stat-title {
             color: rgba(255, 255, 255, 0.9);
         }
 
-        .multa-stat-card .stat-value {
+        .turnover-card .stat-value {
             color: white;
         }
 
-        .multa-stat-card .stat-subtitle {
+        .turnover-card .stat-subtitle {
             color: rgba(255, 255, 255, 0.8);
         }
 
-        .multa-stat-card.warning {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-
-        .multa-stat-card.success {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        .turnover-form {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid #eee;
         }
 
         .top5-grid {
@@ -891,119 +896,6 @@
             padding: 10px;
         }
 
-        .dashboard-filters-container {
-            background-color: #f8f9fa;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #eee;
-            display: none;
-        }
-
-        .dashboard-filters-container.show {
-            display: block;
-        }
-
-        .dashboard-filters-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            align-items: flex-end;
-        }
-
-        .dashboard-filter-group {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .dashboard-filter-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--dark-color);
-            font-size: 0.9rem;
-        }
-
-        .dashboard-filter-input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.9rem;
-            transition: border 0.3s ease;
-        }
-
-        .dashboard-filter-input:focus {
-            outline: none;
-            border-color: var(--secondary-color);
-        }
-
-        .danos-stats-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .danos-stat-card {
-            flex: 1;
-            min-width: 200px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            color: white;
-        }
-
-        .danos-stat-card .stat-title {
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .danos-stat-card .stat-value {
-            color: white;
-        }
-
-        .danos-stat-card .stat-subtitle {
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .faltas-stats-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .faltas-stat-card {
-            flex: 1;
-            min-width: 200px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            color: white;
-        }
-
-        .faltas-stat-card .stat-title {
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .faltas-stat-card .stat-value {
-            color: white;
-        }
-
-        .faltas-stat-card .stat-subtitle {
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .dashboard-filters-date-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #ddd;
-        }
-
         @media (max-width: 992px) {
             .container {
                 flex-direction: column;
@@ -1063,16 +955,8 @@
                 min-width: 100%;
             }
 
-            .stats-container, .multas-stats-container, .top5-grid, .danos-stats-container, .faltas-stats-container {
+            .stats-container {
                 flex-direction: column;
-            }
-
-            .dashboard-filters-row {
-                flex-direction: column;
-            }
-            
-            .dashboard-filter-group {
-                min-width: 100%;
             }
         }
     </style>
@@ -1088,6 +972,7 @@
             </div>
             <ul class="sidebar-menu">
                 <li><a href="#" class="active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="#" data-section="turnover"><i class="fas fa-chart-line"></i> Turnover</a></li>
                 <li><a href="#" data-section="empresas"><i class="fas fa-building"></i> Empresas</a></li>
                 <li><a href="#" data-section="departamentos"><i class="fas fa-sitemap"></i> Departamentos</a></li>
                 <li><a href="#" data-section="colaboradores"><i class="fas fa-user-tie"></i> Colaboradores</a></li>
@@ -1113,52 +998,6 @@
             </div>
 
             <div id="dashboard" class="section-content">
-                <div class="btn-filters">
-                    <button class="btn-toggle-filters" id="toggle-filters-dashboard">
-                        <i class="fas fa-filter"></i> Mostrar Filtros
-                    </button>
-                </div>
-                
-                <div class="dashboard-filters-container" id="filters-dashboard">
-                    <div class="filters-header">
-                        <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros do Dashboard</h4>
-                        <button class="close-filters-btn" onclick="closeFilters('dashboard')">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="dashboard-filters-row">
-                        <div class="dashboard-filter-group">
-                            <label for="dashboard-filtro-departamento"><i class="fas fa-sitemap"></i> Departamento</label>
-                            <select id="dashboard-filtro-departamento" class="dashboard-filter-input">
-                                <option value="">Todos os departamentos</option>
-                            </select>
-                        </div>
-                        <div class="dashboard-filter-group">
-                            <label for="dashboard-filtro-colaborador"><i class="fas fa-user"></i> Colaborador</label>
-                            <select id="dashboard-filtro-colaborador" class="dashboard-filter-input">
-                                <option value="">Todos os colaboradores</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="dashboard-filters-date-row">
-                        <div class="dashboard-filter-group">
-                            <label for="dashboard-filtro-data-inicio"><i class="fas fa-calendar"></i> Data Início</label>
-                            <input type="date" id="dashboard-filtro-data-inicio" class="dashboard-filter-input">
-                        </div>
-                        <div class="dashboard-filter-group">
-                            <label for="dashboard-filtro-data-fim"><i class="fas fa-calendar"></i> Data Fim</label>
-                            <input type="date" id="dashboard-filtro-data-fim" class="dashboard-filter-input">
-                        </div>
-                        <div class="dashboard-filter-group">
-                            <label>&nbsp;</label>
-                            <button class="btn btn-secondary" id="dashboard-limpar-filtros-data" style="width: 100%;">
-                                <i class="fas fa-times"></i> Limpar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="cards-container">
                     <div class="card card-colaborador">
                         <div class="card-header">
@@ -1178,7 +1017,7 @@
                             </div>
                         </div>
                         <div class="card-value" id="total-advertencias">0</div>
-                        <div class="card-change"><span id="advertencias-periodo">com filtros</span></div>
+                        <div class="card-change">Total geral</div>
                     </div>
                     <div class="card card-falta">
                         <div class="card-header">
@@ -1188,7 +1027,7 @@
                             </div>
                         </div>
                         <div class="card-value" id="total-faltas">0</div>
-                        <div class="card-change"><span id="faltas-periodo">com filtros</span></div>
+                        <div class="card-change">Total geral</div>
                     </div>
                     <div class="card card-multa">
                         <div class="card-header">
@@ -1198,7 +1037,7 @@
                             </div>
                         </div>
                         <div class="card-value" id="total-multas">R$ 0,00</div>
-                        <div class="card-change"><span id="multas-periodo">com filtros</span></div>
+                        <div class="card-change">Total geral</div>
                     </div>
                 </div>
 
@@ -1329,6 +1168,48 @@
                         <ul class="top5-list" id="top5-multas-setores">
                             <li class="top5-empty">Carregando...</li>
                         </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="turnover" class="section-content" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">📊 Gestão de Turnover</h3>
+                        <button class="btn btn-primary" id="add-turnover-btn">
+                            <i class="fas fa-plus"></i> Novo Registro de Turnover
+                        </button>
+                    </div>
+                    <div id="turnover-alert"></div>
+                    
+                    <div class="turnover-card">
+                        <div class="stat-title">Taxa de Turnover Atual</div>
+                        <div class="stat-value" id="turnover-taxa-atual">0,00%</div>
+                        <div class="stat-subtitle">Mês atual</div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Mês/Ano</th>
+                                    <th>Colaboradores Início</th>
+                                    <th>Admissões</th>
+                                    <th>Desligamentos</th>
+                                    <th>Colaboradores Fim</th>
+                                    <th>Taxa Turnover</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="turnover-table-body">
+                                <tr>
+                                    <td colspan="8" class="loading">
+                                        <div class="loading-spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -1603,16 +1484,16 @@
                         </div>
                     </div>
 
-                    <div class="danos-stats-container">
-                        <div class="danos-stat-card">
-                            <div class="stat-title">Valor Total Gastos</div>
-                            <div class="stat-value" id="stat-danos-valor-total">R$ 0,00</div>
-                            <div class="stat-subtitle">com filtros aplicados</div>
+                    <div class="danos-stats-container" style="display: flex; gap: 15px; margin-bottom: 25px;">
+                        <div class="danos-stat-card" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: var(--border-radius); padding: 20px; color: white;">
+                            <div class="stat-title" style="color: rgba(255, 255, 255, 0.9);">Valor Total Gastos</div>
+                            <div class="stat-value" style="color: white; font-size: 2rem; font-weight: 700;" id="stat-danos-valor-total">R$ 0,00</div>
+                            <div class="stat-subtitle" style="color: rgba(255, 255, 255, 0.8);">com filtros aplicados</div>
                         </div>
-                        <div class="danos-stat-card">
-                            <div class="stat-title">Total de Registros</div>
-                            <div class="stat-value" id="stat-danos-total">0</div>
-                            <div class="stat-subtitle">com filtros aplicados</div>
+                        <div class="danos-stat-card" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: var(--border-radius); padding: 20px; color: white;">
+                            <div class="stat-title" style="color: rgba(255, 255, 255, 0.9);">Total de Registros</div>
+                            <div class="stat-value" style="color: white; font-size: 2rem; font-weight: 700;" id="stat-danos-total">0</div>
+                            <div class="stat-subtitle" style="color: rgba(255, 255, 255, 0.8);">com filtros aplicados</div>
                         </div>
                     </div>
                     
@@ -1685,11 +1566,11 @@
                         </div>
                     </div>
 
-                    <div class="faltas-stats-container">
-                        <div class="faltas-stat-card">
-                            <div class="stat-title">Total de Faltas</div>
-                            <div class="stat-value" id="stat-faltas-total">0</div>
-                            <div class="stat-subtitle">com filtros aplicados</div>
+                    <div class="faltas-stats-container" style="display: flex; gap: 15px; margin-bottom: 25px;">
+                        <div class="faltas-stat-card" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: var(--border-radius); padding: 20px; color: white;">
+                            <div class="stat-title" style="color: rgba(255, 255, 255, 0.9);">Total de Faltas</div>
+                            <div class="stat-value" style="color: white; font-size: 2rem; font-weight: 700;" id="stat-faltas-total">0</div>
+                            <div class="stat-subtitle" style="color: rgba(255, 255, 255, 0.8);">com filtros aplicados</div>
                         </div>
                     </div>
                     
@@ -1872,16 +1753,16 @@
                         </div>
                     </div>
 
-                    <div class="multas-stats-container">
-                        <div class="multa-stat-card">
-                            <div class="stat-title">Total de Multas</div>
-                            <div class="stat-value" id="stat-multas-total">0</div>
-                            <div class="stat-subtitle">registros</div>
+                    <div class="multas-stats-container" style="display: flex; gap: 15px; margin-bottom: 25px;">
+                        <div class="multa-stat-card" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: var(--border-radius); padding: 20px; color: white;">
+                            <div class="stat-title" style="color: rgba(255, 255, 255, 0.9);">Total de Multas</div>
+                            <div class="stat-value" style="color: white; font-size: 2rem; font-weight: 700;" id="stat-multas-total">0</div>
+                            <div class="stat-subtitle" style="color: rgba(255, 255, 255, 0.8);">registros</div>
                         </div>
-                        <div class="multa-stat-card warning">
-                            <div class="stat-title">Valor Total</div>
-                            <div class="stat-value" id="stat-valor-total">R$ 0,00</div>
-                            <div class="stat-subtitle">total geral</div>
+                        <div class="multa-stat-card" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: var(--border-radius); padding: 20px; color: white;">
+                            <div class="stat-title" style="color: rgba(255, 255, 255, 0.9);">Valor Total</div>
+                            <div class="stat-value" style="color: white; font-size: 2rem; font-weight: 700;" id="stat-valor-total">R$ 0,00</div>
+                            <div class="stat-subtitle" style="color: rgba(255, 255, 255, 0.8);">total geral</div>
                         </div>
                     </div>
 
@@ -1945,7 +1826,8 @@
             faltas: 'faltas',
             feedbacks: 'feedbacks',
             tiposMulta: 'tiposMulta',
-            multas: 'multas'
+            multas: 'multas',
+            turnover: 'turnover'
         };
 
         // Cache de dados para selects
@@ -1953,6 +1835,7 @@
         let departamentosData = [];
         let colaboradoresData = [];
         let tiposMultaData = [];
+        let turnoverData = [];
 
         // Estado
         let currentSection = 'dashboard';
@@ -1960,58 +1843,6 @@
         let currentItemId = null;
         let currentCollection = null;
         let unsubscribeListeners = {};
-        
-        // Filtros do Dashboard
-        let dashboardFiltroAtual = {
-            departamento: '',
-            colaborador: '',
-            dataInicio: '',
-            dataFim: ''
-        };
-        
-        // Filtros das outras seções
-        let colaboradoresFiltroAtual = {
-            status: 'Ativo',
-            nome: '',
-            departamento: '',
-            empresa: ''
-        };
-        
-        let advertenciasFiltroAtual = {
-            nome: '',
-            departamento: '',
-            dataInicio: '',
-            dataFim: ''
-        };
-        
-        let faltasFiltroAtual = {
-            nome: '',
-            departamento: '',
-            dataInicio: '',
-            dataFim: ''
-        };
-        
-        let danosFiltroAtual = {
-            nome: '',
-            departamento: '',
-            dataInicio: '',
-            dataFim: ''
-        };
-        
-        let feedbacksFiltroAtual = {
-            mesAno: '',
-            departamento: ''
-        };
-        
-        let multasFiltroAtual = {
-            nome: '',
-            departamento: '',
-            status: '',
-            placa: '',
-            ait: '',
-            dataInicio: '',
-            dataFim: ''
-        };
 
         // Elementos DOM
         const firebaseStatus = document.getElementById('firebase-status');
@@ -2116,7 +1947,7 @@
                             updateCache(section, snapshot);
                             
                             // Depois atualizar a tabela com os filtros atuais
-                            if (section === currentSection || section === 'colaboradores' || section === 'departamentos' || section === 'feedbacks') {
+                            if (section === currentSection || section === 'colaboradores' || section === 'departamentos' || section === 'feedbacks' || section === 'turnover') {
                                 const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                                 
                                 if (section === 'colaboradores') {
@@ -2141,17 +1972,24 @@
                                     const filteredDocs = applyMultasFilters(docs);
                                     updateTableFromSnapshot(section, snapshot, filteredDocs);
                                     updateMultasStats();
+                                } else if (section === 'turnover') {
+                                    turnoverData = docs.sort((a, b) => b.mesAno.localeCompare(a.mesAno));
+                                    updateTableFromSnapshot(section, snapshot, turnoverData);
+                                    updateTurnoverTaxaAtual();
                                 } else {
                                     updateTableFromSnapshot(section, snapshot);
                                 }
                             }
                             
-                            // Atualizar dashboard e filtros
-                            updateDashboardCounts();
+                            // Atualizar dashboard
+                            if (section === 'colaboradores' || section === 'advertencias' || section === 'faltas' || section === 'multas' || section === 'danos' || section === 'feedbacks') {
+                                updateDashboardCounts();
+                            }
+                            
                             if (section === 'departamentos' || section === 'colaboradores' || section === 'feedbacks') {
                                 updateColaboradoresFilterOptions();
-                                updateDashboardFilters();
                                 updateFeedbackSelects();
+                                updateMultasFilterOptions();
                             }
                         },
                         (error) => {
@@ -2163,6 +2001,24 @@
                     console.error(`Erro ao configurar listener ${section}: ${error.message}`);
                 }
             });
+        }
+
+        // Atualizar opções dos filtros de multas
+        function updateMultasFilterOptions() {
+            const deptoFilter = document.getElementById('filtro-departamento-multa');
+            
+            if (deptoFilter) {
+                const valorAtual = deptoFilter.value;
+                deptoFilter.innerHTML = '<option value="">Todos os departamentos</option>';
+                const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
+                departamentosUnicos.sort().forEach(depto => {
+                    const option = document.createElement('option');
+                    option.value = depto;
+                    option.textContent = depto;
+                    deptoFilter.appendChild(option);
+                });
+                if (valorAtual) deptoFilter.value = valorAtual;
+            }
         }
 
         // Atualizar opções dos filtros de feedbacks
@@ -2215,41 +2071,6 @@
             }
         }
 
-        // Atualizar filtros do dashboard
-        function updateDashboardFilters() {
-            const deptoFilter = document.getElementById('dashboard-filtro-departamento');
-            const colaboradorFilter = document.getElementById('dashboard-filtro-colaborador');
-            
-            if (deptoFilter) {
-                const valorAtual = deptoFilter.value;
-                deptoFilter.innerHTML = '<option value="">Todos os departamentos</option>';
-                const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
-                departamentosUnicos.sort().forEach(depto => {
-                    const option = document.createElement('option');
-                    option.value = depto;
-                    option.textContent = depto;
-                    deptoFilter.appendChild(option);
-                });
-                if (valorAtual) deptoFilter.value = valorAtual;
-            }
-            
-            if (colaboradorFilter) {
-                const valorAtual = colaboradorFilter.value;
-                colaboradorFilter.innerHTML = '<option value="">Todos os colaboradores</option>';
-                const colaboradoresAtivos = colaboradoresData
-                    .filter(c => c.nome && c.status === 'Ativo')
-                    .map(c => c.nome)
-                    .sort();
-                colaboradoresAtivos.forEach(colab => {
-                    const option = document.createElement('option');
-                    option.value = colab;
-                    option.textContent = colab;
-                    colaboradorFilter.appendChild(option);
-                });
-                if (valorAtual) colaboradorFilter.value = valorAtual;
-            }
-        }
-
         // Atualizar cache
         function updateCache(section, snapshot) {
             const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -2262,6 +2083,8 @@
                 colaboradoresData = docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
             } else if (section === 'tiposMulta') {
                 tiposMultaData = docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+            } else if (section === 'turnover') {
+                turnoverData = docs.sort((a, b) => b.mesAno.localeCompare(a.mesAno));
             }
         }
 
@@ -2276,8 +2099,10 @@
                 
                 await updateDashboardCounts();
                 updateMultasStats();
-                updateDashboardFilters();
+                updateColaboradoresFilterOptions();
                 updateFeedbackSelects();
+                updateMultasFilterOptions();
+                updateTurnoverTaxaAtual();
                 
                 // Carregar feedbacks sem filtros para mostrar total geral
                 const feedbacksRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
@@ -2288,6 +2113,64 @@
                 console.log('✅ Dados iniciais carregados');
             } catch (error) {
                 console.error(`Erro ao carregar dados: ${error.message}`);
+            }
+        }
+
+        // Calcular taxa de turnover
+        function calcularTaxaTurnover(inicio, admissao, desligamento, fim) {
+            inicio = parseInt(inicio) || 0;
+            admissao = parseInt(admissao) || 0;
+            desligamento = parseInt(desligamento) || 0;
+            fim = parseInt(fim) || 0;
+            
+            if (inicio === 0 || fim === 0) return 0;
+            
+            const mediaColaboradores = (inicio + fim) / 2;
+            if (mediaColaboradores === 0) return 0;
+            
+            const taxa = (desligamento / mediaColaboradores) * 100;
+            return taxa.toFixed(2);
+        }
+
+        // Validar registro de turnover
+        function validarRegistroTurnover(formData) {
+            const inicio = parseInt(formData.colaboradoresInicio) || 0;
+            const admissao = parseInt(formData.admissoes) || 0;
+            const desligamento = parseInt(formData.desligamentos) || 0;
+            const fim = parseInt(formData.colaboradoresFim) || 0;
+            
+            if (inicio === 0 || fim === 0) {
+                return { valido: false, mensagem: 'Os campos Colaboradores Início e Fim devem ser preenchidos' };
+            }
+            
+            if (inicio + admissao - desligamento !== fim) {
+                return { 
+                    valido: false, 
+                    mensagem: `Os números não batem: Início (${inicio}) + Admissões (${admissao}) - Desligamentos (${desligamento}) deveria ser igual a Fim (${fim}), mas o resultado é ${inicio + admissao - desligamento}` 
+                };
+            }
+            
+            return { valido: true };
+        }
+
+        // Atualizar estatísticas de turnover
+        function updateTurnoverTaxaAtual() {
+            const hoje = new Date();
+            const mesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
+            
+            const registroAtual = turnoverData.find(r => r.mesAno === mesAtual);
+            
+            if (registroAtual) {
+                const taxa = registroAtual.taxaTurnover || calcularTaxaTurnover(
+                    registroAtual.colaboradoresInicio,
+                    registroAtual.admissoes,
+                    registroAtual.desligamentos,
+                    registroAtual.colaboradoresFim
+                );
+                
+                document.getElementById('turnover-taxa-atual').textContent = `${taxa}%`;
+            } else {
+                document.getElementById('turnover-taxa-atual').textContent = '0,00%';
             }
         }
 
@@ -2358,80 +2241,33 @@
             return diffDays > 0 ? diffDays : 1;
         }
 
-        // Aplicar filtros automáticos do dashboard
-        async function aplicarFiltrosDashboardAutomatico() {
-            updateDashboardCounts();
-        }
-
-        // Atualizar dashboard com filtros automáticos
+        // Atualizar dashboard
         async function updateDashboardCounts() {
             try {
                 const colaboradoresRef = firebaseApp.firestore.collection(firebaseApp.db, 'colaboradores');
                 const colaboradoresSnapshot = await firebaseApp.firestore.getDocs(colaboradoresRef);
                 document.getElementById('total-colaboradores').textContent = colaboradoresSnapshot.size;
                 
-                let filtroDepartamento = dashboardFiltroAtual.departamento;
-                let filtroColaborador = dashboardFiltroAtual.colaborador;
-                let dataInicio = dashboardFiltroAtual.dataInicio;
-                let dataFim = dashboardFiltroAtual.dataFim;
-                
                 const advertenciasRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
                 const advertenciasSnapshot = await firebaseApp.firestore.getDocs(advertenciasRef);
                 let advertenciasDocs = advertenciasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                advertenciasDocs = advertenciasDocs.filter(item => {
-                    if (filtroColaborador && item.colaborador !== filtroColaborador) return false;
-                    if (filtroDepartamento) {
-                        const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
-                        if (!colaboradorInfo || colaboradorInfo.departamento !== filtroDepartamento) return false;
-                    }
-                    if (dataInicio || dataFim) {
-                        return dataEstaNoIntervalo(item.data, dataInicio, dataFim);
-                    }
-                    return true;
-                });
-                
                 document.getElementById('total-advertencias').textContent = advertenciasDocs.length;
-                document.getElementById('advertencias-periodo').textContent = filtroDepartamento || filtroColaborador || dataInicio || dataFim ? 'com filtros' : 'total geral';
                 
                 const faltasRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
                 const faltasSnapshot = await firebaseApp.firestore.getDocs(faltasRef);
                 let faltasDocs = faltasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
                 let totalFaltas = 0;
-                faltasDocs = faltasDocs.filter(item => {
-                    if (filtroColaborador && item.colaborador !== filtroColaborador) return false;
-                    if (filtroDepartamento) {
-                        const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
-                        if (!colaboradorInfo || colaboradorInfo.departamento !== filtroDepartamento) return false;
-                    }
-                    if (dataInicio || dataFim) {
-                        const noIntervalo = dataEstaNoIntervalo(item.dataInicio, dataInicio, dataFim) || 
-                                           dataEstaNoIntervalo(item.dataFim, dataInicio, dataFim);
-                        if (!noIntervalo) return false;
-                    }
+                faltasDocs.forEach(item => {
                     totalFaltas += parseInt(item.quantidade) || 1;
-                    return true;
                 });
                 
                 document.getElementById('total-faltas').textContent = totalFaltas;
-                document.getElementById('faltas-periodo').textContent = filtroDepartamento || filtroColaborador || dataInicio || dataFim ? 'com filtros' : 'total geral';
                 
                 const multasRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
                 const multasSnapshot = await firebaseApp.firestore.getDocs(multasRef);
                 let multasDocs = multasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                multasDocs = multasDocs.filter(item => {
-                    if (filtroColaborador && item.colaborador !== filtroColaborador) return false;
-                    if (filtroDepartamento) {
-                        const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
-                        if (!colaboradorInfo || colaboradorInfo.departamento !== filtroDepartamento) return false;
-                    }
-                    if (dataInicio || dataFim) {
-                        return dataEstaNoIntervalo(item.data, dataInicio, dataFim);
-                    }
-                    return true;
-                });
                 
                 let totalMultas = 0;
                 multasDocs.forEach(multa => {
@@ -2439,7 +2275,6 @@
                 });
                 
                 document.getElementById('total-multas').textContent = `R$ ${totalMultas.toFixed(2)}`;
-                document.getElementById('multas-periodo').textContent = filtroDepartamento || filtroColaborador || dataInicio || dataFim ? 'com filtros' : 'total geral';
                 
                 await updateTop5Advertencias();
                 await updateTop5Danos();
@@ -2447,7 +2282,7 @@
                 await updateTop5Feedbacks();
                 await updateTop5Multas();
                 
-                console.log(`Dashboard atualizado com filtros automáticos`);
+                console.log(`Dashboard atualizado`);
             } catch (error) {
                 console.error(`Erro ao atualizar dashboard: ${error.message}`);
             }
@@ -2459,18 +2294,6 @@
                 const advertenciasRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
                 const snapshot = await firebaseApp.firestore.getDocs(advertenciasRef);
                 let advertencias = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                advertencias = advertencias.filter(item => {
-                    if (dashboardFiltroAtual.colaborador && item.colaborador !== dashboardFiltroAtual.colaborador) return false;
-                    if (dashboardFiltroAtual.departamento) {
-                        const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
-                        if (!colaboradorInfo || colaboradorInfo.departamento !== dashboardFiltroAtual.departamento) return false;
-                    }
-                    if (dashboardFiltroAtual.dataInicio || dashboardFiltroAtual.dataFim) {
-                        return dataEstaNoIntervalo(item.data, dashboardFiltroAtual.dataInicio, dashboardFiltroAtual.dataFim);
-                    }
-                    return true;
-                });
                 
                 const colaboradoresCount = {};
                 const setoresCount = {};
@@ -2493,7 +2316,7 @@
                 const topColaboradoresList = document.getElementById('top5-advertencias-colaboradores');
                 if (topColaboradoresList) {
                     if (topColaboradores.length === 0) {
-                        topColaboradoresList.innerHTML = '<li class="top5-empty">Nenhum registro no período</li>';
+                        topColaboradoresList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
                     } else {
                         topColaboradoresList.innerHTML = '';
                         topColaboradores.forEach(([nome, count], index) => {
@@ -2515,7 +2338,7 @@
                 const topSetoresList = document.getElementById('top5-advertencias-setores');
                 if (topSetoresList) {
                     if (topSetores.length === 0) {
-                        topSetoresList.innerHTML = '<li class="top5-empty">Nenhum registro no período</li>';
+                        topSetoresList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
                     } else {
                         topSetoresList.innerHTML = '';
                         topSetores.forEach(([setor, count], index) => {
@@ -2542,18 +2365,6 @@
                 const snapshot = await firebaseApp.firestore.getDocs(danosRef);
                 let danos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                danos = danos.filter(item => {
-                    if (dashboardFiltroAtual.colaborador && item.colaborador !== dashboardFiltroAtual.colaborador) return false;
-                    if (dashboardFiltroAtual.departamento) {
-                        const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
-                        if (!colaboradorInfo || colaboradorInfo.departamento !== dashboardFiltroAtual.departamento) return false;
-                    }
-                    if (dashboardFiltroAtual.dataInicio || dashboardFiltroAtual.dataFim) {
-                        return dataEstaNoIntervalo(item.data, dashboardFiltroAtual.dataInicio, dashboardFiltroAtual.dataFim);
-                    }
-                    return true;
-                });
-                
                 const colaboradoresCount = {};
                 const setoresCount = {};
                 
@@ -2575,7 +2386,7 @@
                 const topColaboradoresList = document.getElementById('top5-danos-colaboradores');
                 if (topColaboradoresList) {
                     if (topColaboradores.length === 0) {
-                        topColaboradoresList.innerHTML = '<li class="top5-empty">Nenhum registro no período</li>';
+                        topColaboradoresList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
                     } else {
                         topColaboradoresList.innerHTML = '';
                         topColaboradores.forEach(([nome, count], index) => {
@@ -2597,7 +2408,7 @@
                 const topSetoresList = document.getElementById('top5-danos-setores');
                 if (topSetoresList) {
                     if (topSetores.length === 0) {
-                        topSetoresList.innerHTML = '<li class="top5-empty">Nenhum registro no período</li>';
+                        topSetoresList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
                     } else {
                         topSetoresList.innerHTML = '';
                         topSetores.forEach(([setor, count], index) => {
@@ -2624,20 +2435,6 @@
                 const snapshot = await firebaseApp.firestore.getDocs(faltasRef);
                 let faltas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                faltas = faltas.filter(item => {
-                    if (dashboardFiltroAtual.colaborador && item.colaborador !== dashboardFiltroAtual.colaborador) return false;
-                    if (dashboardFiltroAtual.departamento) {
-                        const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
-                        if (!colaboradorInfo || colaboradorInfo.departamento !== dashboardFiltroAtual.departamento) return false;
-                    }
-                    if (dashboardFiltroAtual.dataInicio || dashboardFiltroAtual.dataFim) {
-                        const noIntervalo = dataEstaNoIntervalo(item.dataInicio, dashboardFiltroAtual.dataInicio, dashboardFiltroAtual.dataFim) ||
-                                          dataEstaNoIntervalo(item.dataFim, dashboardFiltroAtual.dataInicio, dashboardFiltroAtual.dataFim);
-                        if (!noIntervalo) return false;
-                    }
-                    return true;
-                });
-                
                 const colaboradoresCount = {};
                 const setoresCount = {};
                 
@@ -2660,7 +2457,7 @@
                 const topColaboradoresList = document.getElementById('top5-faltas-colaboradores');
                 if (topColaboradoresList) {
                     if (topColaboradores.length === 0) {
-                        topColaboradoresList.innerHTML = '<li class="top5-empty">Nenhum registro no período</li>';
+                        topColaboradoresList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
                     } else {
                         topColaboradoresList.innerHTML = '';
                         topColaboradores.forEach(([nome, count], index) => {
@@ -2682,7 +2479,7 @@
                 const topSetoresList = document.getElementById('top5-faltas-setores');
                 if (topSetoresList) {
                     if (topSetores.length === 0) {
-                        topSetoresList.innerHTML = '<li class="top5-empty">Nenhum registro no período</li>';
+                        topSetoresList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
                     } else {
                         topSetoresList.innerHTML = '';
                         topSetores.forEach(([setor, count], index) => {
@@ -2708,18 +2505,6 @@
                 const feedbacksRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
                 const snapshot = await firebaseApp.firestore.getDocs(feedbacksRef);
                 let feedbacks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                let dataInicio = dashboardFiltroAtual.dataInicio;
-                let dataFim = dashboardFiltroAtual.dataFim;
-                
-                if (dataInicio || dataFim) {
-                    feedbacks = feedbacks.filter(item => {
-                        if (!item.mesAno) return false;
-                        const [ano, mes] = item.mesAno.split('-');
-                        const data = new Date(parseInt(ano), parseInt(mes) - 1, 1);
-                        return dataEstaNoIntervalo(data.toISOString(), dataInicio, dataFim);
-                    });
-                }
                 
                 const deptTotal = {};
                 const deptPositivos = {};
@@ -2751,7 +2536,7 @@
                 const topTotalList = document.getElementById('top5-feedbacks-total');
                 if (topTotalList) {
                     if (topTotal.length === 0) {
-                        topTotalList.innerHTML = '<li class="top5-empty">Nenhum registro no período</li>';
+                        topTotalList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
                     } else {
                         topTotalList.innerHTML = '';
                         topTotal.forEach(([setor, count], index) => {
@@ -2773,7 +2558,7 @@
                 const topPositivosList = document.getElementById('top5-feedbacks-positivos');
                 if (topPositivosList) {
                     if (topPositivos.length === 0) {
-                        topPositivosList.innerHTML = '<li class="top5-empty">Nenhum registro no período</li>';
+                        topPositivosList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
                     } else {
                         topPositivosList.innerHTML = '';
                         topPositivos.forEach(([setor, count], index) => {
@@ -2795,7 +2580,7 @@
                 const topNeutrosList = document.getElementById('top5-feedbacks-neutros');
                 if (topNeutrosList) {
                     if (topNeutros.length === 0) {
-                        topNeutrosList.innerHTML = '<li class="top5-empty">Nenhum registro no período</li>';
+                        topNeutrosList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
                     } else {
                         topNeutrosList.innerHTML = '';
                         topNeutros.forEach(([setor, count], index) => {
@@ -2817,7 +2602,7 @@
                 const topMelhorarList = document.getElementById('top5-feedbacks-melhorar');
                 if (topMelhorarList) {
                     if (topMelhorar.length === 0) {
-                        topMelhorarList.innerHTML = '<li class="top5-empty">Nenhum registro no período</li>';
+                        topMelhorarList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
                     } else {
                         topMelhorarList.innerHTML = '';
                         topMelhorar.forEach(([setor, count], index) => {
@@ -2837,78 +2622,66 @@
             }
         }
 
-        // Atualizar Top 5 - Multas
+        // Atualizar Top 5 - Multas (CORRIGIDO: por quantidade, não por valor)
         async function updateTop5Multas() {
             try {
                 const multasRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
                 const snapshot = await firebaseApp.firestore.getDocs(multasRef);
                 let multas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
-                multas = multas.filter(item => {
-                    if (dashboardFiltroAtual.colaborador && item.colaborador !== dashboardFiltroAtual.colaborador) return false;
-                    if (dashboardFiltroAtual.departamento) {
-                        const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
-                        if (!colaboradorInfo || colaboradorInfo.departamento !== dashboardFiltroAtual.departamento) return false;
-                    }
-                    if (dashboardFiltroAtual.dataInicio || dashboardFiltroAtual.dataFim) {
-                        return dataEstaNoIntervalo(item.data, dashboardFiltroAtual.dataInicio, dashboardFiltroAtual.dataFim);
-                    }
-                    return true;
-                });
-                
-                const colaboradoresValor = {};
-                const setoresValor = {};
+                const colaboradoresCount = {};
+                const setoresCount = {};
                 
                 multas.forEach(multa => {
                     if (multa.colaborador) {
-                        const valor = parseFloat(multa.valor) || 0;
-                        colaboradoresValor[multa.colaborador] = (colaboradoresValor[multa.colaborador] || 0) + valor;
+                        // Contar por quantidade, não por valor
+                        colaboradoresCount[multa.colaborador] = (colaboradoresCount[multa.colaborador] || 0) + 1;
                         
                         const colaboradorInfo = colaboradoresData.find(c => c.nome === multa.colaborador);
                         if (colaboradorInfo && colaboradorInfo.departamento) {
-                            setoresValor[colaboradorInfo.departamento] = (setoresValor[colaboradorInfo.departamento] || 0) + valor;
+                            setoresCount[colaboradorInfo.departamento] = (setoresCount[colaboradorInfo.departamento] || 0) + 1;
                         }
                     }
                 });
                 
-                const topColaboradores = Object.entries(colaboradoresValor)
+                const topColaboradores = Object.entries(colaboradoresCount)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
                 
                 const topColaboradoresList = document.getElementById('top5-multas-colaboradores');
                 if (topColaboradoresList) {
                     if (topColaboradores.length === 0) {
-                        topColaboradoresList.innerHTML = '<li class="top5-empty">Nenhum registro no período</li>';
+                        topColaboradoresList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
                     } else {
                         topColaboradoresList.innerHTML = '';
-                        topColaboradores.forEach(([nome, valor], index) => {
+                        topColaboradores.forEach(([nome, count], index) => {
                             const li = document.createElement('li');
                             li.className = 'top5-item';
                             li.innerHTML = `
                                 <span class="top5-name">${index + 1}. ${nome}</span>
-                                <span class="top5-value">R$ ${valor.toFixed(2)}</span>
+                                <span class="top5-value">${count} multa(s)</span>
                             `;
                             topColaboradoresList.appendChild(li);
                         });
                     }
                 }
                 
-                const topSetores = Object.entries(setoresValor)
+                const topSetores = Object.entries(setoresCount)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 5);
                 
                 const topSetoresList = document.getElementById('top5-multas-setores');
                 if (topSetoresList) {
                     if (topSetores.length === 0) {
-                        topSetoresList.innerHTML = '<li class="top5-empty">Nenhum registro no período</li>';
+                        topSetoresList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
                     } else {
                         topSetoresList.innerHTML = '';
-                        topSetores.forEach(([setor, valor], index) => {
+                        topSetores.forEach(([setor, count], index) => {
                             const li = document.createElement('li');
                             li.className = 'top5-item';
                             li.innerHTML = `
                                 <span class="top5-name">${index + 1}. ${setor}</span>
-                                <span class="top5-value">R$ ${valor.toFixed(2)}</span>
+                                <span class="top5-value">${count} multa(s)</span>
                             `;
                             topSetoresList.appendChild(li);
                         });
@@ -2920,14 +2693,12 @@
             }
         }
 
-        // Atualizar estatísticas de multas (apenas total geral)
+        // Atualizar estatísticas de multas
         async function updateMultasStats() {
             try {
                 const multasRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
                 const snapshot = await firebaseApp.firestore.getDocs(multasRef);
                 let multas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                multas = applyMultasFilters(multas);
                 
                 let totalRegistros = multas.length;
                 let valorTotal = 0;
@@ -2987,6 +2758,10 @@
                     const filteredDocs = applyMultasFilters(docs);
                     updateTableFromSnapshot(section, snapshot, filteredDocs);
                     updateMultasStats();
+                } else if (section === 'turnover') {
+                    turnoverData = docs.sort((a, b) => b.mesAno.localeCompare(a.mesAno));
+                    updateTableFromSnapshot(section, snapshot, turnoverData);
+                    updateTurnoverTaxaAtual();
                 } else {
                     updateTableFromSnapshot(section, snapshot);
                 }
@@ -3050,12 +2825,55 @@
                     if (!b.mesAno) return -1;
                     return b.mesAno.localeCompare(a.mesAno);
                 });
+            } else if (section === 'turnover') {
+                docs.sort((a, b) => b.mesAno.localeCompare(a.mesAno));
             }
             
             docs.forEach((data) => {
                 const row = document.createElement('tr');
                 
-                if (section === 'empresas') {
+                if (section === 'turnover') {
+                    const taxa = data.taxaTurnover || calcularTaxaTurnover(
+                        data.colaboradoresInicio,
+                        data.admissoes,
+                        data.desligamentos,
+                        data.colaboradoresFim
+                    );
+                    
+                    const mesAno = data.mesAno || '';
+                    let mesAnoFormatado = mesAno;
+                    if (mesAno.includes('-')) {
+                        const [ano, mes] = mesAno.split('-');
+                        const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+                                      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                        const mesNome = meses[parseInt(mes) - 1] || mes;
+                        mesAnoFormatado = `${mesNome}/${ano}`;
+                    }
+                    
+                    const status = (data.colaboradoresInicio && data.colaboradoresFim) ? 
+                        '<span class="status status-active">Completo</span>' : 
+                        '<span class="status status-warning">Pendente</span>';
+                    
+                    row.innerHTML = `
+                        <td><strong>${mesAnoFormatado}</strong></td>
+                        <td>${data.colaboradoresInicio || '-'}</td>
+                        <td>${data.admissoes || '0'}</td>
+                        <td>${data.desligamentos || '0'}</td>
+                        <td>${data.colaboradoresFim || '-'}</td>
+                        <td><strong>${taxa}%</strong></td>
+                        <td>${status}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${data.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                } else if (section === 'empresas') {
                     row.innerHTML = `
                         <td><strong>${data.nome || 'Sem nome'}</strong></td>
                         <td>
@@ -3170,7 +2988,7 @@
                         </td>
                     `;
                 } else if (section === 'feedbacks') {
-                    const mesAno = data.mesAno || '01-2024';
+                    const mesAno = data.mesAno || '';
                     let mesAnoFormatado = mesAno;
                     if (mesAno.includes('-')) {
                         const [ano, mes] = mesAno.split('-');
@@ -3282,7 +3100,8 @@
                 faltas: 7,
                 feedbacks: 7,
                 tiposMulta: 2,
-                multas: 11
+                multas: 11,
+                turnover: 8
             };
             return columns[section] || 5;
         }
@@ -3328,7 +3147,6 @@
 
         // Função corrigida para atualizar estatísticas de feedbacks
         function updateFeedbackStats(feedbacks, isInitialLoad = false) {
-            // Se não houver feedbacks, mostrar 0
             if (!feedbacks || feedbacks.length === 0) {
                 document.getElementById('stat-positivos').textContent = '0';
                 document.getElementById('stat-neutros').textContent = '0';
@@ -3337,13 +3155,11 @@
                 return;
             }
             
-            // Aplicar filtros atuais aos feedbacks
             let filteredFeedbacks = [...feedbacks];
             let subtitleText = 'Total geral';
             
-            // Verificar se há filtros ativos
-            const temFiltroMes = feedbacksFiltroAtual.mesAno && feedbacksFiltroAtual.mesAno !== '';
-            const temFiltroDepartamento = feedbacksFiltroAtual.departamento && feedbacksFiltroAtual.departamento !== '';
+            const temFiltroMes = feedbacksFiltroAtual && feedbacksFiltroAtual.mesAno && feedbacksFiltroAtual.mesAno !== '';
+            const temFiltroDepartamento = feedbacksFiltroAtual && feedbacksFiltroAtual.departamento && feedbacksFiltroAtual.departamento !== '';
             
             if (temFiltroMes) {
                 filteredFeedbacks = filteredFeedbacks.filter(f => f.mesAno === feedbacksFiltroAtual.mesAno);
@@ -3359,7 +3175,6 @@
                 }
             }
             
-            // Se não houver filtros, mostrar todos os feedbacks (total geral)
             if (!temFiltroMes && !temFiltroDepartamento) {
                 filteredFeedbacks = feedbacks;
                 subtitleText = 'Total geral';
@@ -3381,7 +3196,6 @@
                 total += (p + n + m);
             });
             
-            // Atualizar os elementos do DOM
             const statPositivos = document.getElementById('stat-positivos');
             const statNeutros = document.getElementById('stat-neutros');
             const statMelhorar = document.getElementById('stat-melhorar');
@@ -3412,6 +3226,50 @@
             const mesNome = meses[parseInt(mes) - 1] || mes;
             return `${mesNome}/${ano}`;
         }
+
+        // Filtros
+        let colaboradoresFiltroAtual = {
+            status: 'Ativo',
+            nome: '',
+            departamento: '',
+            empresa: ''
+        };
+        
+        let advertenciasFiltroAtual = {
+            nome: '',
+            departamento: '',
+            dataInicio: '',
+            dataFim: ''
+        };
+        
+        let faltasFiltroAtual = {
+            nome: '',
+            departamento: '',
+            dataInicio: '',
+            dataFim: ''
+        };
+        
+        let danosFiltroAtual = {
+            nome: '',
+            departamento: '',
+            dataInicio: '',
+            dataFim: ''
+        };
+        
+        let feedbacksFiltroAtual = {
+            mesAno: '',
+            departamento: ''
+        };
+        
+        let multasFiltroAtual = {
+            nome: '',
+            departamento: '',
+            status: '',
+            placa: '',
+            ait: '',
+            dataInicio: '',
+            dataFim: ''
+        };
 
         function applyColaboradoresFilters(docs) {
             let filtered = [...docs];
@@ -3525,11 +3383,11 @@
         function applyFeedbacksFilters(docs) {
             let filtered = [...docs];
             
-            if (feedbacksFiltroAtual.mesAno) {
+            if (feedbacksFiltroAtual && feedbacksFiltroAtual.mesAno) {
                 filtered = filtered.filter(item => item.mesAno === feedbacksFiltroAtual.mesAno);
             }
             
-            if (feedbacksFiltroAtual.departamento) {
+            if (feedbacksFiltroAtual && feedbacksFiltroAtual.departamento) {
                 filtered = filtered.filter(item => item.departamento === feedbacksFiltroAtual.departamento);
             }
             
@@ -3580,6 +3438,7 @@
             return filtered;
         }
 
+        // Funções de carregamento de formulários
         function loadEmpresaForm(mode = 'add', id = null) {
             let formHTML = `
                 <div class="form-group" style="flex: 100%;">
@@ -4074,6 +3933,85 @@
             }
         }
 
+        function loadTurnoverForm(mode = 'add', id = null) {
+            const hoje = new Date();
+            const ano = hoje.getFullYear();
+            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+            const mesAnoAtual = `${ano}-${mes}`;
+            
+            let formHTML = `
+                <div class="form-row">
+                    <div class="form-group" style="flex: 100%;">
+                        <label for="mesAno">Mês/Ano *</label>
+                        <input type="month" id="mesAno" class="form-control" value="${mesAnoAtual}" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="colaboradoresInicio">Colaboradores no Início do Mês *</label>
+                        <input type="number" id="colaboradoresInicio" class="form-control" placeholder="0" min="0" required>
+                        <small style="color: var(--gray-color);">Total de colaboradores no primeiro dia do mês</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="admissoes">Admissões no Mês</label>
+                        <input type="number" id="admissoes" class="form-control" placeholder="0" min="0" value="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="desligamentos">Desligamentos no Mês</label>
+                        <input type="number" id="desligamentos" class="form-control" placeholder="0" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="colaboradoresFim">Colaboradores no Final do Mês *</label>
+                        <input type="number" id="colaboradoresFim" class="form-control" placeholder="0" min="0" required>
+                        <small style="color: var(--gray-color);">Total de colaboradores no último dia do mês</small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 100%;">
+                        <label for="taxaTurnover">Taxa de Turnover (Calculada Automaticamente)</label>
+                        <input type="text" id="taxaTurnover" class="form-control" readonly placeholder="0.00%">
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modal-form').innerHTML = formHTML;
+            
+            const colaboradoresInicio = document.getElementById('colaboradoresInicio');
+            const admissoes = document.getElementById('admissoes');
+            const desligamentos = document.getElementById('desligamentos');
+            const colaboradoresFim = document.getElementById('colaboradoresFim');
+            const taxaTurnover = document.getElementById('taxaTurnover');
+            
+            function calcularTaxa() {
+                const inicio = parseInt(colaboradoresInicio.value) || 0;
+                const fim = parseInt(colaboradoresFim.value) || 0;
+                
+                if (inicio > 0 && fim > 0) {
+                    const media = (inicio + fim) / 2;
+                    const deslig = parseInt(desligamentos.value) || 0;
+                    const taxa = (deslig / media) * 100;
+                    taxaTurnover.value = `${taxa.toFixed(2)}%`;
+                } else {
+                    taxaTurnover.value = '0.00%';
+                }
+            }
+            
+            colaboradoresInicio.addEventListener('input', calcularTaxa);
+            admissoes.addEventListener('input', calcularTaxa);
+            desligamentos.addEventListener('input', calcularTaxa);
+            colaboradoresFim.addEventListener('input', calcularTaxa);
+            
+            if (mode === 'edit' && id) {
+                fillFormWithData('turnover', id);
+                
+                setTimeout(() => {
+                    calcularTaxa();
+                }, 200);
+            }
+        }
+
         function populateSelectOptions() {
             const departamentoSelect = document.getElementById('departamento');
             const empresaSelect = document.getElementById('empresa');
@@ -4150,6 +4088,7 @@
             }
         }
 
+        // Funções de salvamento
         async function saveEmpresa(formData, mode, id) {
             try {
                 const collectionName = 'empresas';
@@ -4448,6 +4387,50 @@
             }
         }
 
+        async function saveTurnover(formData, mode, id) {
+            try {
+                const collectionName = 'turnover';
+                
+                const validacao = validarRegistroTurnover(formData);
+                if (!validacao.valido) {
+                    showAlert(validacao.mensagem, 'warning', 'turnover-alert');
+                    return false;
+                }
+                
+                const inicio = parseInt(formData.colaboradoresInicio) || 0;
+                const fim = parseInt(formData.colaboradoresFim) || 0;
+                const desligamento = parseInt(formData.desligamentos) || 0;
+                const media = (inicio + fim) / 2;
+                const taxa = media > 0 ? (desligamento / media) * 100 : 0;
+                
+                const turnoverData = {
+                    mesAno: formData.mesAno,
+                    colaboradoresInicio: inicio,
+                    admissoes: parseInt(formData.admissoes) || 0,
+                    desligamentos: desligamento,
+                    colaboradoresFim: fim,
+                    taxaTurnover: taxa.toFixed(2),
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                if (mode === 'add') {
+                    const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                    const docRef = await firebaseApp.firestore.addDoc(collectionRef, turnoverData);
+                    console.log(`✅ Turnover registrado com ID: ${docRef.id} - Taxa: ${taxa.toFixed(2)}%`);
+                    return true;
+                } else if (mode === 'edit' && id) {
+                    const docRef = firebaseApp.firestore.doc(firebaseApp.db, collectionName, id);
+                    await firebaseApp.firestore.updateDoc(docRef, turnoverData);
+                    console.log(`✅ Turnover atualizado: ${id} - Taxa: ${taxa.toFixed(2)}%`);
+                    return true;
+                }
+            } catch (error) {
+                console.error(`❌ Erro ao salvar turnover: ${error.message}`);
+                return false;
+            }
+        }
+
         function openModal(section, mode = 'add', id = null) {
             currentSection = section;
             currentAction = mode;
@@ -4463,7 +4446,8 @@
                 faltas: 'Falta',
                 feedbacks: 'Feedbacks',
                 tiposMulta: 'Tipo de Multa',
-                multas: 'Multa'
+                multas: 'Multa',
+                turnover: 'Turnover'
             };
             
             document.getElementById('modal-title').textContent = 
@@ -4487,6 +4471,8 @@
                 loadTipoMultaForm(mode, id);
             } else if (section === 'multas') {
                 loadMultaForm(mode, id);
+            } else if (section === 'turnover') {
+                loadTurnoverForm(mode, id);
             }
             
             document.getElementById('modal').style.display = 'flex';
@@ -4620,6 +4606,13 @@
                 }
             }
             
+            if (currentSection === 'turnover') {
+                if (!formData.mesAno) {
+                    alert('Por favor, selecione o mês/ano.');
+                    return;
+                }
+            }
+            
             try {
                 let success = false;
                 
@@ -4641,6 +4634,8 @@
                     success = await saveTipoMulta(formData, currentAction, currentItemId);
                 } else if (currentSection === 'multas') {
                     success = await saveMulta(formData, currentAction, currentItemId);
+                } else if (currentSection === 'turnover') {
+                    success = await saveTurnover(formData, currentAction, currentItemId);
                 }
                 
                 if (success) {
@@ -4667,6 +4662,10 @@
                         const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                         const filteredDocs = applyFeedbacksFilters(docs);
                         updateFeedbackStats(filteredDocs, false);
+                    }
+                    if (currentSection === 'turnover') {
+                        await loadTableData('turnover');
+                        updateTurnoverTaxaAtual();
                     }
                 } else {
                     showAlert('Erro ao salvar. Verifique o console (F12).', 'error', `${currentSection}-alert`);
@@ -4717,10 +4716,8 @@
             feedbacksFiltroAtual.mesAno = document.getElementById('filtro-mes-feedback').value;
             feedbacksFiltroAtual.departamento = document.getElementById('filtro-departamento-feedback').value;
             
-            // Recarregar os dados e atualizar os cards
             loadTableData('feedbacks');
             
-            // Atualizar os stats com os filtros aplicados
             setTimeout(async () => {
                 const feedbacksRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
                 const snapshot = await firebaseApp.firestore.getDocs(feedbacksRef);
@@ -4756,6 +4753,7 @@
                     
                     const titles = {
                         dashboard: 'Dashboard',
+                        turnover: 'Turnover',
                         empresas: 'Empresas',
                         departamentos: 'Departamentos',
                         colaboradores: 'Colaboradores',
@@ -4768,7 +4766,7 @@
                     };
                     document.getElementById('page-title').textContent = titles[targetSection] || 'Dashboard';
                     
-                    document.querySelectorAll('.filters-container, .dashboard-filters-container').forEach(container => {
+                    document.querySelectorAll('.filters-container').forEach(container => {
                         container.classList.remove('show');
                     });
                     
@@ -4839,10 +4837,8 @@
                             });
                         }
                         
-                        // Carregar feedbacks e mostrar total geral
                         loadTableData('feedbacks');
                         
-                        // Atualizar os stats com total geral
                         setTimeout(async () => {
                             const feedbacksRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
                             const snapshot = await firebaseApp.firestore.getDocs(feedbacksRef);
@@ -4870,6 +4866,11 @@
                     if (targetSection === 'tipos-multa') {
                         loadTableData('tiposMulta');
                     }
+                    
+                    if (targetSection === 'turnover') {
+                        loadTableData('turnover');
+                        updateTurnoverTaxaAtual();
+                    }
                 });
             });
 
@@ -4882,6 +4883,7 @@
             document.getElementById('add-feedback-btn').addEventListener('click', () => openModal('feedbacks', 'add'));
             document.getElementById('add-tipo-multa-btn').addEventListener('click', () => openModal('tiposMulta', 'add'));
             document.getElementById('add-multa-btn').addEventListener('click', () => openModal('multas', 'add'));
+            document.getElementById('add-turnover-btn').addEventListener('click', () => openModal('turnover', 'add'));
 
             document.getElementById('toggle-filters-colaboradores').addEventListener('click', () => toggleFilters('colaboradores'));
             document.getElementById('toggle-filters-advertencias').addEventListener('click', () => toggleFilters('advertencias'));
@@ -4889,7 +4891,6 @@
             document.getElementById('toggle-filters-danos').addEventListener('click', () => toggleFilters('danos'));
             document.getElementById('toggle-filters-feedbacks').addEventListener('click', () => toggleFilters('feedbacks'));
             document.getElementById('toggle-filters-multas').addEventListener('click', () => toggleFilters('multas'));
-            document.getElementById('toggle-filters-dashboard').addEventListener('click', () => toggleFilters('dashboard'));
 
             document.getElementById('close-modal').addEventListener('click', closeModal);
             document.getElementById('cancel-form').addEventListener('click', closeModal);
@@ -4926,35 +4927,6 @@
             document.getElementById('filtro-data-inicio-multa').addEventListener('change', aplicarFiltrosMultasAutomatico);
             document.getElementById('filtro-data-fim-multa').addEventListener('change', aplicarFiltrosMultasAutomatico);
             
-            document.getElementById('dashboard-filtro-departamento').addEventListener('change', function() {
-                dashboardFiltroAtual.departamento = this.value;
-                aplicarFiltrosDashboardAutomatico();
-            });
-            
-            document.getElementById('dashboard-filtro-colaborador').addEventListener('change', function() {
-                dashboardFiltroAtual.colaborador = this.value;
-                aplicarFiltrosDashboardAutomatico();
-            });
-            
-            document.getElementById('dashboard-filtro-data-inicio').addEventListener('change', function() {
-                dashboardFiltroAtual.dataInicio = this.value;
-                aplicarFiltrosDashboardAutomatico();
-            });
-            
-            document.getElementById('dashboard-filtro-data-fim').addEventListener('change', function() {
-                dashboardFiltroAtual.dataFim = this.value;
-                aplicarFiltrosDashboardAutomatico();
-            });
-            
-            document.getElementById('dashboard-limpar-filtros-data').addEventListener('click', function() {
-                document.getElementById('dashboard-filtro-data-inicio').value = '';
-                document.getElementById('dashboard-filtro-data-fim').value = '';
-                dashboardFiltroAtual.dataInicio = '';
-                dashboardFiltroAtual.dataFim = '';
-                aplicarFiltrosDashboardAutomatico();
-                showAlert('Filtros de data limpos!', 'success', '');
-            });
-            
             document.getElementById('modal').addEventListener('click', function(e) {
                 if (e.target === this) closeModal();
             });
@@ -4975,7 +4947,7 @@
                 console.log(`✅ ${section} excluído: ${id}`);
                 showAlert('Item excluído com sucesso!', 'success', `${section}-alert`);
                 
-                if (['colaboradores', 'advertencias', 'faltas', 'multas', 'feedbacks', 'danos', 'tiposMulta'].includes(section)) {
+                if (['colaboradores', 'advertencias', 'faltas', 'multas', 'feedbacks', 'danos', 'tiposMulta', 'turnover'].includes(section)) {
                     await updateDashboardCounts();
                     if (section === 'multas') {
                         await updateMultasStats();
@@ -4997,6 +4969,10 @@
                         const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                         const filteredDocs = applyFeedbacksFilters(docs);
                         updateFeedbackStats(filteredDocs, false);
+                    }
+                    if (section === 'turnover') {
+                        await loadTableData('turnover');
+                        updateTurnoverTaxaAtual();
                     }
                 }
             } catch (error) {
