@@ -6,6 +6,8 @@
     <title>Gestão de RH - Sistema Completo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <!-- Firebase 9 Modular -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -845,6 +847,8 @@
             border-radius: var(--border-radius);
             padding: 20px;
             box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
         }
 
         .top5-header {
@@ -867,8 +871,18 @@
             color: var(--primary-color);
         }
 
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+            margin: 10px 0;
+        }
+
         .top5-list {
             list-style: none;
+            margin-top: 10px;
+            max-height: 150px;
+            overflow-y: auto;
         }
 
         .top5-item {
@@ -877,6 +891,7 @@
             align-items: center;
             padding: 8px 0;
             border-bottom: 1px dashed #eee;
+            font-size: 0.9rem;
         }
 
         .top5-item:last-child {
@@ -885,6 +900,10 @@
 
         .top5-name {
             font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
         }
 
         .top5-value {
@@ -1102,39 +1121,23 @@
                     <div class="top5-card">
                         <div class="top5-header">
                             <i class="fas fa-exclamation-triangle" style="color: var(--warning-color);"></i>
-                            <div class="top5-title">Top 5 - Advertências por Colaborador</div>
-                        </div>
-                        <ul class="top5-list" id="top5-advertencias-colaboradores">
-                            <li class="top5-empty">Carregando...</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="top5-card">
-                        <div class="top5-header">
-                            <i class="fas fa-sitemap" style="color: var(--warning-color);"></i>
                             <div class="top5-title">Top 5 - Advertências por Setor</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart-advertencias-setores"></canvas>
                         </div>
                         <ul class="top5-list" id="top5-advertencias-setores">
                             <li class="top5-empty">Carregando...</li>
                         </ul>
                     </div>
-                </div>
-
-                <div class="top5-grid">
-                    <div class="top5-card">
-                        <div class="top5-header">
-                            <i class="fas fa-tools" style="color: #e67e22;"></i>
-                            <div class="top5-title">Top 5 - Danos/Avarias por Colaborador</div>
-                        </div>
-                        <ul class="top5-list" id="top5-danos-colaboradores">
-                            <li class="top5-empty">Carregando...</li>
-                        </ul>
-                    </div>
                     
                     <div class="top5-card">
                         <div class="top5-header">
-                            <i class="fas fa-sitemap" style="color: #e67e22;"></i>
+                            <i class="fas fa-tools" style="color: #e67e22;"></i>
                             <div class="top5-title">Top 5 - Danos/Avarias por Setor</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart-danos-setores"></canvas>
                         </div>
                         <ul class="top5-list" id="top5-danos-setores">
                             <li class="top5-empty">Carregando...</li>
@@ -1146,61 +1149,25 @@
                     <div class="top5-card">
                         <div class="top5-header">
                             <i class="fas fa-calendar-times" style="color: var(--accent-color);"></i>
-                            <div class="top5-title">Top 5 - Faltas por Colaborador</div>
-                        </div>
-                        <ul class="top5-list" id="top5-faltas-colaboradores">
-                            <li class="top5-empty">Carregando...</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="top5-card">
-                        <div class="top5-header">
-                            <i class="fas fa-sitemap" style="color: var(--accent-color);"></i>
                             <div class="top5-title">Top 5 - Faltas por Setor</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart-faltas-setores"></canvas>
                         </div>
                         <ul class="top5-list" id="top5-faltas-setores">
                             <li class="top5-empty">Carregando...</li>
                         </ul>
                     </div>
-                </div>
-
-                <div class="top5-grid">
+                    
                     <div class="top5-card">
                         <div class="top5-header">
                             <i class="fas fa-comment-dots" style="color: var(--success-color);"></i>
                             <div class="top5-title">Top 5 - Feedbacks Totais por Setor</div>
                         </div>
+                        <div class="chart-container">
+                            <canvas id="chart-feedbacks-total"></canvas>
+                        </div>
                         <ul class="top5-list" id="top5-feedbacks-total">
-                            <li class="top5-empty">Carregando...</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="top5-card">
-                        <div class="top5-header">
-                            <i class="fas fa-smile" style="color: var(--success-color);"></i>
-                            <div class="top5-title">Top 5 - Feedbacks Positivos por Setor</div>
-                        </div>
-                        <ul class="top5-list" id="top5-feedbacks-positivos">
-                            <li class="top5-empty">Carregando...</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="top5-card">
-                        <div class="top5-header">
-                            <i class="fas fa-meh" style="color: var(--orange-color);"></i>
-                            <div class="top5-title">Top 5 - Feedbacks Neutros por Setor</div>
-                        </div>
-                        <ul class="top5-list" id="top5-feedbacks-neutros">
-                            <li class="top5-empty">Carregando...</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="top5-card">
-                        <div class="top5-header">
-                            <i class="fas fa-frown" style="color: var(--red-color);"></i>
-                            <div class="top5-title">Top 5 - A Melhorar por Setor</div>
-                        </div>
-                        <ul class="top5-list" id="top5-feedbacks-melhorar">
                             <li class="top5-empty">Carregando...</li>
                         </ul>
                     </div>
@@ -1210,19 +1177,22 @@
                     <div class="top5-card">
                         <div class="top5-header">
                             <i class="fas fa-money-bill-wave" style="color: var(--secondary-color);"></i>
-                            <div class="top5-title">Top 5 - Multas por Colaborador</div>
+                            <div class="top5-title">Top 5 - Multas por Setor</div>
                         </div>
-                        <ul class="top5-list" id="top5-multas-colaboradores">
+                        <div class="chart-container">
+                            <canvas id="chart-multas-setores"></canvas>
+                        </div>
+                        <ul class="top5-list" id="top5-multas-setores">
                             <li class="top5-empty">Carregando...</li>
                         </ul>
                     </div>
                     
                     <div class="top5-card">
                         <div class="top5-header">
-                            <i class="fas fa-sitemap" style="color: var(--secondary-color);"></i>
-                            <div class="top5-title">Top 5 - Multas por Setor</div>
+                            <i class="fas fa-smile" style="color: var(--success-color);"></i>
+                            <div class="top5-title">Feedbacks Positivos por Setor</div>
                         </div>
-                        <ul class="top5-list" id="top5-multas-setores">
+                        <ul class="top5-list" id="top5-feedbacks-positivos">
                             <li class="top5-empty">Carregando...</li>
                         </ul>
                     </div>
@@ -1930,6 +1900,13 @@
         let currentCollection = null;
         let unsubscribeListeners = {};
 
+        // Referências dos gráficos
+        let chartAdvertenciasSetores = null;
+        let chartDanosSetores = null;
+        let chartFaltasSetores = null;
+        let chartFeedbacksTotal = null;
+        let chartMultasSetores = null;
+
         // Filtros do Dashboard
         let dashboardFiltros = {
             dataInicio: '',
@@ -2016,6 +1993,167 @@
             }
         }
 
+        // Função para atualizar os gráficos do dashboard
+        function updateDashboardCharts() {
+            setTimeout(async () => {
+                const advertencias = await buscarDadosFiltrados('advertencias', 'data');
+                const danos = await buscarDadosFiltrados('danos', 'data');
+                const faltas = await buscarDadosFiltrados('faltas', 'dataInicio');
+                const feedbacks = await buscarDadosFiltrados('feedbacks', 'mesAno');
+                const multas = await buscarDadosFiltrados('multas', 'data');
+                
+                // Advertências por Setor
+                const advertenciasSetor = {};
+                advertencias.forEach(adv => {
+                    const colaboradorInfo = colaboradoresData.find(c => c.nome === adv.colaborador);
+                    if (colaboradorInfo && colaboradorInfo.departamento) {
+                        advertenciasSetor[colaboradorInfo.departamento] = (advertenciasSetor[colaboradorInfo.departamento] || 0) + 1;
+                    }
+                });
+                
+                atualizarGraficoPizza('chart-advertencias-setores', advertenciasSetor, chartAdvertenciasSetores, (chart) => { chartAdvertenciasSetores = chart; });
+                
+                // Danos por Setor
+                const danosSetor = {};
+                danos.forEach(dano => {
+                    const colaboradorInfo = colaboradoresData.find(c => c.nome === dano.colaborador);
+                    if (colaboradorInfo && colaboradorInfo.departamento) {
+                        danosSetor[colaboradorInfo.departamento] = (danosSetor[colaboradorInfo.departamento] || 0) + 1;
+                    }
+                });
+                
+                atualizarGraficoPizza('chart-danos-setores', danosSetor, chartDanosSetores, (chart) => { chartDanosSetores = chart; });
+                
+                // Faltas por Setor
+                const faltasSetor = {};
+                faltas.forEach(falta => {
+                    const quantidade = parseInt(falta.quantidade) || 1;
+                    const colaboradorInfo = colaboradoresData.find(c => c.nome === falta.colaborador);
+                    if (colaboradorInfo && colaboradorInfo.departamento) {
+                        faltasSetor[colaboradorInfo.departamento] = (faltasSetor[colaboradorInfo.departamento] || 0) + quantidade;
+                    }
+                });
+                
+                atualizarGraficoPizza('chart-faltas-setores', faltasSetor, chartFaltasSetores, (chart) => { chartFaltasSetores = chart; });
+                
+                // Feedbacks Totais por Setor
+                const feedbacksTotal = {};
+                feedbacks.forEach(feedback => {
+                    if (feedback.departamento) {
+                        const total = (parseInt(feedback.positivos) || 0) + (parseInt(feedback.neutros) || 0) + (parseInt(feedback.melhorar) || 0);
+                        feedbacksTotal[feedback.departamento] = (feedbacksTotal[feedback.departamento] || 0) + total;
+                    }
+                });
+                
+                atualizarGraficoPizza('chart-feedbacks-total', feedbacksTotal, chartFeedbacksTotal, (chart) => { chartFeedbacksTotal = chart; });
+                
+                // Multas por Setor
+                const multasSetor = {};
+                multas.forEach(multa => {
+                    const colaboradorInfo = colaboradoresData.find(c => c.nome === multa.colaborador);
+                    if (colaboradorInfo && colaboradorInfo.departamento) {
+                        multasSetor[colaboradorInfo.departamento] = (multasSetor[colaboradorInfo.departamento] || 0) + 1;
+                    }
+                });
+                
+                atualizarGraficoPizza('chart-multas-setores', multasSetor, chartMultasSetores, (chart) => { chartMultasSetores = chart; });
+                
+                // Atualizar listas também
+                atualizarListaTop5('top5-advertencias-setores', advertenciasSetor);
+                atualizarListaTop5('top5-danos-setores', danosSetor);
+                atualizarListaTop5('top5-faltas-setores', faltasSetor);
+                atualizarListaTop5('top5-feedbacks-total', feedbacksTotal);
+                atualizarListaTop5('top5-multas-setores', multasSetor);
+                
+                // Feedbacks positivos
+                const feedbacksPositivos = {};
+                feedbacks.forEach(feedback => {
+                    if (feedback.departamento) {
+                        const positivos = parseInt(feedback.positivos) || 0;
+                        if (positivos > 0) {
+                            feedbacksPositivos[feedback.departamento] = (feedbacksPositivos[feedback.departamento] || 0) + positivos;
+                        }
+                    }
+                });
+                atualizarListaTop5('top5-feedbacks-positivos', feedbacksPositivos);
+                
+            } catch (error) {
+                console.error('Erro ao atualizar gráficos:', error);
+            }
+        }
+
+        // Função para atualizar gráfico de pizza
+        function atualizarGraficoPizza(canvasId, data, chartInstance, setChartInstance) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Destruir gráfico anterior se existir
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+            
+            const sorted = Object.entries(data)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+            
+            if (sorted.length === 0) {
+                setChartInstance(null);
+                return;
+            }
+            
+            const labels = sorted.map(item => item[0]);
+            const values = sorted.map(item => item[1]);
+            
+            // Cores para o gráfico
+            const colors = [
+                '#3498db', '#e74c3c', '#f39c12', '#2ecc71', '#9b59b6',
+                '#1abc9c', '#e67e22', '#34495e', '#7f8c8d', '#c0392b'
+            ];
+            
+            const newChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: colors.slice(0, labels.length),
+                        borderColor: 'white',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            setChartInstance(newChart);
+        }
+
         // Função para atualizar os cards do dashboard com os filtros aplicados
         async function updateDashboardWithFilters() {
             try {
@@ -2026,7 +2164,12 @@
                 
                 // Atualizar cards
                 document.getElementById('total-advertencias-dashboard').textContent = advertencias.length;
-                document.getElementById('total-faltas-dashboard').textContent = faltas.reduce((total, item) => total + (parseInt(item.quantidade) || 1), 0);
+                
+                let totalFaltas = 0;
+                faltas.forEach(falta => {
+                    totalFaltas += parseInt(falta.quantidade) || 1;
+                });
+                document.getElementById('total-faltas-dashboard').textContent = totalFaltas;
                 
                 let totalMultas = 0;
                 multas.forEach(multa => {
@@ -2055,8 +2198,23 @@
                 document.getElementById('faltas-periodo').textContent = periodoTexto;
                 document.getElementById('multas-periodo').textContent = periodoTexto;
                 
-                // Atualizar Top 5 com filtros
-                await updateTop5ComFiltros();
+                // Atualizar taxa de turnover
+                const hoje = new Date();
+                const mesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
+                const registroAtual = turnoverData.find(r => r.mesAno === mesAtual);
+                
+                if (registroAtual) {
+                    const taxa = registroAtual.taxaTurnover || 0;
+                    document.getElementById('dashboard-taxa-turnover').textContent = `${taxa}%`;
+                    const classificacao = classificarTurnover(taxa);
+                    document.getElementById('dashboard-turnover-status').innerHTML = `<span class="status ${classificacao.classe}">${classificacao.texto}</span>`;
+                } else {
+                    document.getElementById('dashboard-taxa-turnover').textContent = '0,00%';
+                    document.getElementById('dashboard-turnover-status').innerHTML = '<span class="status status-baixo">Baixo</span>';
+                }
+                
+                // Atualizar gráficos
+                updateDashboardCharts();
                 
             } catch (error) {
                 console.error('Erro ao atualizar dashboard:', error);
@@ -2107,114 +2265,6 @@
             }
         }
 
-        // Função para atualizar os Top 5 com filtros
-        async function updateTop5ComFiltros() {
-            try {
-                const advertencias = await buscarDadosFiltrados('advertencias', 'data');
-                const danos = await buscarDadosFiltrados('danos', 'data');
-                const faltas = await buscarDadosFiltrados('faltas', 'dataInicio');
-                const feedbacks = await buscarDadosFiltrados('feedbacks', 'mesAno');
-                const multas = await buscarDadosFiltrados('multas', 'data');
-                
-                // Advertências
-                const advertenciasColab = {};
-                const advertenciasSetor = {};
-                advertencias.forEach(adv => {
-                    if (adv.colaborador) {
-                        advertenciasColab[adv.colaborador] = (advertenciasColab[adv.colaborador] || 0) + 1;
-                        const colaboradorInfo = colaboradoresData.find(c => c.nome === adv.colaborador);
-                        if (colaboradorInfo && colaboradorInfo.departamento) {
-                            advertenciasSetor[colaboradorInfo.departamento] = (advertenciasSetor[colaboradorInfo.departamento] || 0) + 1;
-                        }
-                    }
-                });
-                
-                atualizarListaTop5('top5-advertencias-colaboradores', advertenciasColab);
-                atualizarListaTop5('top5-advertencias-setores', advertenciasSetor);
-                
-                // Danos
-                const danosColab = {};
-                const danosSetor = {};
-                danos.forEach(dano => {
-                    if (dano.colaborador) {
-                        danosColab[dano.colaborador] = (danosColab[dano.colaborador] || 0) + 1;
-                        const colaboradorInfo = colaboradoresData.find(c => c.nome === dano.colaborador);
-                        if (colaboradorInfo && colaboradorInfo.departamento) {
-                            danosSetor[colaboradorInfo.departamento] = (danosSetor[colaboradorInfo.departamento] || 0) + 1;
-                        }
-                    }
-                });
-                
-                atualizarListaTop5('top5-danos-colaboradores', danosColab);
-                atualizarListaTop5('top5-danos-setores', danosSetor);
-                
-                // Faltas
-                const faltasColab = {};
-                const faltasSetor = {};
-                faltas.forEach(falta => {
-                    if (falta.colaborador) {
-                        const quantidade = parseInt(falta.quantidade) || 1;
-                        faltasColab[falta.colaborador] = (faltasColab[falta.colaborador] || 0) + quantidade;
-                        const colaboradorInfo = colaboradoresData.find(c => c.nome === falta.colaborador);
-                        if (colaboradorInfo && colaboradorInfo.departamento) {
-                            faltasSetor[colaboradorInfo.departamento] = (faltasSetor[colaboradorInfo.departamento] || 0) + quantidade;
-                        }
-                    }
-                });
-                
-                atualizarListaTop5('top5-faltas-colaboradores', faltasColab);
-                atualizarListaTop5('top5-faltas-setores', faltasSetor);
-                
-                // Multas
-                const multasColab = {};
-                const multasSetor = {};
-                multas.forEach(multa => {
-                    if (multa.colaborador) {
-                        multasColab[multa.colaborador] = (multasColab[multa.colaborador] || 0) + 1;
-                        const colaboradorInfo = colaboradoresData.find(c => c.nome === multa.colaborador);
-                        if (colaboradorInfo && colaboradorInfo.departamento) {
-                            multasSetor[colaboradorInfo.departamento] = (multasSetor[colaboradorInfo.departamento] || 0) + 1;
-                        }
-                    }
-                });
-                
-                atualizarListaTop5('top5-multas-colaboradores', multasColab);
-                atualizarListaTop5('top5-multas-setores', multasSetor);
-                
-                // Feedbacks (não dependem de filtros de data)
-                const deptTotal = {};
-                const deptPositivos = {};
-                const deptNeutros = {};
-                const deptMelhorar = {};
-                
-                feedbacks.forEach(feedback => {
-                    if (feedback.departamento) {
-                        deptTotal[feedback.departamento] = (deptTotal[feedback.departamento] || 0) + 
-                            (parseInt(feedback.positivos) || 0) + 
-                            (parseInt(feedback.neutros) || 0) + 
-                            (parseInt(feedback.melhorar) || 0);
-                        
-                        deptPositivos[feedback.departamento] = (deptPositivos[feedback.departamento] || 0) + 
-                            (parseInt(feedback.positivos) || 0);
-                        
-                        deptNeutros[feedback.departamento] = (deptNeutros[feedback.departamento] || 0) + 
-                            (parseInt(feedback.neutros) || 0);
-                        
-                        deptMelhorar[feedback.departamento] = (deptMelhorar[feedback.departamento] || 0) + 
-                            (parseInt(feedback.melhorar) || 0);
-                    }
-                });
-                
-                atualizarListaTop5('top5-feedbacks-total', deptTotal);
-                atualizarListaTop5('top5-feedbacks-positivos', deptPositivos);
-                atualizarListaTop5('top5-feedbacks-neutros', deptNeutros);
-                atualizarListaTop5('top5-feedbacks-melhorar', deptMelhorar);
-                
-            } catch (error) {
-                console.error('Erro ao atualizar Top 5:', error);
-            }
-        }
-
         // Função auxiliar para atualizar lista Top 5
         function atualizarListaTop5(elementId, data) {
             const listElement = document.getElementById(elementId);
@@ -2234,7 +2284,7 @@
                 const li = document.createElement('li');
                 li.className = 'top5-item';
                 li.innerHTML = `
-                    <span class="top5-name">${index + 1}. ${name}</span>
+                    <span class="top5-name" title="${name}">${index + 1}. ${name}</span>
                     <span class="top5-value">${value}</span>
                 `;
                 listElement.appendChild(li);
