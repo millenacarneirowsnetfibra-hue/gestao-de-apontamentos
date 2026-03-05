@@ -245,11 +245,6 @@
             border-left-color: var(--secondary-color);
         }
 
-        .card-colaborador {
-            background: linear-gradient(135deg, #e8f8f0, white);
-            border-left-color: var(--success-color);
-        }
-
         .card-turnover {
             background: linear-gradient(135deg, #f4e8ff, white);
             border-left-color: #9b59b6;
@@ -1010,17 +1005,57 @@
             </div>
 
             <div id="dashboard" class="section-content">
-                <div class="cards-container">
-                    <div class="card card-colaborador">
-                        <div class="card-header">
-                            <div class="card-title">Total de Colaboradores</div>
-                            <div class="card-icon" style="background-color: var(--success-color);">
-                                <i class="fas fa-users"></i>
-                            </div>
-                        </div>
-                        <div class="card-value" id="total-colaboradores">0</div>
-                        <div class="card-change positive"><i class="fas fa-sync"></i> Em tempo real</div>
+                <!-- FILTROS DO DASHBOARD -->
+                <div class="btn-filters">
+                    <button class="btn-toggle-filters" id="toggle-filters-dashboard">
+                        <i class="fas fa-filter"></i> Filtrar Dashboard
+                    </button>
+                </div>
+                
+                <div class="filters-container" id="filters-dashboard">
+                    <div class="filters-header">
+                        <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros do Dashboard</h4>
+                        <button class="close-filters-btn" onclick="closeFilters('dashboard')">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
+                    <div class="filters-row">
+                        <div class="filter-group">
+                            <label for="filtro-data-inicio-dashboard">Data Início</label>
+                            <input type="date" id="filtro-data-inicio-dashboard" class="filter-input">
+                        </div>
+                        <div class="filter-group">
+                            <label for="filtro-data-fim-dashboard">Data Fim</label>
+                            <input type="date" id="filtro-data-fim-dashboard" class="filter-input">
+                        </div>
+                    </div>
+                    <div class="filters-row">
+                        <div class="filter-group">
+                            <label for="filtro-departamento-dashboard">Departamento</label>
+                            <select id="filtro-departamento-dashboard" class="filter-input">
+                                <option value="">Todos os departamentos</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filtro-empresa-dashboard">Empresa</label>
+                            <select id="filtro-empresa-dashboard" class="filter-input">
+                                <option value="">Todas as empresas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filters-row">
+                        <div class="filter-group" style="display: flex; align-items: flex-end;">
+                            <button class="btn btn-primary" id="btn-aplicar-filtros-dashboard">
+                                <i class="fas fa-check"></i> Aplicar Filtros
+                            </button>
+                            <button class="btn btn-secondary" id="btn-limpar-filtros-dashboard" style="margin-left: 10px;">
+                                <i class="fas fa-eraser"></i> Limpar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cards-container">
                     <div class="card card-advertencia">
                         <div class="card-header">
                             <div class="card-title">Advertências</div>
@@ -1028,8 +1063,8 @@
                                 <i class="fas fa-exclamation-triangle"></i>
                             </div>
                         </div>
-                        <div class="card-value" id="total-advertencias">0</div>
-                        <div class="card-change">Total geral</div>
+                        <div class="card-value" id="total-advertencias-dashboard">0</div>
+                        <div class="card-change" id="advertencias-periodo">Período filtrado</div>
                     </div>
                     <div class="card card-falta">
                         <div class="card-header">
@@ -1038,8 +1073,8 @@
                                 <i class="fas fa-calendar-times"></i>
                             </div>
                         </div>
-                        <div class="card-value" id="total-faltas">0</div>
-                        <div class="card-change">Total geral</div>
+                        <div class="card-value" id="total-faltas-dashboard">0</div>
+                        <div class="card-change" id="faltas-periodo">Período filtrado</div>
                     </div>
                     <div class="card card-multa">
                         <div class="card-header">
@@ -1048,8 +1083,8 @@
                                 <i class="fas fa-money-bill-wave"></i>
                             </div>
                         </div>
-                        <div class="card-value" id="total-multas">R$ 0,00</div>
-                        <div class="card-change">Total geral</div>
+                        <div class="card-value" id="total-multas-dashboard">R$ 0,00</div>
+                        <div class="card-change" id="multas-periodo">Período filtrado</div>
                     </div>
                     <div class="card card-turnover">
                         <div class="card-header">
@@ -1895,6 +1930,14 @@
         let currentCollection = null;
         let unsubscribeListeners = {};
 
+        // Filtros do Dashboard
+        let dashboardFiltros = {
+            dataInicio: '',
+            dataFim: '',
+            departamento: '',
+            empresa: ''
+        };
+
         // Elementos DOM
         const firebaseStatus = document.getElementById('firebase-status');
 
@@ -1928,7 +1971,7 @@
                     toggleBtn.innerHTML = `<i class="fas fa-times"></i> ${section === 'turnover' ? 'Ocultar Pesquisa' : 'Ocultar Filtros'}`;
                     toggleBtn.classList.add('active');
                 } else {
-                    toggleBtn.innerHTML = `<i class="fas fa-filter"></i> ${section === 'turnover' ? 'Pesquisar por Mês/Ano' : 'Mostrar Filtros'}`;
+                    toggleBtn.innerHTML = `<i class="fas fa-filter"></i> ${section === 'turnover' ? 'Pesquisar por Mês/Ano' : (section === 'dashboard' ? 'Filtrar Dashboard' : 'Mostrar Filtros')}`;
                     toggleBtn.classList.remove('active');
                 }
             }
@@ -1942,7 +1985,7 @@
             if (filtersContainer) {
                 filtersContainer.classList.remove('show');
                 if (toggleBtn) {
-                    toggleBtn.innerHTML = `<i class="fas fa-filter"></i> ${section === 'turnover' ? 'Pesquisar por Mês/Ano' : 'Mostrar Filtros'}`;
+                    toggleBtn.innerHTML = `<i class="fas fa-filter"></i> ${section === 'turnover' ? 'Pesquisar por Mês/Ano' : (section === 'dashboard' ? 'Filtrar Dashboard' : 'Mostrar Filtros')}`;
                     toggleBtn.classList.remove('active');
                 }
             }
@@ -1973,6 +2016,231 @@
             }
         }
 
+        // Função para atualizar os cards do dashboard com os filtros aplicados
+        async function updateDashboardWithFilters() {
+            try {
+                // Buscar dados filtrados
+                const advertencias = await buscarDadosFiltrados('advertencias', 'data');
+                const faltas = await buscarDadosFiltrados('faltas', 'dataInicio');
+                const multas = await buscarDadosFiltrados('multas', 'data');
+                
+                // Atualizar cards
+                document.getElementById('total-advertencias-dashboard').textContent = advertencias.length;
+                document.getElementById('total-faltas-dashboard').textContent = faltas.reduce((total, item) => total + (parseInt(item.quantidade) || 1), 0);
+                
+                let totalMultas = 0;
+                multas.forEach(multa => {
+                    totalMultas += parseFloat(multa.valor) || 0;
+                });
+                document.getElementById('total-multas-dashboard').textContent = `R$ ${totalMultas.toFixed(2)}`;
+                
+                // Atualizar textos do período
+                let periodoTexto = 'Período filtrado';
+                if (dashboardFiltros.dataInicio && dashboardFiltros.dataFim) {
+                    periodoTexto = `${formatDateExactly(dashboardFiltros.dataInicio)} até ${formatDateExactly(dashboardFiltros.dataFim)}`;
+                } else if (dashboardFiltros.dataInicio) {
+                    periodoTexto = `A partir de ${formatDateExactly(dashboardFiltros.dataInicio)}`;
+                } else if (dashboardFiltros.dataFim) {
+                    periodoTexto = `Até ${formatDateExactly(dashboardFiltros.dataFim)}`;
+                }
+                
+                if (dashboardFiltros.departamento) {
+                    periodoTexto += ` - Depto: ${dashboardFiltros.departamento}`;
+                }
+                if (dashboardFiltros.empresa) {
+                    periodoTexto += ` - Empresa: ${dashboardFiltros.empresa}`;
+                }
+                
+                document.getElementById('advertencias-periodo').textContent = periodoTexto;
+                document.getElementById('faltas-periodo').textContent = periodoTexto;
+                document.getElementById('multas-periodo').textContent = periodoTexto;
+                
+                // Atualizar Top 5 com filtros
+                await updateTop5ComFiltros();
+                
+            } catch (error) {
+                console.error('Erro ao atualizar dashboard:', error);
+            }
+        }
+
+        // Função para buscar dados filtrados
+        async function buscarDadosFiltrados(colecao, campoData) {
+            try {
+                const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, colecao);
+                const snapshot = await firebaseApp.firestore.getDocs(collectionRef);
+                let docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                // Filtrar por período
+                if (dashboardFiltros.dataInicio || dashboardFiltros.dataFim) {
+                    docs = docs.filter(item => {
+                        const dataItem = item[campoData] || item.data || '';
+                        return dataEstaNoIntervalo(dataItem, dashboardFiltros.dataInicio, dashboardFiltros.dataFim);
+                    });
+                }
+                
+                // Filtrar por departamento
+                if (dashboardFiltros.departamento) {
+                    docs = docs.filter(item => {
+                        if (colecao === 'advertencias' || colecao === 'faltas' || colecao === 'multas' || colecao === 'danos') {
+                            const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
+                            return colaboradorInfo && colaboradorInfo.departamento === dashboardFiltros.departamento;
+                        }
+                        return true;
+                    });
+                }
+                
+                // Filtrar por empresa
+                if (dashboardFiltros.empresa) {
+                    docs = docs.filter(item => {
+                        if (colecao === 'advertencias' || colecao === 'faltas' || colecao === 'multas' || colecao === 'danos') {
+                            const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
+                            return colaboradorInfo && colaboradorInfo.empresa === dashboardFiltros.empresa;
+                        }
+                        return true;
+                    });
+                }
+                
+                return docs;
+            } catch (error) {
+                console.error(`Erro ao buscar ${colecao}:`, error);
+                return [];
+            }
+        }
+
+        // Função para atualizar os Top 5 com filtros
+        async function updateTop5ComFiltros() {
+            try {
+                const advertencias = await buscarDadosFiltrados('advertencias', 'data');
+                const danos = await buscarDadosFiltrados('danos', 'data');
+                const faltas = await buscarDadosFiltrados('faltas', 'dataInicio');
+                const feedbacks = await buscarDadosFiltrados('feedbacks', 'mesAno');
+                const multas = await buscarDadosFiltrados('multas', 'data');
+                
+                // Advertências
+                const advertenciasColab = {};
+                const advertenciasSetor = {};
+                advertencias.forEach(adv => {
+                    if (adv.colaborador) {
+                        advertenciasColab[adv.colaborador] = (advertenciasColab[adv.colaborador] || 0) + 1;
+                        const colaboradorInfo = colaboradoresData.find(c => c.nome === adv.colaborador);
+                        if (colaboradorInfo && colaboradorInfo.departamento) {
+                            advertenciasSetor[colaboradorInfo.departamento] = (advertenciasSetor[colaboradorInfo.departamento] || 0) + 1;
+                        }
+                    }
+                });
+                
+                atualizarListaTop5('top5-advertencias-colaboradores', advertenciasColab);
+                atualizarListaTop5('top5-advertencias-setores', advertenciasSetor);
+                
+                // Danos
+                const danosColab = {};
+                const danosSetor = {};
+                danos.forEach(dano => {
+                    if (dano.colaborador) {
+                        danosColab[dano.colaborador] = (danosColab[dano.colaborador] || 0) + 1;
+                        const colaboradorInfo = colaboradoresData.find(c => c.nome === dano.colaborador);
+                        if (colaboradorInfo && colaboradorInfo.departamento) {
+                            danosSetor[colaboradorInfo.departamento] = (danosSetor[colaboradorInfo.departamento] || 0) + 1;
+                        }
+                    }
+                });
+                
+                atualizarListaTop5('top5-danos-colaboradores', danosColab);
+                atualizarListaTop5('top5-danos-setores', danosSetor);
+                
+                // Faltas
+                const faltasColab = {};
+                const faltasSetor = {};
+                faltas.forEach(falta => {
+                    if (falta.colaborador) {
+                        const quantidade = parseInt(falta.quantidade) || 1;
+                        faltasColab[falta.colaborador] = (faltasColab[falta.colaborador] || 0) + quantidade;
+                        const colaboradorInfo = colaboradoresData.find(c => c.nome === falta.colaborador);
+                        if (colaboradorInfo && colaboradorInfo.departamento) {
+                            faltasSetor[colaboradorInfo.departamento] = (faltasSetor[colaboradorInfo.departamento] || 0) + quantidade;
+                        }
+                    }
+                });
+                
+                atualizarListaTop5('top5-faltas-colaboradores', faltasColab);
+                atualizarListaTop5('top5-faltas-setores', faltasSetor);
+                
+                // Multas
+                const multasColab = {};
+                const multasSetor = {};
+                multas.forEach(multa => {
+                    if (multa.colaborador) {
+                        multasColab[multa.colaborador] = (multasColab[multa.colaborador] || 0) + 1;
+                        const colaboradorInfo = colaboradoresData.find(c => c.nome === multa.colaborador);
+                        if (colaboradorInfo && colaboradorInfo.departamento) {
+                            multasSetor[colaboradorInfo.departamento] = (multasSetor[colaboradorInfo.departamento] || 0) + 1;
+                        }
+                    }
+                });
+                
+                atualizarListaTop5('top5-multas-colaboradores', multasColab);
+                atualizarListaTop5('top5-multas-setores', multasSetor);
+                
+                // Feedbacks (não dependem de filtros de data)
+                const deptTotal = {};
+                const deptPositivos = {};
+                const deptNeutros = {};
+                const deptMelhorar = {};
+                
+                feedbacks.forEach(feedback => {
+                    if (feedback.departamento) {
+                        deptTotal[feedback.departamento] = (deptTotal[feedback.departamento] || 0) + 
+                            (parseInt(feedback.positivos) || 0) + 
+                            (parseInt(feedback.neutros) || 0) + 
+                            (parseInt(feedback.melhorar) || 0);
+                        
+                        deptPositivos[feedback.departamento] = (deptPositivos[feedback.departamento] || 0) + 
+                            (parseInt(feedback.positivos) || 0);
+                        
+                        deptNeutros[feedback.departamento] = (deptNeutros[feedback.departamento] || 0) + 
+                            (parseInt(feedback.neutros) || 0);
+                        
+                        deptMelhorar[feedback.departamento] = (deptMelhorar[feedback.departamento] || 0) + 
+                            (parseInt(feedback.melhorar) || 0);
+                    }
+                });
+                
+                atualizarListaTop5('top5-feedbacks-total', deptTotal);
+                atualizarListaTop5('top5-feedbacks-positivos', deptPositivos);
+                atualizarListaTop5('top5-feedbacks-neutros', deptNeutros);
+                atualizarListaTop5('top5-feedbacks-melhorar', deptMelhorar);
+                
+            } catch (error) {
+                console.error('Erro ao atualizar Top 5:', error);
+            }
+        }
+
+        // Função auxiliar para atualizar lista Top 5
+        function atualizarListaTop5(elementId, data) {
+            const listElement = document.getElementById(elementId);
+            if (!listElement) return;
+            
+            const sorted = Object.entries(data)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+            
+            if (sorted.length === 0) {
+                listElement.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
+                return;
+            }
+            
+            listElement.innerHTML = '';
+            sorted.forEach(([name, value], index) => {
+                const li = document.createElement('li');
+                li.className = 'top5-item';
+                li.innerHTML = `
+                    <span class="top5-name">${index + 1}. ${name}</span>
+                    <span class="top5-value">${value}</span>
+                `;
+                listElement.appendChild(li);
+            });
+        }
+
         // Inicialização
         document.addEventListener('DOMContentLoaded', async function() {
             console.log('Aplicação iniciando...');
@@ -1994,6 +2262,11 @@
             setupEventListeners();
             await loadInitialData();
             setupRealtimeListeners();
+            
+            // Atualizar opções dos filtros do dashboard
+            setTimeout(() => {
+                updateDashboardFilterOptions();
+            }, 1000);
             
             console.log('✅ Aplicação inicializada com sucesso!');
         });
@@ -2045,20 +2318,20 @@
                                     const filteredDocs = applyTurnoverFilters(docs);
                                     updateTableFromSnapshot(section, snapshot, filteredDocs);
                                     updateTurnoverTaxaAtual();
-                                    updateDashboardTurnover();
                                 } else {
                                     updateTableFromSnapshot(section, snapshot);
                                 }
                             }
                             
                             if (section === 'colaboradores' || section === 'advertencias' || section === 'faltas' || section === 'multas' || section === 'danos' || section === 'feedbacks' || section === 'turnover') {
-                                updateDashboardCounts();
+                                updateDashboardWithFilters();
                             }
                             
                             if (section === 'departamentos' || section === 'colaboradores' || section === 'feedbacks') {
                                 updateColaboradoresFilterOptions();
                                 updateFeedbackSelects();
                                 updateMultasFilterOptions();
+                                updateDashboardFilterOptions();
                             }
                         },
                         (error) => {
@@ -2072,29 +2345,35 @@
             });
         }
 
-        // NOVA FUNÇÃO: Atualizar card de turnover no dashboard
-        function updateDashboardTurnover() {
-            const hoje = new Date();
-            const mesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
+        // Atualizar opções dos filtros do dashboard
+        function updateDashboardFilterOptions() {
+            const deptoFilter = document.getElementById('filtro-departamento-dashboard');
+            const empresaFilter = document.getElementById('filtro-empresa-dashboard');
             
-            const registroAtual = turnoverData.find(r => r.mesAno === mesAtual);
-            let taxa = '0,00';
-            let classificacao = { texto: 'Sem registro', classe: 'status-warning' };
-            
-            if (registroAtual) {
-                taxa = registroAtual.taxaTurnover || calcularTaxaTurnover(
-                    registroAtual.colaboradoresInicio,
-                    registroAtual.admissoes,
-                    registroAtual.desligamentos,
-                    registroAtual.colaboradoresFim
-                );
-                classificacao = classificarTurnover(taxa);
+            if (deptoFilter) {
+                const valorAtual = deptoFilter.value;
+                deptoFilter.innerHTML = '<option value="">Todos os departamentos</option>';
+                const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
+                departamentosUnicos.sort().forEach(depto => {
+                    const option = document.createElement('option');
+                    option.value = depto;
+                    option.textContent = depto;
+                    deptoFilter.appendChild(option);
+                });
+                if (valorAtual) deptoFilter.value = valorAtual;
             }
             
-            document.getElementById('dashboard-taxa-turnover').textContent = `${taxa}%`;
-            const statusElement = document.getElementById('dashboard-turnover-status');
-            if (statusElement) {
-                statusElement.innerHTML = `<span class="status ${classificacao.classe}">${classificacao.texto}</span>`;
+            if (empresaFilter) {
+                const valorAtual = empresaFilter.value;
+                empresaFilter.innerHTML = '<option value="">Todas as empresas</option>';
+                const empresasUnicas = [...new Set(empresasData.map(e => e.nome).filter(Boolean))];
+                empresasUnicas.sort().forEach(empresa => {
+                    const option = document.createElement('option');
+                    option.value = empresa;
+                    option.textContent = empresa;
+                    empresaFilter.appendChild(option);
+                });
+                if (valorAtual) empresaFilter.value = valorAtual;
             }
         }
 
@@ -2237,13 +2516,12 @@
                     await loadTableData(section);
                 }
                 
-                await updateDashboardCounts();
+                await updateDashboardWithFilters();
                 updateMultasStats();
                 updateColaboradoresFilterOptions();
                 updateFeedbackSelects();
                 updateMultasFilterOptions();
                 updateTurnoverTaxaAtual();
-                updateDashboardTurnover();
                 
                 const feedbacksRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
                 const feedbacksSnapshot = await firebaseApp.firestore.getDocs(feedbacksRef);
@@ -2386,459 +2664,6 @@
             return diffDays > 0 ? diffDays : 1;
         }
 
-        // Atualizar dashboard
-        async function updateDashboardCounts() {
-            try {
-                const colaboradoresRef = firebaseApp.firestore.collection(firebaseApp.db, 'colaboradores');
-                const colaboradoresSnapshot = await firebaseApp.firestore.getDocs(colaboradoresRef);
-                document.getElementById('total-colaboradores').textContent = colaboradoresSnapshot.size;
-                
-                const advertenciasRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
-                const advertenciasSnapshot = await firebaseApp.firestore.getDocs(advertenciasRef);
-                let advertenciasDocs = advertenciasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                document.getElementById('total-advertencias').textContent = advertenciasDocs.length;
-                
-                const faltasRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
-                const faltasSnapshot = await firebaseApp.firestore.getDocs(faltasRef);
-                let faltasDocs = faltasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                let totalFaltas = 0;
-                faltasDocs.forEach(item => {
-                    totalFaltas += parseInt(item.quantidade) || 1;
-                });
-                
-                document.getElementById('total-faltas').textContent = totalFaltas;
-                
-                const multasRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
-                const multasSnapshot = await firebaseApp.firestore.getDocs(multasRef);
-                let multasDocs = multasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                let totalMultas = 0;
-                multasDocs.forEach(multa => {
-                    totalMultas += parseFloat(multa.valor) || 0;
-                });
-                
-                document.getElementById('total-multas').textContent = `R$ ${totalMultas.toFixed(2)}`;
-                
-                updateDashboardTurnover();
-                
-                await updateTop5Advertencias();
-                await updateTop5Danos();
-                await updateTop5Faltas();
-                await updateTop5Feedbacks();
-                await updateTop5Multas();
-                
-                console.log(`Dashboard atualizado`);
-            } catch (error) {
-                console.error(`Erro ao atualizar dashboard: ${error.message}`);
-            }
-        }
-
-        // Atualizar Top 5 - Advertências
-        async function updateTop5Advertencias() {
-            try {
-                const advertenciasRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
-                const snapshot = await firebaseApp.firestore.getDocs(advertenciasRef);
-                let advertencias = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                const colaboradoresCount = {};
-                const setoresCount = {};
-                
-                advertencias.forEach(adv => {
-                    if (adv.colaborador) {
-                        colaboradoresCount[adv.colaborador] = (colaboradoresCount[adv.colaborador] || 0) + 1;
-                        
-                        const colaboradorInfo = colaboradoresData.find(c => c.nome === adv.colaborador);
-                        if (colaboradorInfo && colaboradorInfo.departamento) {
-                            setoresCount[colaboradorInfo.departamento] = (setoresCount[colaboradorInfo.departamento] || 0) + 1;
-                        }
-                    }
-                });
-                
-                const topColaboradores = Object.entries(colaboradoresCount)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 5);
-                
-                const topColaboradoresList = document.getElementById('top5-advertencias-colaboradores');
-                if (topColaboradoresList) {
-                    if (topColaboradores.length === 0) {
-                        topColaboradoresList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
-                    } else {
-                        topColaboradoresList.innerHTML = '';
-                        topColaboradores.forEach(([nome, count], index) => {
-                            const li = document.createElement('li');
-                            li.className = 'top5-item';
-                            li.innerHTML = `
-                                <span class="top5-name">${index + 1}. ${nome}</span>
-                                <span class="top5-value">${count}</span>
-                            `;
-                            topColaboradoresList.appendChild(li);
-                        });
-                    }
-                }
-                
-                const topSetores = Object.entries(setoresCount)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 5);
-                
-                const topSetoresList = document.getElementById('top5-advertencias-setores');
-                if (topSetoresList) {
-                    if (topSetores.length === 0) {
-                        topSetoresList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
-                    } else {
-                        topSetoresList.innerHTML = '';
-                        topSetores.forEach(([setor, count], index) => {
-                            const li = document.createElement('li');
-                            li.className = 'top5-item';
-                            li.innerHTML = `
-                                <span class="top5-name">${index + 1}. ${setor}</span>
-                                <span class="top5-value">${count}</span>
-                            `;
-                            topSetoresList.appendChild(li);
-                        });
-                    }
-                }
-                
-            } catch (error) {
-                console.error(`Erro ao atualizar Top 5 Advertências: ${error.message}`);
-            }
-        }
-
-        // Atualizar Top 5 - Danos e Avarias
-        async function updateTop5Danos() {
-            try {
-                const danosRef = firebaseApp.firestore.collection(firebaseApp.db, 'danos');
-                const snapshot = await firebaseApp.firestore.getDocs(danosRef);
-                let danos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                const colaboradoresCount = {};
-                const setoresCount = {};
-                
-                danos.forEach(dano => {
-                    if (dano.colaborador) {
-                        colaboradoresCount[dano.colaborador] = (colaboradoresCount[dano.colaborador] || 0) + 1;
-                        
-                        const colaboradorInfo = colaboradoresData.find(c => c.nome === dano.colaborador);
-                        if (colaboradorInfo && colaboradorInfo.departamento) {
-                            setoresCount[colaboradorInfo.departamento] = (setoresCount[colaboradorInfo.departamento] || 0) + 1;
-                        }
-                    }
-                });
-                
-                const topColaboradores = Object.entries(colaboradoresCount)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 5);
-                
-                const topColaboradoresList = document.getElementById('top5-danos-colaboradores');
-                if (topColaboradoresList) {
-                    if (topColaboradores.length === 0) {
-                        topColaboradoresList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
-                    } else {
-                        topColaboradoresList.innerHTML = '';
-                        topColaboradores.forEach(([nome, count], index) => {
-                            const li = document.createElement('li');
-                            li.className = 'top5-item';
-                            li.innerHTML = `
-                                <span class="top5-name">${index + 1}. ${nome}</span>
-                                <span class="top5-value">${count}</span>
-                            `;
-                            topColaboradoresList.appendChild(li);
-                        });
-                    }
-                }
-                
-                const topSetores = Object.entries(setoresCount)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 5);
-                
-                const topSetoresList = document.getElementById('top5-danos-setores');
-                if (topSetoresList) {
-                    if (topSetores.length === 0) {
-                        topSetoresList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
-                    } else {
-                        topSetoresList.innerHTML = '';
-                        topSetores.forEach(([setor, count], index) => {
-                            const li = document.createElement('li');
-                            li.className = 'top5-item';
-                            li.innerHTML = `
-                                <span class="top5-name">${index + 1}. ${setor}</span>
-                                <span class="top5-value">${count}</span>
-                            `;
-                            topSetoresList.appendChild(li);
-                        });
-                    }
-                }
-                
-            } catch (error) {
-                console.error(`Erro ao atualizar Top 5 Danos: ${error.message}`);
-            }
-        }
-
-        // Atualizar Top 5 - Faltas
-        async function updateTop5Faltas() {
-            try {
-                const faltasRef = firebaseApp.firestore.collection(firebaseApp.db, 'faltas');
-                const snapshot = await firebaseApp.firestore.getDocs(faltasRef);
-                let faltas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                const colaboradoresCount = {};
-                const setoresCount = {};
-                
-                faltas.forEach(falta => {
-                    if (falta.colaborador) {
-                        const quantidade = parseInt(falta.quantidade) || 1;
-                        colaboradoresCount[falta.colaborador] = (colaboradoresCount[falta.colaborador] || 0) + quantidade;
-                        
-                        const colaboradorInfo = colaboradoresData.find(c => c.nome === falta.colaborador);
-                        if (colaboradorInfo && colaboradorInfo.departamento) {
-                            setoresCount[colaboradorInfo.departamento] = (setoresCount[colaboradorInfo.departamento] || 0) + quantidade;
-                        }
-                    }
-                });
-                
-                const topColaboradores = Object.entries(colaboradoresCount)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 5);
-                
-                const topColaboradoresList = document.getElementById('top5-faltas-colaboradores');
-                if (topColaboradoresList) {
-                    if (topColaboradores.length === 0) {
-                        topColaboradoresList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
-                    } else {
-                        topColaboradoresList.innerHTML = '';
-                        topColaboradores.forEach(([nome, count], index) => {
-                            const li = document.createElement('li');
-                            li.className = 'top5-item';
-                            li.innerHTML = `
-                                <span class="top5-name">${index + 1}. ${nome}</span>
-                                <span class="top5-value">${count}</span>
-                            `;
-                            topColaboradoresList.appendChild(li);
-                        });
-                    }
-                }
-                
-                const topSetores = Object.entries(setoresCount)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 5);
-                
-                const topSetoresList = document.getElementById('top5-faltas-setores');
-                if (topSetoresList) {
-                    if (topSetores.length === 0) {
-                        topSetoresList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
-                    } else {
-                        topSetoresList.innerHTML = '';
-                        topSetores.forEach(([setor, count], index) => {
-                            const li = document.createElement('li');
-                            li.className = 'top5-item';
-                            li.innerHTML = `
-                                <span class="top5-name">${index + 1}. ${setor}</span>
-                                <span class="top5-value">${count}</span>
-                            `;
-                            topSetoresList.appendChild(li);
-                        });
-                    }
-                }
-                
-            } catch (error) {
-                console.error(`Erro ao atualizar Top 5 Faltas: ${error.message}`);
-            }
-        }
-
-        // Atualizar Top 5 - Feedbacks por Setor
-        async function updateTop5Feedbacks() {
-            try {
-                const feedbacksRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
-                const snapshot = await firebaseApp.firestore.getDocs(feedbacksRef);
-                let feedbacks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                const deptTotal = {};
-                const deptPositivos = {};
-                const deptNeutros = {};
-                const deptMelhorar = {};
-                
-                feedbacks.forEach(feedback => {
-                    if (feedback.departamento) {
-                        deptTotal[feedback.departamento] = (deptTotal[feedback.departamento] || 0) + 
-                            (parseInt(feedback.positivos) || 0) + 
-                            (parseInt(feedback.neutros) || 0) + 
-                            (parseInt(feedback.melhorar) || 0);
-                        
-                        deptPositivos[feedback.departamento] = (deptPositivos[feedback.departamento] || 0) + 
-                            (parseInt(feedback.positivos) || 0);
-                        
-                        deptNeutros[feedback.departamento] = (deptNeutros[feedback.departamento] || 0) + 
-                            (parseInt(feedback.neutros) || 0);
-                        
-                        deptMelhorar[feedback.departamento] = (deptMelhorar[feedback.departamento] || 0) + 
-                            (parseInt(feedback.melhorar) || 0);
-                    }
-                });
-                
-                const topTotal = Object.entries(deptTotal)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 5);
-                
-                const topTotalList = document.getElementById('top5-feedbacks-total');
-                if (topTotalList) {
-                    if (topTotal.length === 0) {
-                        topTotalList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
-                    } else {
-                        topTotalList.innerHTML = '';
-                        topTotal.forEach(([setor, count], index) => {
-                            const li = document.createElement('li');
-                            li.className = 'top5-item';
-                            li.innerHTML = `
-                                <span class="top5-name">${index + 1}. ${setor}</span>
-                                <span class="top5-value">${count}</span>
-                            `;
-                            topTotalList.appendChild(li);
-                        });
-                    }
-                }
-                
-                const topPositivos = Object.entries(deptPositivos)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 5);
-                
-                const topPositivosList = document.getElementById('top5-feedbacks-positivos');
-                if (topPositivosList) {
-                    if (topPositivos.length === 0) {
-                        topPositivosList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
-                    } else {
-                        topPositivosList.innerHTML = '';
-                        topPositivos.forEach(([setor, count], index) => {
-                            const li = document.createElement('li');
-                            li.className = 'top5-item';
-                            li.innerHTML = `
-                                <span class="top5-name">${index + 1}. ${setor}</span>
-                                <span class="top5-value">${count}</span>
-                            `;
-                            topPositivosList.appendChild(li);
-                        });
-                    }
-                }
-                
-                const topNeutros = Object.entries(deptNeutros)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 5);
-                
-                const topNeutrosList = document.getElementById('top5-feedbacks-neutros');
-                if (topNeutrosList) {
-                    if (topNeutros.length === 0) {
-                        topNeutrosList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
-                    } else {
-                        topNeutrosList.innerHTML = '';
-                        topNeutros.forEach(([setor, count], index) => {
-                            const li = document.createElement('li');
-                            li.className = 'top5-item';
-                            li.innerHTML = `
-                                <span class="top5-name">${index + 1}. ${setor}</span>
-                                <span class="top5-value" style="background-color: var(--orange-color);">${count}</span>
-                            `;
-                            topNeutrosList.appendChild(li);
-                        });
-                    }
-                }
-                
-                const topMelhorar = Object.entries(deptMelhorar)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 5);
-                
-                const topMelhorarList = document.getElementById('top5-feedbacks-melhorar');
-                if (topMelhorarList) {
-                    if (topMelhorar.length === 0) {
-                        topMelhorarList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
-                    } else {
-                        topMelhorarList.innerHTML = '';
-                        topMelhorar.forEach(([setor, count], index) => {
-                            const li = document.createElement('li');
-                            li.className = 'top5-item';
-                            li.innerHTML = `
-                                <span class="top5-name">${index + 1}. ${setor}</span>
-                                <span class="top5-value" style="background-color: var(--red-color);">${count}</span>
-                            `;
-                            topMelhorarList.appendChild(li);
-                        });
-                    }
-                }
-                
-            } catch (error) {
-                console.error(`Erro ao atualizar Top 5 Feedbacks: ${error.message}`);
-            }
-        }
-
-        // Atualizar Top 5 - Multas
-        async function updateTop5Multas() {
-            try {
-                const multasRef = firebaseApp.firestore.collection(firebaseApp.db, 'multas');
-                const snapshot = await firebaseApp.firestore.getDocs(multasRef);
-                let multas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                
-                const colaboradoresCount = {};
-                const setoresCount = {};
-                
-                multas.forEach(multa => {
-                    if (multa.colaborador) {
-                        colaboradoresCount[multa.colaborador] = (colaboradoresCount[multa.colaborador] || 0) + 1;
-                        
-                        const colaboradorInfo = colaboradoresData.find(c => c.nome === multa.colaborador);
-                        if (colaboradorInfo && colaboradorInfo.departamento) {
-                            setoresCount[colaboradorInfo.departamento] = (setoresCount[colaboradorInfo.departamento] || 0) + 1;
-                        }
-                    }
-                });
-                
-                const topColaboradores = Object.entries(colaboradoresCount)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 5);
-                
-                const topColaboradoresList = document.getElementById('top5-multas-colaboradores');
-                if (topColaboradoresList) {
-                    if (topColaboradores.length === 0) {
-                        topColaboradoresList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
-                    } else {
-                        topColaboradoresList.innerHTML = '';
-                        topColaboradores.forEach(([nome, count], index) => {
-                            const li = document.createElement('li');
-                            li.className = 'top5-item';
-                            li.innerHTML = `
-                                <span class="top5-name">${index + 1}. ${nome}</span>
-                                <span class="top5-value">${count} multa(s)</span>
-                            `;
-                            topColaboradoresList.appendChild(li);
-                        });
-                    }
-                }
-                
-                const topSetores = Object.entries(setoresCount)
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 5);
-                
-                const topSetoresList = document.getElementById('top5-multas-setores');
-                if (topSetoresList) {
-                    if (topSetores.length === 0) {
-                        topSetoresList.innerHTML = '<li class="top5-empty">Nenhum registro encontrado</li>';
-                    } else {
-                        topSetoresList.innerHTML = '';
-                        topSetores.forEach(([setor, count], index) => {
-                            const li = document.createElement('li');
-                            li.className = 'top5-item';
-                            li.innerHTML = `
-                                <span class="top5-name">${index + 1}. ${setor}</span>
-                                <span class="top5-value">${count} multa(s)</span>
-                            `;
-                            topSetoresList.appendChild(li);
-                        });
-                    }
-                }
-                
-            } catch (error) {
-                console.error(`Erro ao atualizar Top 5 Multas: ${error.message}`);
-            }
-        }
-
         // Atualizar estatísticas de multas
         async function updateMultasStats() {
             try {
@@ -2909,7 +2734,6 @@
                     const filteredDocs = applyTurnoverFilters(docs);
                     updateTableFromSnapshot(section, snapshot, filteredDocs);
                     updateTurnoverTaxaAtual();
-                    updateDashboardTurnover();
                 } else {
                     updateTableFromSnapshot(section, snapshot);
                 }
@@ -4791,7 +4615,7 @@
                 if (success) {
                     showAlert(`${currentSection.charAt(0).toUpperCase() + currentSection.slice(1)} salvo com sucesso!`, 'success', `${currentSection}-alert`);
                     closeModal();
-                    await updateDashboardCounts();
+                    await updateDashboardWithFilters();
                     if (currentSection === 'multas') {
                         await updateMultasStats();
                     }
@@ -4816,7 +4640,6 @@
                     if (currentSection === 'turnover') {
                         await loadTableData('turnover');
                         updateTurnoverTaxaAtual();
-                        updateDashboardTurnover();
                     }
                 } else {
                     showAlert('Erro ao salvar. Verifique o console (F12).', 'error', `${currentSection}-alert`);
@@ -4924,11 +4747,18 @@
                     document.querySelectorAll('.btn-toggle-filters').forEach(btn => {
                         if (btn.id.includes('turnover')) {
                             btn.innerHTML = '<i class="fas fa-filter"></i> Pesquisar por Mês/Ano';
+                        } else if (btn.id.includes('dashboard')) {
+                            btn.innerHTML = '<i class="fas fa-filter"></i> Filtrar Dashboard';
                         } else {
                             btn.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
                         }
                         btn.classList.remove('active');
                     });
+                    
+                    if (targetSection === 'dashboard') {
+                        updateDashboardFilterOptions();
+                        updateDashboardWithFilters();
+                    }
                     
                     if (targetSection === 'colaboradores') {
                         updateColaboradoresFilterOptions();
@@ -5025,7 +4855,6 @@
                     if (targetSection === 'turnover') {
                         loadTableData('turnover');
                         updateTurnoverTaxaAtual();
-                        updateDashboardTurnover();
                     }
                 });
             });
@@ -5041,6 +4870,7 @@
             document.getElementById('add-multa-btn').addEventListener('click', () => openModal('multas', 'add'));
             document.getElementById('add-turnover-btn').addEventListener('click', () => openModal('turnover', 'add'));
 
+            document.getElementById('toggle-filters-dashboard').addEventListener('click', () => toggleFilters('dashboard'));
             document.getElementById('toggle-filters-colaboradores').addEventListener('click', () => toggleFilters('colaboradores'));
             document.getElementById('toggle-filters-advertencias').addEventListener('click', () => toggleFilters('advertencias'));
             document.getElementById('toggle-filters-faltas').addEventListener('click', () => toggleFilters('faltas'));
@@ -5091,6 +4921,33 @@
             document.getElementById('modal').addEventListener('click', function(e) {
                 if (e.target === this) closeModal();
             });
+
+            // Event listeners para os filtros do dashboard
+            document.getElementById('btn-aplicar-filtros-dashboard').addEventListener('click', function() {
+                dashboardFiltros.dataInicio = document.getElementById('filtro-data-inicio-dashboard').value;
+                dashboardFiltros.dataFim = document.getElementById('filtro-data-fim-dashboard').value;
+                dashboardFiltros.departamento = document.getElementById('filtro-departamento-dashboard').value;
+                dashboardFiltros.empresa = document.getElementById('filtro-empresa-dashboard').value;
+                
+                updateDashboardWithFilters();
+                closeFilters('dashboard');
+            });
+
+            document.getElementById('btn-limpar-filtros-dashboard').addEventListener('click', function() {
+                document.getElementById('filtro-data-inicio-dashboard').value = '';
+                document.getElementById('filtro-data-fim-dashboard').value = '';
+                document.getElementById('filtro-departamento-dashboard').value = '';
+                document.getElementById('filtro-empresa-dashboard').value = '';
+                
+                dashboardFiltros = {
+                    dataInicio: '',
+                    dataFim: '',
+                    departamento: '',
+                    empresa: ''
+                };
+                
+                updateDashboardWithFilters();
+            });
         }
 
         window.editItem = function(section, id) {
@@ -5109,7 +4966,7 @@
                 showAlert('Item excluído com sucesso!', 'success', `${section}-alert`);
                 
                 if (['colaboradores', 'advertencias', 'faltas', 'multas', 'feedbacks', 'danos', 'tiposMulta', 'turnover'].includes(section)) {
-                    await updateDashboardCounts();
+                    await updateDashboardWithFilters();
                     if (section === 'multas') {
                         await updateMultasStats();
                     }
@@ -5134,7 +4991,6 @@
                     if (section === 'turnover') {
                         await loadTableData('turnover');
                         updateTurnoverTaxaAtual();
-                        updateDashboardTurnover();
                     }
                 }
             } catch (error) {
