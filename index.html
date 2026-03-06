@@ -539,6 +539,7 @@
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
+            display: inline-block;
         }
 
         .status-active {
@@ -1125,7 +1126,7 @@
                             </div>
                         </div>
                         <div class="card-value" id="dashboard-taxa-turnover">0,00%</div>
-                        <div class="card-change" id="dashboard-turnover-status"><span class="status status-baixo">Baixo</span></div>
+                        <div class="card-change" id="dashboard-turnover-status"><span class="status status-info">Sem dados</span></div>
                     </div>
                 </div>
 
@@ -2473,6 +2474,8 @@
                 const advertencias = await buscarDadosFiltrados('advertencias', 'data');
                 const faltas = await buscarDadosFiltrados('faltas', 'dataInicio');
                 const multas = await buscarDadosFiltrados('multas', 'data');
+                const turnover = await firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'turnover'));
+                const turnoverDocs = turnover.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
                 // Atualizar cards
                 document.getElementById('total-advertencias-dashboard').textContent = advertencias.length;
@@ -2483,6 +2486,28 @@
                     totalMultas += parseFloat(multa.valor) || 0;
                 });
                 document.getElementById('total-multas-dashboard').textContent = `R$ ${totalMultas.toFixed(2)}`;
+                
+                // Calcular taxa de turnover atual
+                const hoje = new Date();
+                const mesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
+                const registroAtual = turnoverDocs.find(r => r.mesAno === mesAtual);
+                
+                if (registroAtual) {
+                    const taxa = registroAtual.taxaTurnover || calcularTaxaTurnover(
+                        registroAtual.colaboradoresInicio,
+                        registroAtual.admissoes,
+                        registroAtual.desligamentos,
+                        registroAtual.colaboradoresFim
+                    );
+                    
+                    const classificacao = classificarTurnover(taxa);
+                    
+                    document.getElementById('dashboard-taxa-turnover').textContent = `${taxa}%`;
+                    document.getElementById('dashboard-turnover-status').innerHTML = `<span class="status ${classificacao.classe}"><i class="fas ${classificacao.icone}" style="margin-right: 5px;"></i>${classificacao.texto}</span>`;
+                } else {
+                    document.getElementById('dashboard-taxa-turnover').textContent = '0,00%';
+                    document.getElementById('dashboard-turnover-status').innerHTML = '<span class="status status-info">Sem dados</span>';
+                }
                 
                 // Atualizar textos do período
                 let periodoTexto = 'Período filtrado';
@@ -2583,6 +2608,7 @@
             setTimeout(() => {
                 updateDashboardFilterOptions();
                 updateAllCharts();
+                updateDashboardWithFilters();
             }, 1000);
             
             console.log('✅ Aplicação inicializada com sucesso!');
@@ -2907,7 +2933,7 @@
                 
                 document.getElementById('turnover-taxa-atual').textContent = `${taxa}%`;
                 const statusElement = document.getElementById('turnover-status-atual');
-                statusElement.innerHTML = `Mês atual - <span style="display: inline-block; padding: 4px 12px; border-radius: 20px; background-color: ${classificacao.classe === 'status-baixo' ? 'rgba(39, 174, 96, 0.2)' : 'rgba(231, 76, 60, 0.2)'}; color: ${classificacao.classe === 'status-baixo' ? 'var(--success-color)' : 'var(--accent-color)'};">${classificacao.texto}</span>`;
+                statusElement.innerHTML = `Mês atual - <span class="status ${classificacao.classe}"><i class="fas ${classificacao.icone}" style="margin-right: 5px;"></i>${classificacao.texto}</span>`;
             } else {
                 document.getElementById('turnover-taxa-atual').textContent = '0,00%';
                 document.getElementById('turnover-status-atual').innerHTML = 'Mês atual - Sem registro';
