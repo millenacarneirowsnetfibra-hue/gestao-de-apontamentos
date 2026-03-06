@@ -879,6 +879,49 @@
             max-height: 280px;
         }
 
+        .top5-list {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .top5-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s;
+        }
+
+        .top5-list-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .top5-list-item .rank {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .top5-list-item .name {
+            flex: 1;
+            margin-left: 15px;
+            font-weight: 500;
+        }
+
+        .top5-list-item .value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
         .top5-empty {
             color: var(--gray-color);
             font-style: italic;
@@ -1086,6 +1129,7 @@
                     </div>
                 </div>
 
+                <!-- Top 5 por Setor (Gráficos) -->
                 <div class="top5-grid">
                     <div class="top5-card">
                         <div class="top5-header">
@@ -1138,6 +1182,99 @@
                         </div>
                         <div class="chart-container">
                             <canvas id="chart-feedbacks-totais-setores"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top 5 por Colaborador (Listas) -->
+                <div class="top5-grid">
+                    <div class="top5-card">
+                        <div class="top5-header">
+                            <i class="fas fa-exclamation-triangle" style="color: var(--warning-color);"></i>
+                            <div class="top5-title">Top 5 - Colaboradores com mais Advertências</div>
+                        </div>
+                        <div class="top5-list" id="top5-advertencias-colaboradores">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="top5-card">
+                        <div class="top5-header">
+                            <i class="fas fa-tools" style="color: #e67e22;"></i>
+                            <div class="top5-title">Top 5 - Colaboradores com mais Danos/Avarias</div>
+                        </div>
+                        <div class="top5-list" id="top5-danos-colaboradores">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="top5-grid">
+                    <div class="top5-card">
+                        <div class="top5-header">
+                            <i class="fas fa-calendar-times" style="color: var(--accent-color);"></i>
+                            <div class="top5-title">Top 5 - Colaboradores com mais Faltas</div>
+                        </div>
+                        <div class="top5-list" id="top5-faltas-colaboradores">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="top5-card">
+                        <div class="top5-header">
+                            <i class="fas fa-money-bill-wave" style="color: var(--secondary-color);"></i>
+                            <div class="top5-title">Top 5 - Colaboradores com mais Multas</div>
+                        </div>
+                        <div class="top5-list" id="top5-multas-colaboradores">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="top5-grid">
+                    <div class="top5-card">
+                        <div class="top5-header">
+                            <i class="fas fa-smile" style="color: var(--success-color);"></i>
+                            <div class="top5-title">Top 5 - Setor com mais Feedbacks Positivos</div>
+                        </div>
+                        <div class="top5-list" id="top5-feedbacks-positivos-setor">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="top5-card">
+                        <div class="top5-header">
+                            <i class="fas fa-meh" style="color: var(--orange-color);"></i>
+                            <div class="top5-title">Top 5 - Setor com mais Feedbacks Neutros</div>
+                        </div>
+                        <div class="top5-list" id="top5-feedbacks-neutros-setor">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="top5-grid">
+                    <div class="top5-card">
+                        <div class="top5-header">
+                            <i class="fas fa-frown" style="color: var(--accent-color);"></i>
+                            <div class="top5-title">Top 5 - Setor com mais Feedbacks a Melhorar</div>
+                        </div>
+                        <div class="top5-list" id="top5-feedbacks-melhorar-setor">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2019,7 +2156,155 @@
             });
         }
 
-        // Função para atualizar todos os gráficos do dashboard
+        // Função para atualizar Top 5 Colaboradores
+        function updateTop5Colaboradores() {
+            try {
+                // Top 5 Colaboradores com mais Advertências
+                const advertenciasPorColaborador = {};
+                firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'advertencias')).then(snapshot => {
+                    snapshot.docs.forEach(doc => {
+                        const data = doc.data();
+                        advertenciasPorColaborador[data.colaborador] = (advertenciasPorColaborador[data.colaborador] || 0) + 1;
+                    });
+                    
+                    const sorted = Object.entries(advertenciasPorColaborador)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 5);
+                    
+                    renderTop5List('top5-advertencias-colaboradores', sorted, 'advertências');
+                }).catch(error => {
+                    console.error('Erro ao carregar top 5 advertências:', error);
+                });
+
+                // Top 5 Colaboradores com mais Danos/Avarias
+                const danosPorColaborador = {};
+                firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'danos')).then(snapshot => {
+                    snapshot.docs.forEach(doc => {
+                        const data = doc.data();
+                        danosPorColaborador[data.colaborador] = (danosPorColaborador[data.colaborador] || 0) + 1;
+                    });
+                    
+                    const sorted = Object.entries(danosPorColaborador)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 5);
+                    
+                    renderTop5List('top5-danos-colaboradores', sorted, 'danos');
+                }).catch(error => {
+                    console.error('Erro ao carregar top 5 danos:', error);
+                });
+
+                // Top 5 Colaboradores com mais Faltas
+                const faltasPorColaborador = {};
+                firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'faltas')).then(snapshot => {
+                    snapshot.docs.forEach(doc => {
+                        const data = doc.data();
+                        const quantidade = parseInt(data.quantidade) || 1;
+                        faltasPorColaborador[data.colaborador] = (faltasPorColaborador[data.colaborador] || 0) + quantidade;
+                    });
+                    
+                    const sorted = Object.entries(faltasPorColaborador)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 5);
+                    
+                    renderTop5List('top5-faltas-colaboradores', sorted, 'dias de falta');
+                }).catch(error => {
+                    console.error('Erro ao carregar top 5 faltas:', error);
+                });
+
+                // Top 5 Colaboradores com mais Multas
+                const multasPorColaborador = {};
+                firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'multas')).then(snapshot => {
+                    snapshot.docs.forEach(doc => {
+                        const data = doc.data();
+                        multasPorColaborador[data.colaborador] = (multasPorColaborador[data.colaborador] || 0) + 1;
+                    });
+                    
+                    const sorted = Object.entries(multasPorColaborador)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 5);
+                    
+                    renderTop5List('top5-multas-colaboradores', sorted, 'multas');
+                }).catch(error => {
+                    console.error('Erro ao carregar top 5 multas:', error);
+                });
+            } catch (error) {
+                console.error('Erro ao atualizar top 5 colaboradores:', error);
+            }
+        }
+
+        // Função para atualizar Top 5 Feedbacks por Setor
+        function updateTop5FeedbacksSetor() {
+            try {
+                firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks')).then(snapshot => {
+                    const feedbacksPorSetor = {
+                        positivos: {},
+                        neutros: {},
+                        melhorar: {}
+                    };
+                    
+                    snapshot.docs.forEach(doc => {
+                        const data = doc.data();
+                        const setor = data.departamento;
+                        
+                        if (setor) {
+                            feedbacksPorSetor.positivos[setor] = (feedbacksPorSetor.positivos[setor] || 0) + (parseInt(data.positivos) || 0);
+                            feedbacksPorSetor.neutros[setor] = (feedbacksPorSetor.neutros[setor] || 0) + (parseInt(data.neutros) || 0);
+                            feedbacksPorSetor.melhorar[setor] = (feedbacksPorSetor.melhorar[setor] || 0) + (parseInt(data.melhorar) || 0);
+                        }
+                    });
+                    
+                    // Ordenar e pegar top 5 para cada categoria
+                    const sortedPositivos = Object.entries(feedbacksPorSetor.positivos)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 5);
+                    
+                    const sortedNeutros = Object.entries(feedbacksPorSetor.neutros)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 5);
+                    
+                    const sortedMelhorar = Object.entries(feedbacksPorSetor.melhorar)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 5);
+                    
+                    renderTop5List('top5-feedbacks-positivos-setor', sortedPositivos, 'feedbacks positivos');
+                    renderTop5List('top5-feedbacks-neutros-setor', sortedNeutros, 'feedbacks neutros');
+                    renderTop5List('top5-feedbacks-melhorar-setor', sortedMelhorar, 'feedbacks a melhorar');
+                    
+                }).catch(error => {
+                    console.error('Erro ao carregar top 5 feedbacks por setor:', error);
+                });
+            } catch (error) {
+                console.error('Erro ao atualizar top 5 feedbacks por setor:', error);
+            }
+        }
+
+        // Função auxiliar para renderizar lista Top 5
+        function renderTop5List(elementId, data, unit) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
+            
+            if (data.length === 0) {
+                container.innerHTML = '<div class="top5-empty">Nenhum dado disponível</div>';
+                return;
+            }
+            
+            let html = '';
+            data.forEach((item, index) => {
+                const [name, value] = item;
+                const rank = index + 1;
+                html += `
+                    <div class="top5-list-item">
+                        <div class="rank">${rank}</div>
+                        <div class="name">${name}</div>
+                        <div class="value">${value} ${unit}</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Função para atualizar todos os gráficos e listas do dashboard
         function updateAllCharts() {
             try {
                 // Advertências por Setor
@@ -2030,9 +2315,7 @@
                     }
                 });
                 
-                // Contar advertências
-                const advertenciasRef = firebaseApp.firestore.collection(firebaseApp.db, 'advertencias');
-                firebaseApp.firestore.getDocs(advertenciasRef).then(snapshot => {
+                firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'advertencias')).then(snapshot => {
                     snapshot.docs.forEach(doc => {
                         const data = doc.data();
                         const colaboradorInfo = colaboradoresData.find(c => c.nome === data.colaborador);
@@ -2174,8 +2457,12 @@
                     console.error('Erro ao carregar feedbacks:', error);
                 });
 
+                // Atualizar Top 5 Colaboradores e Feedbacks por Setor
+                updateTop5Colaboradores();
+                updateTop5FeedbacksSetor();
+
             } catch (error) {
-                console.error('Erro ao atualizar gráficos:', error);
+                console.error('Erro ao atualizar gráficos e listas:', error);
             }
         }
 
@@ -2218,7 +2505,7 @@
                 document.getElementById('faltas-periodo').textContent = periodoTexto;
                 document.getElementById('multas-periodo').textContent = periodoTexto;
                 
-                // Atualizar gráficos
+                // Atualizar gráficos e listas
                 updateAllCharts();
                 
             } catch (error) {
