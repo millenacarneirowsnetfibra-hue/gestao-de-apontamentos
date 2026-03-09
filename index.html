@@ -1120,13 +1120,13 @@
                     </div>
                     <div class="card card-turnover">
                         <div class="card-header">
-                            <div class="card-title">Taxa de Turnover</div>
+                            <div class="card-title">Taxa de Turnover Geral</div>
                             <div class="card-icon" style="background-color: #9b59b6;">
                                 <i class="fas fa-chart-line"></i>
                             </div>
                         </div>
                         <div class="card-value" id="dashboard-taxa-turnover">0,00%</div>
-                        <div class="card-change" id="dashboard-turnover-status"><span class="status status-info">Sem dados</span></div>
+                        <div class="card-change" id="dashboard-turnover-status"><span class="status status-info">Calculado com base em todos os registros</span></div>
                     </div>
                 </div>
 
@@ -1321,9 +1321,9 @@
                     </div>
                     
                     <div class="turnover-card">
-                        <div class="stat-title">Taxa de Turnover Atual</div>
-                        <div class="stat-value" id="turnover-taxa-atual">0,00%</div>
-                        <div class="stat-subtitle" id="turnover-status-atual">Mês atual</div>
+                        <div class="stat-title">Taxa de Turnover Geral</div>
+                        <div class="stat-value" id="turnover-taxa-geral">0,00%</div>
+                        <div class="stat-subtitle" id="turnover-status-geral">Calculado com base em todos os registros</div>
                     </div>
                     
                     <div class="table-container">
@@ -2002,6 +2002,51 @@
         // Elementos DOM
         const firebaseStatus = document.getElementById('firebase-status');
 
+        // Função para calcular taxa de turnover geral
+        async function calcularTurnoverGeral() {
+            try {
+                const turnoverRef = firebaseApp.firestore.collection(firebaseApp.db, 'turnover');
+                const snapshot = await firebaseApp.firestore.getDocs(turnoverRef);
+                const registros = snapshot.docs.map(doc => doc.data());
+                
+                if (registros.length === 0) {
+                    return { taxa: 0, classificacao: 'Sem dados' };
+                }
+
+                let totalDesligamentos = 0;
+                let somaMedias = 0;
+                let mesesValidos = 0;
+
+                registros.forEach(registro => {
+                    const inicio = parseInt(registro.colaboradoresInicio) || 0;
+                    const fim = parseInt(registro.colaboradoresFim) || 0;
+                    const desligamentos = parseInt(registro.desligamentos) || 0;
+                    
+                    if (inicio > 0 && fim > 0) {
+                        const media = (inicio + fim) / 2;
+                        somaMedias += media;
+                        totalDesligamentos += desligamentos;
+                        mesesValidos++;
+                    }
+                });
+
+                if (mesesValidos === 0 || somaMedias === 0) {
+                    return { taxa: 0, classificacao: 'Sem dados suficientes' };
+                }
+
+                const mediaGeral = somaMedias / mesesValidos;
+                const taxaGeral = (totalDesligamentos / (mediaGeral * mesesValidos)) * 100;
+                
+                return {
+                    taxa: taxaGeral.toFixed(2),
+                    classificacao: classificarTurnover(taxaGeral)
+                };
+            } catch (error) {
+                console.error('Erro ao calcular turnover geral:', error);
+                return { taxa: 0, classificacao: 'Erro no cálculo' };
+            }
+        }
+
         // Função para classificar taxa de turnover
         function classificarTurnover(taxa) {
             const taxaNumerica = parseFloat(taxa) || 0;
@@ -2474,8 +2519,6 @@
                 const advertencias = await buscarDadosFiltrados('advertencias', 'data');
                 const faltas = await buscarDadosFiltrados('faltas', 'dataInicio');
                 const multas = await buscarDadosFiltrados('multas', 'data');
-                const turnover = await firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'turnover'));
-                const turnoverDocs = turnover.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 
                 // Atualizar cards
                 document.getElementById('total-advertencias-dashboard').textContent = advertencias.length;
@@ -2487,26 +2530,13 @@
                 });
                 document.getElementById('total-multas-dashboard').textContent = `R$ ${totalMultas.toFixed(2)}`;
                 
-                // Calcular taxa de turnover atual
-                const hoje = new Date();
-                const mesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
-                const registroAtual = turnoverDocs.find(r => r.mesAno === mesAtual);
-                
-                if (registroAtual) {
-                    const taxa = registroAtual.taxaTurnover || calcularTaxaTurnover(
-                        registroAtual.colaboradoresInicio,
-                        registroAtual.admissoes,
-                        registroAtual.desligamentos,
-                        registroAtual.colaboradoresFim
-                    );
-                    
-                    const classificacao = classificarTurnover(taxa);
-                    
-                    document.getElementById('dashboard-taxa-turnover').textContent = `${taxa}%`;
-                    document.getElementById('dashboard-turnover-status').innerHTML = `<span class="status ${classificacao.classe}"><i class="fas ${classificacao.icone}" style="margin-right: 5px;"></i>${classificacao.texto}</span>`;
+                // Calcular turnover geral
+                const turnoverGeral = await calcularTurnoverGeral();
+                document.getElementById('dashboard-taxa-turnover').textContent = `${turnoverGeral.taxa}%`;
+                if (turnoverGeral.classificacao && typeof turnoverGeral.classificacao === 'object') {
+                    document.getElementById('dashboard-turnover-status').innerHTML = `<span class="status ${turnoverGeral.classificacao.classe}"><i class="fas ${turnoverGeral.classificacao.icone}" style="margin-right: 5px;"></i>${turnoverGeral.classificacao.texto}</span>`;
                 } else {
-                    document.getElementById('dashboard-taxa-turnover').textContent = '0,00%';
-                    document.getElementById('dashboard-turnover-status').innerHTML = '<span class="status status-info">Sem dados</span>';
+                    document.getElementById('dashboard-turnover-status').innerHTML = `<span class="status status-info">${turnoverGeral.classificacao}</span>`;
                 }
                 
                 // Atualizar textos do período
@@ -2660,7 +2690,7 @@
                                     turnoverData = docs.sort((a, b) => b.mesAno.localeCompare(a.mesAno));
                                     const filteredDocs = applyTurnoverFilters(docs);
                                     updateTableFromSnapshot(section, snapshot, filteredDocs);
-                                    updateTurnoverTaxaAtual();
+                                    updateTurnoverGeralNoCard();
                                 } else {
                                     updateTableFromSnapshot(section, snapshot);
                                 }
@@ -2676,6 +2706,10 @@
                                 updateMultasFilterOptions();
                                 updateDashboardFilterOptions();
                             }
+                            
+                            if (section === 'turnover') {
+                                updateTurnoverGeralNoCard();
+                            }
                         },
                         (error) => {
                             console.error(`Erro listener ${section}: ${error.message}`);
@@ -2686,6 +2720,26 @@
                     console.error(`Erro ao configurar listener ${section}: ${error.message}`);
                 }
             });
+        }
+
+        // Função para atualizar o card de turnover geral
+        async function updateTurnoverGeralNoCard() {
+            const turnoverGeral = await calcularTurnoverGeral();
+            
+            const turnoverTaxaElement = document.getElementById('turnover-taxa-geral');
+            const turnoverStatusElement = document.getElementById('turnover-status-geral');
+            
+            if (turnoverTaxaElement) {
+                turnoverTaxaElement.textContent = `${turnoverGeral.taxa}%`;
+            }
+            
+            if (turnoverStatusElement) {
+                if (turnoverGeral.classificacao && typeof turnoverGeral.classificacao === 'object') {
+                    turnoverStatusElement.innerHTML = `Calculado com base em todos os registros - <span class="status ${turnoverGeral.classificacao.classe}"><i class="fas ${turnoverGeral.classificacao.icone}" style="margin-right: 5px;"></i>${turnoverGeral.classificacao.texto}</span>`;
+                } else {
+                    turnoverStatusElement.textContent = `Calculado com base em todos os registros - ${turnoverGeral.classificacao}`;
+                }
+            }
         }
 
         // Atualizar opções dos filtros do dashboard
@@ -2864,7 +2918,7 @@
                 updateColaboradoresFilterOptions();
                 updateFeedbackSelects();
                 updateMultasFilterOptions();
-                updateTurnoverTaxaAtual();
+                await updateTurnoverGeralNoCard();
                 
                 const feedbacksRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
                 const feedbacksSnapshot = await firebaseApp.firestore.getDocs(feedbacksRef);
@@ -2912,32 +2966,6 @@
             }
             
             return { valido: true };
-        }
-
-        // Atualizar estatísticas de turnover
-        function updateTurnoverTaxaAtual() {
-            const hoje = new Date();
-            const mesAtual = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
-            
-            const registroAtual = turnoverData.find(r => r.mesAno === mesAtual);
-            
-            if (registroAtual) {
-                const taxa = registroAtual.taxaTurnover || calcularTaxaTurnover(
-                    registroAtual.colaboradoresInicio,
-                    registroAtual.admissoes,
-                    registroAtual.desligamentos,
-                    registroAtual.colaboradoresFim
-                );
-                
-                const classificacao = classificarTurnover(taxa);
-                
-                document.getElementById('turnover-taxa-atual').textContent = `${taxa}%`;
-                const statusElement = document.getElementById('turnover-status-atual');
-                statusElement.innerHTML = `Mês atual - <span class="status ${classificacao.classe}"><i class="fas ${classificacao.icone}" style="margin-right: 5px;"></i>${classificacao.texto}</span>`;
-            } else {
-                document.getElementById('turnover-taxa-atual').textContent = '0,00%';
-                document.getElementById('turnover-status-atual').innerHTML = 'Mês atual - Sem registro';
-            }
         }
 
         // Atualizar estatísticas de danos com filtros
@@ -3076,7 +3104,7 @@
                     turnoverData = docs.sort((a, b) => b.mesAno.localeCompare(a.mesAno));
                     const filteredDocs = applyTurnoverFilters(docs);
                     updateTableFromSnapshot(section, snapshot, filteredDocs);
-                    updateTurnoverTaxaAtual();
+                    await updateTurnoverGeralNoCard();
                 } else {
                     updateTableFromSnapshot(section, snapshot);
                 }
@@ -4982,7 +5010,7 @@
                     }
                     if (currentSection === 'turnover') {
                         await loadTableData('turnover');
-                        updateTurnoverTaxaAtual();
+                        await updateTurnoverGeralNoCard();
                     }
                 } else {
                     showAlert('Erro ao salvar. Verifique o console (F12).', 'error', `${currentSection}-alert`);
@@ -5197,7 +5225,7 @@
                     
                     if (targetSection === 'turnover') {
                         loadTableData('turnover');
-                        updateTurnoverTaxaAtual();
+                        updateTurnoverGeralNoCard();
                     }
                 });
             });
@@ -5333,7 +5361,7 @@
                     }
                     if (section === 'turnover') {
                         await loadTableData('turnover');
-                        updateTurnoverTaxaAtual();
+                        await updateTurnoverGeralNoCard();
                     }
                 }
             } catch (error) {
