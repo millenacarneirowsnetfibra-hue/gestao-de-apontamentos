@@ -75,6 +75,7 @@
             --card-multa: rgba(52, 152, 219, 0.15);
             --card-colaborador: rgba(46, 204, 113, 0.15);
             --card-turnover: rgba(155, 89, 182, 0.15);
+            --card-promocao: rgba(46, 204, 113, 0.15);
         }
 
         * {
@@ -103,6 +104,7 @@
             transition: all 0.3s ease;
             box-shadow: var(--shadow);
             z-index: 100;
+            overflow-y: auto;
         }
 
         .sidebar-header {
@@ -250,6 +252,11 @@
         .card-turnover {
             background: linear-gradient(135deg, #f4e8ff, white);
             border-left-color: #9b59b6;
+        }
+
+        .card-promocao {
+            background: linear-gradient(135deg, #e8f8f5, white);
+            border-left-color: #27ae60;
         }
 
         .card-header {
@@ -1012,6 +1019,7 @@
             <ul class="sidebar-menu">
                 <li><a href="#" class="active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                 <li><a href="#" data-section="turnover"><i class="fas fa-chart-line"></i> Turnover</a></li>
+                <li><a href="#" data-section="promocoes"><i class="fas fa-arrow-up"></i> Promoções</a></li>
                 <li><a href="#" data-section="empresas"><i class="fas fa-building"></i> Empresas</a></li>
                 <li><a href="#" data-section="departamentos"><i class="fas fa-sitemap"></i> Departamentos</a></li>
                 <li><a href="#" data-section="colaboradores"><i class="fas fa-user-tie"></i> Colaboradores</a></li>
@@ -1185,6 +1193,16 @@
                             <canvas id="chart-feedbacks-totais-setores"></canvas>
                         </div>
                     </div>
+                    
+                    <div class="top5-card">
+                        <div class="top5-header">
+                            <i class="fas fa-arrow-up" style="color: #27ae60;"></i>
+                            <div class="top5-title">Top 5 - Promoções por Setor</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart-promocoes-setores"></canvas>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Top 5 por Colaborador (Listas) -->
@@ -1278,6 +1296,18 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="top5-card">
+                        <div class="top5-header">
+                            <i class="fas fa-arrow-up" style="color: #27ae60;"></i>
+                            <div class="top5-title">Top 5 - Colaboradores mais Promovidos</div>
+                        </div>
+                        <div class="top5-list" id="top5-promocoes-colaboradores">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1343,6 +1373,100 @@
                             <tbody id="turnover-table-body">
                                 <tr>
                                     <td colspan="8" class="loading">
+                                        <div class="loading-spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="promocoes" class="section-content" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">🏆 Gestão de Promoções</h3>
+                        <button class="btn btn-primary" id="add-promocao-btn">
+                            <i class="fas fa-plus"></i> Registrar Promoção
+                        </button>
+                    </div>
+                    <div id="promocoes-alert"></div>
+                    
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-title">Total de Promoções</div>
+                            <div class="stat-value" id="stat-promocoes-total">0</div>
+                            <div class="stat-subtitle">registros</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-title">Média de Aumento Salarial</div>
+                            <div class="stat-value" id="stat-promocoes-media">0%</div>
+                            <div class="stat-subtitle">percentual médio</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-title">Maior Aumento</div>
+                            <div class="stat-value" id="stat-promocoes-maior">R$ 0</div>
+                            <div class="stat-subtitle">valor em reais</div>
+                        </div>
+                    </div>
+                    
+                    <div class="btn-filters">
+                        <button class="btn-toggle-filters" id="toggle-filters-promocoes">
+                            <i class="fas fa-filter"></i> Mostrar Filtros
+                        </button>
+                    </div>
+                    
+                    <div class="filters-container" id="filters-promocoes">
+                        <div class="filters-header">
+                            <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                            <button class="close-filters-btn" onclick="closeFilters('promocoes')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-nome-promocao">Nome do Colaborador</label>
+                                <input type="text" id="filtro-nome-promocao" class="filter-input" placeholder="Digite o nome...">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-departamento-promocao">Departamento</label>
+                                <select id="filtro-departamento-promocao" class="filter-input">
+                                    <option value="">Todos os departamentos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-data-inicio-promocao">Data Promoção (Início)</label>
+                                <input type="date" id="filtro-data-inicio-promocao" class="filter-input">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-data-fim-promocao">Data Promoção (Fim)</label>
+                                <input type="date" id="filtro-data-fim-promocao" class="filter-input">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Colaborador</th>
+                                    <th>Departamento</th>
+                                    <th>Cargo Anterior</th>
+                                    <th>Cargo Novo</th>
+                                    <th>Salário Anterior</th>
+                                    <th>Salário Novo</th>
+                                    <th>Aumento</th>
+                                    <th>Data Promoção</th>
+                                    <th>Data Vigência</th>
+                                    <th>Chamado</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="promocoes-table-body">
+                                <tr>
+                                    <td colspan="11" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -1965,7 +2089,8 @@
             feedbacks: 'feedbacks',
             tiposMulta: 'tiposMulta',
             multas: 'multas',
-            turnover: 'turnover'
+            turnover: 'turnover',
+            promocoes: 'promocoes'
         };
 
         // Cache de dados para selects
@@ -1974,6 +2099,7 @@
         let colaboradoresData = [];
         let tiposMultaData = [];
         let turnoverData = [];
+        let promocoesData = [];
 
         // Estado
         let currentSection = 'dashboard';
@@ -1988,7 +2114,8 @@
             danosSetores: null,
             faltasSetores: null,
             multasSetores: null,
-            feedbacksTotaisSetores: null
+            feedbacksTotaisSetores: null,
+            promocoesSetores: null
         };
 
         // Filtros do Dashboard
@@ -2074,10 +2201,10 @@
             if (filtersContainer) {
                 filtersContainer.classList.toggle('show');
                 if (filtersContainer.classList.contains('show')) {
-                    toggleBtn.innerHTML = `<i class="fas fa-times"></i> ${section === 'turnover' ? 'Ocultar Pesquisa' : 'Ocultar Filtros'}`;
+                    toggleBtn.innerHTML = `<i class="fas fa-times"></i> ${section === 'turnover' ? 'Ocultar Pesquisa' : (section === 'promocoes' ? 'Ocultar Filtros' : 'Ocultar Filtros')}`;
                     toggleBtn.classList.add('active');
                 } else {
-                    toggleBtn.innerHTML = `<i class="fas fa-filter"></i> ${section === 'turnover' ? 'Pesquisar por Mês/Ano' : (section === 'dashboard' ? 'Filtrar Dashboard' : 'Mostrar Filtros')}`;
+                    toggleBtn.innerHTML = `<i class="fas fa-filter"></i> ${section === 'turnover' ? 'Pesquisar por Mês/Ano' : (section === 'dashboard' ? 'Filtrar Dashboard' : (section === 'promocoes' ? 'Mostrar Filtros' : 'Mostrar Filtros'))}`;
                     toggleBtn.classList.remove('active');
                 }
             }
@@ -2091,7 +2218,7 @@
             if (filtersContainer) {
                 filtersContainer.classList.remove('show');
                 if (toggleBtn) {
-                    toggleBtn.innerHTML = `<i class="fas fa-filter"></i> ${section === 'turnover' ? 'Pesquisar por Mês/Ano' : (section === 'dashboard' ? 'Filtrar Dashboard' : 'Mostrar Filtros')}`;
+                    toggleBtn.innerHTML = `<i class="fas fa-filter"></i> ${section === 'turnover' ? 'Pesquisar por Mês/Ano' : (section === 'dashboard' ? 'Filtrar Dashboard' : (section === 'promocoes' ? 'Mostrar Filtros' : 'Mostrar Filtros'))}`;
                     toggleBtn.classList.remove('active');
                 }
             }
@@ -2272,6 +2399,23 @@
                     renderTop5List('top5-multas-colaboradores', sorted, 'multas');
                 }).catch(error => {
                     console.error('Erro ao carregar top 5 multas:', error);
+                });
+
+                // Top 5 Colaboradores mais Promovidos
+                const promocoesPorColaborador = {};
+                firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'promocoes')).then(snapshot => {
+                    snapshot.docs.forEach(doc => {
+                        const data = doc.data();
+                        promocoesPorColaborador[data.colaborador] = (promocoesPorColaborador[data.colaborador] || 0) + 1;
+                    });
+                    
+                    const sorted = Object.entries(promocoesPorColaborador)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 5);
+                    
+                    renderTop5List('top5-promocoes-colaboradores', sorted, 'promoções');
+                }).catch(error => {
+                    console.error('Erro ao carregar top 5 promoções:', error);
                 });
             } catch (error) {
                 console.error('Erro ao atualizar top 5 colaboradores:', error);
@@ -2503,6 +2647,36 @@
                     console.error('Erro ao carregar feedbacks:', error);
                 });
 
+                // Promoções por Setor
+                const promocoesSetor = {};
+                departamentosData.forEach(depto => {
+                    if (depto.nome) {
+                        promocoesSetor[depto.nome] = 0;
+                    }
+                });
+                
+                firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'promocoes')).then(snapshot => {
+                    snapshot.docs.forEach(doc => {
+                        const data = doc.data();
+                        const colaboradorInfo = colaboradoresData.find(c => c.nome === data.colaborador);
+                        if (colaboradorInfo && colaboradorInfo.departamento) {
+                            promocoesSetor[colaboradorInfo.departamento] = (promocoesSetor[colaboradorInfo.departamento] || 0) + 1;
+                        }
+                    });
+                    
+                    const sorted = Object.entries(promocoesSetor)
+                        .filter(([_, value]) => value > 0)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 5);
+                    
+                    const labels = sorted.map(item => item[0]);
+                    const data = sorted.map(item => item[1]);
+                    
+                    updatePieChart('chart-promocoes-setores', labels, data, 'Promoções por Setor');
+                }).catch(error => {
+                    console.error('Erro ao carregar promoções:', error);
+                });
+
                 // Atualizar Top 5 Colaboradores e Feedbacks por Setor
                 updateTop5Colaboradores();
                 updateTop5FeedbacksSetor();
@@ -2586,7 +2760,7 @@
                 // Filtrar por departamento
                 if (dashboardFiltros.departamento) {
                     docs = docs.filter(item => {
-                        if (colecao === 'advertencias' || colecao === 'faltas' || colecao === 'multas' || colecao === 'danos') {
+                        if (colecao === 'advertencias' || colecao === 'faltas' || colecao === 'multas' || colecao === 'danos' || colecao === 'promocoes') {
                             const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
                             return colaboradorInfo && colaboradorInfo.departamento === dashboardFiltros.departamento;
                         }
@@ -2597,7 +2771,7 @@
                 // Filtrar por empresa
                 if (dashboardFiltros.empresa) {
                     docs = docs.filter(item => {
-                        if (colecao === 'advertencias' || colecao === 'faltas' || colecao === 'multas' || colecao === 'danos') {
+                        if (colecao === 'advertencias' || colecao === 'faltas' || colecao === 'multas' || colecao === 'danos' || colecao === 'promocoes') {
                             const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
                             return colaboradorInfo && colaboradorInfo.empresa === dashboardFiltros.empresa;
                         }
@@ -2661,7 +2835,7 @@
                             
                             updateCache(section, snapshot);
                             
-                            if (section === currentSection || section === 'colaboradores' || section === 'departamentos' || section === 'feedbacks' || section === 'turnover') {
+                            if (section === currentSection || section === 'colaboradores' || section === 'departamentos' || section === 'feedbacks' || section === 'turnover' || section === 'promocoes') {
                                 const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                                 
                                 if (section === 'colaboradores') {
@@ -2691,19 +2865,24 @@
                                     const filteredDocs = applyTurnoverFilters(docs);
                                     updateTableFromSnapshot(section, snapshot, filteredDocs);
                                     updateTurnoverGeralNoCard();
+                                } else if (section === 'promocoes') {
+                                    const filteredDocs = applyPromocoesFilters(docs);
+                                    updateTableFromSnapshot(section, snapshot, filteredDocs);
+                                    updatePromocoesStats(filteredDocs);
                                 } else {
                                     updateTableFromSnapshot(section, snapshot);
                                 }
                             }
                             
-                            if (section === 'colaboradores' || section === 'advertencias' || section === 'faltas' || section === 'multas' || section === 'danos' || section === 'feedbacks' || section === 'turnover') {
+                            if (section === 'colaboradores' || section === 'advertencias' || section === 'faltas' || section === 'multas' || section === 'danos' || section === 'feedbacks' || section === 'turnover' || section === 'promocoes') {
                                 updateDashboardWithFilters();
                             }
                             
-                            if (section === 'departamentos' || section === 'colaboradores' || section === 'feedbacks') {
+                            if (section === 'departamentos' || section === 'colaboradores' || section === 'feedbacks' || section === 'promocoes') {
                                 updateColaboradoresFilterOptions();
                                 updateFeedbackSelects();
                                 updateMultasFilterOptions();
+                                updatePromocoesFilterOptions();
                                 updateDashboardFilterOptions();
                             }
                             
@@ -2779,6 +2958,41 @@
             mesAno: ''
         };
 
+        // FILTRO DE PROMOÇÕES - Variável de estado
+        let promocoesFiltroAtual = {
+            nome: '',
+            departamento: '',
+            dataInicio: '',
+            dataFim: ''
+        };
+
+        // Função para aplicar filtro de Promoções
+        function applyPromocoesFilters(docs) {
+            let filtered = [...docs];
+            
+            if (promocoesFiltroAtual.nome) {
+                const termo = promocoesFiltroAtual.nome.toLowerCase();
+                filtered = filtered.filter(item => 
+                    item.colaborador && item.colaborador.toLowerCase().includes(termo)
+                );
+            }
+            
+            if (promocoesFiltroAtual.departamento) {
+                filtered = filtered.filter(item => {
+                    const colaboradorInfo = colaboradoresData.find(c => c.nome === item.colaborador);
+                    return colaboradorInfo && colaboradorInfo.departamento === promocoesFiltroAtual.departamento;
+                });
+            }
+            
+            if (promocoesFiltroAtual.dataInicio || promocoesFiltroAtual.dataFim) {
+                filtered = filtered.filter(item => {
+                    return dataEstaNoIntervalo(item.dataPromocao, promocoesFiltroAtual.dataInicio, promocoesFiltroAtual.dataFim);
+                });
+            }
+            
+            return filtered;
+        }
+
         // Função para aplicar filtro de Turnover
         function applyTurnoverFilters(docs) {
             let filtered = [...docs];
@@ -2817,6 +3031,24 @@
             
             const statusElement = document.getElementById('turnover-filtro-status');
             if (statusElement) statusElement.innerHTML = '';
+        }
+
+        // Atualizar opções dos filtros de promoções
+        function updatePromocoesFilterOptions() {
+            const deptoFilter = document.getElementById('filtro-departamento-promocao');
+            
+            if (deptoFilter) {
+                const valorAtual = deptoFilter.value;
+                deptoFilter.innerHTML = '<option value="">Todos os departamentos</option>';
+                const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
+                departamentosUnicos.sort().forEach(depto => {
+                    const option = document.createElement('option');
+                    option.value = depto;
+                    option.textContent = depto;
+                    deptoFilter.appendChild(option);
+                });
+                if (valorAtual) deptoFilter.value = valorAtual;
+            }
         }
 
         // Atualizar opções dos filtros de multas
@@ -2901,6 +3133,8 @@
                 tiposMultaData = docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
             } else if (section === 'turnover') {
                 turnoverData = docs.sort((a, b) => b.mesAno.localeCompare(a.mesAno));
+            } else if (section === 'promocoes') {
+                promocoesData = docs.sort((a, b) => new Date(b.dataPromocao) - new Date(a.dataPromocao));
             }
         }
 
@@ -2918,6 +3152,7 @@
                 updateColaboradoresFilterOptions();
                 updateFeedbackSelects();
                 updateMultasFilterOptions();
+                updatePromocoesFilterOptions();
                 await updateTurnoverGeralNoCard();
                 
                 const feedbacksRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
@@ -2993,6 +3228,38 @@
             
             const statFaltasTotal = document.getElementById('stat-faltas-total');
             if (statFaltasTotal) statFaltasTotal.textContent = totalFaltas;
+        }
+
+        // Atualizar estatísticas de promoções
+        function updatePromocoesStats(promocoes) {
+            let totalPromocoes = promocoes.length;
+            let somaPercentuais = 0;
+            let maiorAumento = 0;
+            
+            promocoes.forEach(promo => {
+                const salarioAntigo = parseFloat(promo.salarioAntigo) || 0;
+                const salarioNovo = parseFloat(promo.salarioNovo) || 0;
+                
+                if (salarioAntigo > 0) {
+                    const percentual = ((salarioNovo - salarioAntigo) / salarioAntigo) * 100;
+                    somaPercentuais += percentual;
+                }
+                
+                const aumento = salarioNovo - salarioAntigo;
+                if (aumento > maiorAumento) {
+                    maiorAumento = aumento;
+                }
+            });
+            
+            const mediaPercentual = totalPromocoes > 0 ? (somaPercentuais / totalPromocoes).toFixed(2) : 0;
+            
+            const statTotal = document.getElementById('stat-promocoes-total');
+            const statMedia = document.getElementById('stat-promocoes-media');
+            const statMaior = document.getElementById('stat-promocoes-maior');
+            
+            if (statTotal) statTotal.textContent = totalPromocoes;
+            if (statMedia) statMedia.textContent = `${mediaPercentual}%`;
+            if (statMaior) statMaior.textContent = `R$ ${maiorAumento.toFixed(2)}`;
         }
 
         // Função para verificar se uma data está no intervalo
@@ -3105,6 +3372,11 @@
                     const filteredDocs = applyTurnoverFilters(docs);
                     updateTableFromSnapshot(section, snapshot, filteredDocs);
                     await updateTurnoverGeralNoCard();
+                } else if (section === 'promocoes') {
+                    promocoesData = docs.sort((a, b) => new Date(b.dataPromocao) - new Date(a.dataPromocao));
+                    const filteredDocs = applyPromocoesFilters(docs);
+                    updateTableFromSnapshot(section, snapshot, filteredDocs);
+                    updatePromocoesStats(filteredDocs);
                 } else {
                     updateTableFromSnapshot(section, snapshot);
                 }
@@ -3144,10 +3416,10 @@
                 docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
             } else if (section === 'tiposMulta') {
                 docs.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
-            } else if (section === 'advertencias' || section === 'multas') {
+            } else if (section === 'advertencias' || section === 'multas' || section === 'promocoes') {
                 docs.sort((a, b) => {
-                    const dataA = parseDateExactly(a.data) || new Date(0);
-                    const dataB = parseDateExactly(b.data) || new Date(0);
+                    const dataA = parseDateExactly(a.data || a.dataPromocao) || new Date(0);
+                    const dataB = parseDateExactly(b.data || b.dataPromocao) || new Date(0);
                     return dataB - dataA;
                 });
             } else if (section === 'faltas') {
@@ -3175,7 +3447,38 @@
             docs.forEach((data) => {
                 const row = document.createElement('tr');
                 
-                if (section === 'turnover') {
+                if (section === 'promocoes') {
+                    const colaboradorInfo = colaboradoresData.find(c => c.nome === data.colaborador);
+                    const departamento = colaboradorInfo ? colaboradorInfo.departamento : 'Não especificado';
+                    const salarioAntigo = parseFloat(data.salarioAntigo || 0).toFixed(2);
+                    const salarioNovo = parseFloat(data.salarioNovo || 0).toFixed(2);
+                    const aumento = (parseFloat(data.salarioNovo) - parseFloat(data.salarioAntigo)).toFixed(2);
+                    const percentual = parseFloat(data.salarioAntigo) > 0 ? 
+                        (((parseFloat(data.salarioNovo) - parseFloat(data.salarioAntigo)) / parseFloat(data.salarioAntigo)) * 100).toFixed(2) : 0;
+                    
+                    row.innerHTML = `
+                        <td><strong>${data.colaborador || 'Não especificado'}</strong></td>
+                        <td>${departamento}</td>
+                        <td>${data.cargoAntigo || 'Não especificado'}</td>
+                        <td><strong>${data.cargoNovo || 'Não especificado'}</strong></td>
+                        <td>R$ ${salarioAntigo}</td>
+                        <td>R$ ${salarioNovo}</td>
+                        <td><span class="badge badge-positivo">+R$ ${aumento} (${percentual}%)</span></td>
+                        <td>${formatDateExactly(data.dataPromocao) || 'Não especificada'}</td>
+                        <td>${formatDateExactly(data.dataVigencia) || 'Não especificada'}</td>
+                        <td><span class="status status-info">${data.chamado || 'Não informado'}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn edit-btn" onclick="editItem('${section}', '${data.id}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete-btn" onclick="deleteItem('${section}', '${data.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                } else if (section === 'turnover') {
                     const taxa = data.taxaTurnover || calcularTaxaTurnover(
                         data.colaboradoresInicio,
                         data.admissoes,
@@ -3446,7 +3749,8 @@
                 feedbacks: 7,
                 tiposMulta: 2,
                 multas: 11,
-                turnover: 8
+                turnover: 8,
+                promocoes: 11
             };
             return columns[section] || 5;
         }
@@ -4357,6 +4661,108 @@
             }
         }
 
+        function loadPromocaoForm(mode = 'add', id = null) {
+            const hoje = new Date();
+            const ano = hoje.getFullYear();
+            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+            const dia = String(hoje.getDate()).padStart(2, '0');
+            const dataAtual = `${ano}-${mes}-${dia}`;
+            
+            let formHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="colaborador">Colaborador *</label>
+                        <select id="colaborador" class="form-control" required>
+                            <option value="">Selecione um colaborador</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="dataPromocao">Data da Promoção *</label>
+                        <input type="date" id="dataPromocao" class="form-control" value="${dataAtual}" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dataVigencia">Data de Vigência *</label>
+                        <input type="date" id="dataVigencia" class="form-control" value="${dataAtual}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="chamado">Número do Chamado *</label>
+                        <input type="text" id="chamado" class="form-control" placeholder="Ex: #1234" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cargoAntigo">Cargo Anterior *</label>
+                        <input type="text" id="cargoAntigo" class="form-control" placeholder="Ex: Assistente" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cargoNovo">Cargo Novo *</label>
+                        <input type="text" id="cargoNovo" class="form-control" placeholder="Ex: Analista" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="salarioAntigo">Salário Anterior (R$) *</label>
+                        <input type="number" id="salarioAntigo" class="form-control" placeholder="0.00" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="salarioNovo">Salário Novo (R$) *</label>
+                        <input type="number" id="salarioNovo" class="form-control" placeholder="0.00" step="0.01" min="0" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex: 100%;">
+                        <label for="aumento">Aumento (Calculado Automaticamente)</label>
+                        <input type="text" id="aumento" class="form-control" readonly placeholder="R$ 0,00 (0%)">
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modal-form').innerHTML = formHTML;
+            
+            const colaboradorSelect = document.getElementById('colaborador');
+            if (colaboradorSelect) {
+                colaboradorSelect.innerHTML = '<option value="">Selecione um colaborador</option>';
+                colaboradoresData.forEach(colab => {
+                    if (colab.nome && colab.status === 'Ativo') {
+                        const option = document.createElement('option');
+                        option.value = colab.nome;
+                        option.textContent = colab.nome;
+                        colaboradorSelect.appendChild(option);
+                    }
+                });
+            }
+            
+            const salarioAntigo = document.getElementById('salarioAntigo');
+            const salarioNovo = document.getElementById('salarioNovo');
+            const aumento = document.getElementById('aumento');
+            
+            function calcularAumento() {
+                const antigo = parseFloat(salarioAntigo.value) || 0;
+                const novo = parseFloat(salarioNovo.value) || 0;
+                
+                if (antigo > 0 && novo > 0) {
+                    const diferenca = novo - antigo;
+                    const percentual = (diferenca / antigo) * 100;
+                    aumento.value = `R$ ${diferenca.toFixed(2)} (${percentual.toFixed(2)}%)`;
+                } else {
+                    aumento.value = 'R$ 0,00 (0%)';
+                }
+            }
+            
+            salarioAntigo.addEventListener('input', calcularAumento);
+            salarioNovo.addEventListener('input', calcularAumento);
+            
+            if (mode === 'edit' && id) {
+                fillFormWithData('promocoes', id);
+                
+                setTimeout(() => {
+                    calcularAumento();
+                }, 200);
+            }
+        }
+
         function populateSelectOptions() {
             const departamentoSelect = document.getElementById('departamento');
             const empresaSelect = document.getElementById('empresa');
@@ -4776,6 +5182,59 @@
             }
         }
 
+        async function savePromocao(formData, mode, id) {
+            try {
+                const collectionName = 'promocoes';
+                
+                if (!formData.colaborador) {
+                    throw new Error('Selecione um colaborador');
+                }
+                
+                const salarioAntigo = parseFloat(formData.salarioAntigo) || 0;
+                const salarioNovo = parseFloat(formData.salarioNovo) || 0;
+                
+                if (salarioAntigo <= 0) {
+                    throw new Error('Informe o salário anterior');
+                }
+                
+                if (salarioNovo <= 0) {
+                    throw new Error('Informe o novo salário');
+                }
+                
+                if (salarioNovo <= salarioAntigo) {
+                    throw new Error('O novo salário deve ser maior que o anterior');
+                }
+                
+                const promocaoData = {
+                    colaborador: formData.colaborador,
+                    dataPromocao: formData.dataPromocao,
+                    dataVigencia: formData.dataVigencia,
+                    chamado: formData.chamado,
+                    cargoAntigo: formData.cargoAntigo,
+                    cargoNovo: formData.cargoNovo,
+                    salarioAntigo: salarioAntigo,
+                    salarioNovo: salarioNovo,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                if (mode === 'add') {
+                    const collectionRef = firebaseApp.firestore.collection(firebaseApp.db, collectionName);
+                    const docRef = await firebaseApp.firestore.addDoc(collectionRef, promocaoData);
+                    console.log(`✅ Promoção registrada com ID: ${docRef.id}`);
+                    return true;
+                } else if (mode === 'edit' && id) {
+                    const docRef = firebaseApp.firestore.doc(firebaseApp.db, collectionName, id);
+                    await firebaseApp.firestore.updateDoc(docRef, promocaoData);
+                    console.log(`✅ Promoção atualizada: ${id}`);
+                    return true;
+                }
+            } catch (error) {
+                console.error(`❌ Erro ao salvar promoção: ${error.message}`);
+                throw error;
+            }
+        }
+
         function openModal(section, mode = 'add', id = null) {
             currentSection = section;
             currentAction = mode;
@@ -4792,7 +5251,8 @@
                 feedbacks: 'Feedbacks',
                 tiposMulta: 'Tipo de Multa',
                 multas: 'Multa',
-                turnover: 'Turnover'
+                turnover: 'Turnover',
+                promocoes: 'Promoção'
             };
             
             document.getElementById('modal-title').textContent = 
@@ -4818,6 +5278,8 @@
                 loadMultaForm(mode, id);
             } else if (section === 'turnover') {
                 loadTurnoverForm(mode, id);
+            } else if (section === 'promocoes') {
+                loadPromocaoForm(mode, id);
             }
             
             document.getElementById('modal').style.display = 'flex';
@@ -4958,6 +5420,37 @@
                 }
             }
             
+            if (currentSection === 'promocoes') {
+                if (!formData.colaborador) {
+                    alert('Por favor, selecione um colaborador.');
+                    return;
+                }
+                if (!formData.chamado) {
+                    alert('Por favor, informe o número do chamado.');
+                    return;
+                }
+                if (!formData.cargoAntigo) {
+                    alert('Por favor, informe o cargo anterior.');
+                    return;
+                }
+                if (!formData.cargoNovo) {
+                    alert('Por favor, informe o novo cargo.');
+                    return;
+                }
+                if (!formData.salarioAntigo || parseFloat(formData.salarioAntigo) <= 0) {
+                    alert('Por favor, informe um salário anterior válido.');
+                    return;
+                }
+                if (!formData.salarioNovo || parseFloat(formData.salarioNovo) <= 0) {
+                    alert('Por favor, informe um novo salário válido.');
+                    return;
+                }
+                if (parseFloat(formData.salarioNovo) <= parseFloat(formData.salarioAntigo)) {
+                    alert('O novo salário deve ser maior que o anterior.');
+                    return;
+                }
+            }
+            
             try {
                 let success = false;
                 
@@ -4981,6 +5474,8 @@
                     success = await saveMulta(formData, currentAction, currentItemId);
                 } else if (currentSection === 'turnover') {
                     success = await saveTurnover(formData, currentAction, currentItemId);
+                } else if (currentSection === 'promocoes') {
+                    success = await savePromocao(formData, currentAction, currentItemId);
                 }
                 
                 if (success) {
@@ -5011,6 +5506,12 @@
                     if (currentSection === 'turnover') {
                         await loadTableData('turnover');
                         await updateTurnoverGeralNoCard();
+                    }
+                    if (currentSection === 'promocoes') {
+                        const snapshot = await firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'promocoes'));
+                        const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                        const filteredDocs = applyPromocoesFilters(docs);
+                        updatePromocoesStats(filteredDocs);
                     }
                 } else {
                     showAlert('Erro ao salvar. Verifique o console (F12).', 'error', `${currentSection}-alert`);
@@ -5083,6 +5584,15 @@
             loadTableData('multas');
         }
 
+        function aplicarFiltrosPromocoesAutomatico() {
+            promocoesFiltroAtual.nome = document.getElementById('filtro-nome-promocao').value;
+            promocoesFiltroAtual.departamento = document.getElementById('filtro-departamento-promocao').value;
+            promocoesFiltroAtual.dataInicio = document.getElementById('filtro-data-inicio-promocao').value;
+            promocoesFiltroAtual.dataFim = document.getElementById('filtro-data-fim-promocao').value;
+            
+            loadTableData('promocoes');
+        }
+
         function setupEventListeners() {
             document.querySelectorAll('.sidebar-menu a').forEach(link => {
                 link.addEventListener('click', function(e) {
@@ -5099,6 +5609,7 @@
                     const titles = {
                         dashboard: 'Dashboard',
                         turnover: 'Turnover',
+                        promocoes: 'Promoções',
                         empresas: 'Empresas',
                         departamentos: 'Departamentos',
                         colaboradores: 'Colaboradores',
@@ -5227,6 +5738,21 @@
                         loadTableData('turnover');
                         updateTurnoverGeralNoCard();
                     }
+                    
+                    if (targetSection === 'promocoes') {
+                        const departamentoSelect = document.getElementById('filtro-departamento-promocao');
+                        if (departamentoSelect) {
+                            departamentoSelect.innerHTML = '<option value="">Todos os departamentos</option>';
+                            const departamentosUnicos = [...new Set(departamentosData.map(d => d.nome).filter(Boolean))];
+                            departamentosUnicos.sort().forEach(depto => {
+                                const option = document.createElement('option');
+                                option.value = depto;
+                                option.textContent = depto;
+                                departamentoSelect.appendChild(option);
+                            });
+                        }
+                        loadTableData('promocoes');
+                    }
                 });
             });
 
@@ -5240,6 +5766,7 @@
             document.getElementById('add-tipo-multa-btn').addEventListener('click', () => openModal('tiposMulta', 'add'));
             document.getElementById('add-multa-btn').addEventListener('click', () => openModal('multas', 'add'));
             document.getElementById('add-turnover-btn').addEventListener('click', () => openModal('turnover', 'add'));
+            document.getElementById('add-promocao-btn').addEventListener('click', () => openModal('promocoes', 'add'));
 
             document.getElementById('toggle-filters-dashboard').addEventListener('click', () => toggleFilters('dashboard'));
             document.getElementById('toggle-filters-colaboradores').addEventListener('click', () => toggleFilters('colaboradores'));
@@ -5249,6 +5776,7 @@
             document.getElementById('toggle-filters-feedbacks').addEventListener('click', () => toggleFilters('feedbacks'));
             document.getElementById('toggle-filters-multas').addEventListener('click', () => toggleFilters('multas'));
             document.getElementById('toggle-filters-turnover').addEventListener('click', () => toggleFilters('turnover'));
+            document.getElementById('toggle-filters-promocoes').addEventListener('click', () => toggleFilters('promocoes'));
 
             document.getElementById('close-modal').addEventListener('click', closeModal);
             document.getElementById('cancel-form').addEventListener('click', closeModal);
@@ -5288,6 +5816,11 @@
             document.getElementById('filtro-mes-turnover').addEventListener('change', aplicarFiltrosTurnoverAutomatico);
             
             document.getElementById('btn-limpar-filtro-turnover').addEventListener('click', limparFiltroTurnover);
+            
+            document.getElementById('filtro-nome-promocao').addEventListener('input', aplicarFiltrosPromocoesAutomatico);
+            document.getElementById('filtro-departamento-promocao').addEventListener('change', aplicarFiltrosPromocoesAutomatico);
+            document.getElementById('filtro-data-inicio-promocao').addEventListener('change', aplicarFiltrosPromocoesAutomatico);
+            document.getElementById('filtro-data-fim-promocao').addEventListener('change', aplicarFiltrosPromocoesAutomatico);
             
             document.getElementById('modal').addEventListener('click', function(e) {
                 if (e.target === this) closeModal();
@@ -5336,7 +5869,7 @@
                 console.log(`✅ ${section} excluído: ${id}`);
                 showAlert('Item excluído com sucesso!', 'success', `${section}-alert`);
                 
-                if (['colaboradores', 'advertencias', 'faltas', 'multas', 'feedbacks', 'danos', 'tiposMulta', 'turnover'].includes(section)) {
+                if (['colaboradores', 'advertencias', 'faltas', 'multas', 'feedbacks', 'danos', 'tiposMulta', 'turnover', 'promocoes'].includes(section)) {
                     await updateDashboardWithFilters();
                     if (section === 'multas') {
                         await updateMultasStats();
@@ -5362,6 +5895,12 @@
                     if (section === 'turnover') {
                         await loadTableData('turnover');
                         await updateTurnoverGeralNoCard();
+                    }
+                    if (section === 'promocoes') {
+                        const snapshot = await firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'promocoes'));
+                        const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                        const filteredDocs = applyPromocoesFilters(docs);
+                        updatePromocoesStats(filteredDocs);
                     }
                 }
             } catch (error) {
