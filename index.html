@@ -938,19 +938,6 @@
             width: 100%;
         }
 
-        .feedback-lists-column {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            height: 100%;
-        }
-
-        .feedback-lists-column .top5-card {
-            height: auto;
-            flex: 1;
-            min-height: 0;
-        }
-
         @media (max-width: 992px) {
             .container {
                 flex-direction: column;
@@ -1108,7 +1095,6 @@
                     </div>
                 </div>
 
-                <!-- Cards de métricas principais (incluindo novo card de promoções) -->
                 <div class="cards-container">
                     <div class="card card-advertencia">
                         <div class="card-header">
@@ -1150,20 +1136,9 @@
                         <div class="card-value" id="dashboard-taxa-turnover">0,00%</div>
                         <div class="card-change" id="dashboard-turnover-status"><span class="status status-info">Calculado com base em todos os registros</span></div>
                     </div>
-                    <!-- Novo card de Total de Promoções -->
-                    <div class="card card-promocao">
-                        <div class="card-header">
-                            <div class="card-title">Total de Promoções</div>
-                            <div class="card-icon" style="background-color: #27ae60;">
-                                <i class="fas fa-arrow-up"></i>
-                            </div>
-                        </div>
-                        <div class="card-value" id="total-promocoes-dashboard">0</div>
-                        <div class="card-change" id="promocoes-periodo">Período filtrado</div>
-                    </div>
                 </div>
 
-                <!-- Linha 1: Advertências (gráfico + lista) -->
+                <!-- Top 5 por Setor (Gráficos) -->
                 <div class="top5-grid">
                     <div class="top5-card">
                         <div class="top5-header">
@@ -1174,6 +1149,64 @@
                             <canvas id="chart-advertencias-setores"></canvas>
                         </div>
                     </div>
+                    
+                    <div class="top5-card">
+                        <div class="top5-header">
+                            <i class="fas fa-tools" style="color: #e67e22;"></i>
+                            <div class="top5-title">Top 5 - Danos/Avarias por Setor</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart-danos-setores"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="top5-grid">
+                    <div class="top5-card">
+                        <div class="top5-header">
+                            <i class="fas fa-calendar-times" style="color: var(--accent-color);"></i>
+                            <div class="top5-title">Top 5 - Faltas por Setor</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart-faltas-setores"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="top5-card">
+                        <div class="top5-header">
+                            <i class="fas fa-money-bill-wave" style="color: var(--secondary-color);"></i>
+                            <div class="top5-title">Top 5 - Multas por Setor</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart-multas-setores"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="top5-grid">
+                    <div class="top5-card">
+                        <div class="top5-header">
+                            <i class="fas fa-comment-dots" style="color: var(--success-color);"></i>
+                            <div class="top5-title">Top 5 - Feedbacks Totais por Setor</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart-feedbacks-totais-setores"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="top5-card">
+                        <div class="top5-header">
+                            <i class="fas fa-arrow-up" style="color: #27ae60;"></i>
+                            <div class="top5-title">Top 5 - Promoções por Setor</div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="chart-promocoes-setores"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top 5 por Colaborador (Listas) -->
+                <div class="top5-grid">
                     <div class="top5-card">
                         <div class="top5-header">
                             <i class="fas fa-exclamation-triangle" style="color: var(--warning-color);"></i>
@@ -1185,19 +1218,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Linha 2: Danos/Avarias (gráfico + lista) -->
-                <div class="top5-grid">
-                    <div class="top5-card">
-                        <div class="top5-header">
-                            <i class="fas fa-tools" style="color: #e67e22;"></i>
-                            <div class="top5-title">Top 5 - Danos/Avarias por Setor</div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="chart-danos-setores"></canvas>
-                        </div>
-                    </div>
                     <div class="top5-card">
                         <div class="top5-header">
                             <i class="fas fa-tools" style="color: #e67e22;"></i>
@@ -1211,17 +1232,7 @@
                     </div>
                 </div>
 
-                <!-- Linha 3: Faltas (gráfico + lista) -->
                 <div class="top5-grid">
-                    <div class="top5-card">
-                        <div class="top5-header">
-                            <i class="fas fa-calendar-times" style="color: var(--accent-color);"></i>
-                            <div class="top5-title">Top 5 - Faltas por Setor</div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="chart-faltas-setores"></canvas>
-                        </div>
-                    </div>
                     <div class="top5-card">
                         <div class="top5-header">
                             <i class="fas fa-calendar-times" style="color: var(--accent-color);"></i>
@@ -1233,19 +1244,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Linha 4: Multas (gráfico + lista) -->
-                <div class="top5-grid">
-                    <div class="top5-card">
-                        <div class="top5-header">
-                            <i class="fas fa-money-bill-wave" style="color: var(--secondary-color);"></i>
-                            <div class="top5-title">Top 5 - Multas por Setor</div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="chart-multas-setores"></canvas>
-                        </div>
-                    </div>
                     <div class="top5-card">
                         <div class="top5-header">
                             <i class="fas fa-money-bill-wave" style="color: var(--secondary-color);"></i>
@@ -1259,17 +1258,45 @@
                     </div>
                 </div>
 
-                <!-- Linha 5: Promoções (gráfico + lista) -->
                 <div class="top5-grid">
                     <div class="top5-card">
                         <div class="top5-header">
-                            <i class="fas fa-arrow-up" style="color: #27ae60;"></i>
-                            <div class="top5-title">Top 5 - Promoções por Setor</div>
+                            <i class="fas fa-smile" style="color: var(--success-color);"></i>
+                            <div class="top5-title">Top 5 - Setor com mais Feedbacks Positivos</div>
                         </div>
-                        <div class="chart-container">
-                            <canvas id="chart-promocoes-setores"></canvas>
+                        <div class="top5-list" id="top5-feedbacks-positivos-setor">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="top5-card">
+                        <div class="top5-header">
+                            <i class="fas fa-meh" style="color: var(--orange-color);"></i>
+                            <div class="top5-title">Top 5 - Setor com mais Feedbacks Neutros</div>
+                        </div>
+                        <div class="top5-list" id="top5-feedbacks-neutros-setor">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="top5-grid">
+                    <div class="top5-card">
+                        <div class="top5-header">
+                            <i class="fas fa-frown" style="color: var(--accent-color);"></i>
+                            <div class="top5-title">Top 5 - Setor com mais Feedbacks a Melhorar</div>
+                        </div>
+                        <div class="top5-list" id="top5-feedbacks-melhorar-setor">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="top5-card">
                         <div class="top5-header">
                             <i class="fas fa-arrow-up" style="color: #27ae60;"></i>
@@ -1282,59 +1309,9 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Linha 6: Feedbacks (gráfico à esquerda, três listas empilhadas à direita) -->
-                <div class="top5-grid" style="grid-template-columns: 1fr 1fr;">
-                    <div class="top5-card">
-                        <div class="top5-header">
-                            <i class="fas fa-comment-dots" style="color: var(--success-color);"></i>
-                            <div class="top5-title">Top 5 - Feedbacks Totais por Setor</div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="chart-feedbacks-totais-setores"></canvas>
-                        </div>
-                    </div>
-                    <div class="feedback-lists-column">
-                        <div class="top5-card">
-                            <div class="top5-header">
-                                <i class="fas fa-smile" style="color: var(--success-color);"></i>
-                                <div class="top5-title">Top 5 - Setor com mais Feedbacks Positivos</div>
-                            </div>
-                            <div class="top5-list" id="top5-feedbacks-positivos-setor">
-                                <div class="loading">
-                                    <div class="loading-spinner"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="top5-card">
-                            <div class="top5-header">
-                                <i class="fas fa-meh" style="color: var(--orange-color);"></i>
-                                <div class="top5-title">Top 5 - Setor com mais Feedbacks Neutros</div>
-                            </div>
-                            <div class="top5-list" id="top5-feedbacks-neutros-setor">
-                                <div class="loading">
-                                    <div class="loading-spinner"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="top5-card">
-                            <div class="top5-header">
-                                <i class="fas fa-frown" style="color: var(--accent-color);"></i>
-                                <div class="top5-title">Top 5 - Setor com mais Feedbacks a Melhorar</div>
-                            </div>
-                            <div class="top5-list" id="top5-feedbacks-melhorar-setor">
-                                <div class="loading">
-                                    <div class="loading-spinner"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            <!-- Demais seções (turnover, promocoes, empresas, etc.) permanecem inalteradas -->
             <div id="turnover" class="section-content" style="display: none;">
-                <!-- conteúdo existente, não alterado -->
                 <div class="section">
                     <div class="section-header">
                         <h3 class="section-title">📊 Gestão de Turnover</h3>
@@ -1344,6 +1321,7 @@
                     </div>
                     <div id="turnover-alert"></div>
                     
+                    <!-- FILTRO DE MÊS/ANO PARA TURNOVER -->
                     <div class="btn-filters">
                         <button class="btn-toggle-filters" id="toggle-filters-turnover">
                             <i class="fas fa-filter"></i> Pesquisar por Mês/Ano
@@ -1404,8 +1382,682 @@
                 </div>
             </div>
 
-            <!-- As demais seções (promocoes, empresas, departamentos, etc.) foram omitidas para brevidade, mas permanecem idênticas ao código original -->
-            <!-- ... (todo o conteúdo original após o dashboard) ... -->
+            <div id="promocoes" class="section-content" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">🏆 Gestão de Promoções</h3>
+                        <button class="btn btn-primary" id="add-promocao-btn">
+                            <i class="fas fa-plus"></i> Registrar Promoção
+                        </button>
+                    </div>
+                    <div id="promocoes-alert"></div>
+                    
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-title">Total de Promoções</div>
+                            <div class="stat-value" id="stat-promocoes-total">0</div>
+                            <div class="stat-subtitle">registros</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-title">Média de Aumento Salarial</div>
+                            <div class="stat-value" id="stat-promocoes-media">0%</div>
+                            <div class="stat-subtitle">percentual médio</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-title">Maior Aumento</div>
+                            <div class="stat-value" id="stat-promocoes-maior">R$ 0</div>
+                            <div class="stat-subtitle">valor em reais</div>
+                        </div>
+                    </div>
+                    
+                    <div class="btn-filters">
+                        <button class="btn-toggle-filters" id="toggle-filters-promocoes">
+                            <i class="fas fa-filter"></i> Mostrar Filtros
+                        </button>
+                    </div>
+                    
+                    <div class="filters-container" id="filters-promocoes">
+                        <div class="filters-header">
+                            <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                            <button class="close-filters-btn" onclick="closeFilters('promocoes')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-nome-promocao">Nome do Colaborador</label>
+                                <input type="text" id="filtro-nome-promocao" class="filter-input" placeholder="Digite o nome...">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-departamento-promocao">Departamento</label>
+                                <select id="filtro-departamento-promocao" class="filter-input">
+                                    <option value="">Todos os departamentos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-data-inicio-promocao">Data Promoção (Início)</label>
+                                <input type="date" id="filtro-data-inicio-promocao" class="filter-input">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-data-fim-promocao">Data Promoção (Fim)</label>
+                                <input type="date" id="filtro-data-fim-promocao" class="filter-input">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Colaborador</th>
+                                    <th>Departamento</th>
+                                    <th>Cargo Anterior</th>
+                                    <th>Cargo Novo</th>
+                                    <th>Salário Anterior</th>
+                                    <th>Salário Novo</th>
+                                    <th>Aumento</th>
+                                    <th>Data Promoção</th>
+                                    <th>Data Alteração</th>
+                                    <th>Chamado</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="promocoes-table-body">
+                                <tr>
+                                    <td colspan="11" class="loading">
+                                        <div class="loading-spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="empresas" class="section-content" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Empresas</h3>
+                        <button class="btn btn-primary" id="add-empresa-btn">Adicionar Empresa</button>
+                    </div>
+                    <div id="empresas-alert"></div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="empresas-table-body">
+                                <tr>
+                                    <td colspan="2" class="loading">
+                                        <div class="loading-spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="departamentos" class="section-content" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Departamentos</h3>
+                        <button class="btn btn-primary" id="add-departamento-btn">Adicionar Departamento</button>
+                    </div>
+                    <div id="departamentos-alert"></div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="departamentos-table-body">
+                                <tr>
+                                    <td colspan="2" class="loading">
+                                        <div class="loading-spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="colaboradores" class="section-content" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Colaboradores</h3>
+                        <button class="btn btn-primary" id="add-colaborador-btn">Adicionar Colaborador</button>
+                    </div>
+                    
+                    <div class="btn-filters">
+                        <button class="btn-toggle-filters" id="toggle-filters-colaboradores">
+                            <i class="fas fa-filter"></i> Mostrar Filtros
+                        </button>
+                    </div>
+                    
+                    <div class="filters-container" id="filters-colaboradores">
+                        <div class="filters-header">
+                            <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                            <button class="close-filters-btn" onclick="closeFilters('colaboradores')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-status-colaborador">Status</label>
+                                <select id="filtro-status-colaborador" class="filter-input">
+                                    <option value="todos">Todos</option>
+                                    <option value="Ativo" selected>Ativos</option>
+                                    <option value="Inativo">Inativos</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-nome-colaborador">Nome</label>
+                                <input type="text" id="filtro-nome-colaborador" class="filter-input" placeholder="Digite o nome...">
+                            </div>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-departamento-colaborador">Departamento</label>
+                                <select id="filtro-departamento-colaborador" class="filter-input">
+                                    <option value="">Todos os departamentos</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-empresa-colaborador">Empresa</label>
+                                <select id="filtro-empresa-colaborador" class="filter-input">
+                                    <option value="">Todas as empresas</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="colaboradores-alert"></div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Departamento</th>
+                                    <th>Empresa</th>
+                                    <th>Data Admissão</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="colaboradores-table-body">
+                                <tr>
+                                    <td colspan="6" class="loading">
+                                        <div class="loading-spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tipos-multa" class="section-content" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Tipos de Multa</h3>
+                        <button class="btn btn-primary" id="add-tipo-multa-btn">
+                            <i class="fas fa-plus"></i> Cadastrar Tipo de Multa
+                        </button>
+                    </div>
+                    <div id="tipos-multa-alert"></div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nome do Tipo</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tiposMulta-table-body">
+                                <tr>
+                                    <td colspan="2" class="loading">
+                                        <div class="loading-spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="advertencias" class="section-content" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Advertências</h3>
+                        <button class="btn btn-primary" id="add-advertencia-btn">Adicionar Advertência</button>
+                    </div>
+                    
+                    <div class="btn-filters">
+                        <button class="btn-toggle-filters" id="toggle-filters-advertencias">
+                            <i class="fas fa-filter"></i> Mostrar Filtros
+                        </button>
+                    </div>
+                    
+                    <div class="filters-container" id="filters-advertencias">
+                        <div class="filters-header">
+                            <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                            <button class="close-filters-btn" onclick="closeFilters('advertencias')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-nome">Nome do Colaborador</label>
+                                <input type="text" id="filtro-nome" class="filter-input" placeholder="Digite o nome...">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-departamento">Departamento</label>
+                                <select id="filtro-departamento" class="filter-input">
+                                    <option value="">Todos os departamentos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-data-inicio">Data Início</label>
+                                <input type="date" id="filtro-data-inicio" class="filter-input">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-data-fim">Data Fim</label>
+                                <input type="date" id="filtro-data-fim" class="filter-input">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="advertencias-alert"></div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Colaborador</th>
+                                    <th>Departamento</th>
+                                    <th>Data</th>
+                                    <th>Motivo</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="advertencias-table-body">
+                                <tr>
+                                    <td colspan="5" class="loading">
+                                        <div class="loading-spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="danos" class="section-content" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Danos e Avarias</h3>
+                        <button class="btn btn-primary" id="add-dano-btn">Registrar Dano/Avaria</button>
+                    </div>
+                    
+                    <div class="btn-filters">
+                        <button class="btn-toggle-filters" id="toggle-filters-danos">
+                            <i class="fas fa-filter"></i> Mostrar Filtros
+                        </button>
+                    </div>
+                    
+                    <div class="filters-container" id="filters-danos">
+                        <div class="filters-header">
+                            <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                            <button class="close-filters-btn" onclick="closeFilters('danos')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-nome-dano">Nome do Colaborador</label>
+                                <input type="text" id="filtro-nome-dano" class="filter-input" placeholder="Digite o nome...">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-departamento-dano">Departamento</label>
+                                <select id="filtro-departamento-dano" class="filter-input">
+                                    <option value="">Todos os departamentos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-data-inicio-dano">Data Início</label>
+                                <input type="date" id="filtro-data-inicio-dano" class="filter-input">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-data-fim-dano">Data Fim</label>
+                                <input type="date" id="filtro-data-fim-dano" class="filter-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="danos-stats-container" style="display: flex; gap: 15px; margin-bottom: 25px;">
+                        <div class="danos-stat-card" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: var(--border-radius); padding: 20px; color: white;">
+                            <div class="stat-title" style="color: rgba(255, 255, 255, 0.9);">Valor Total Gastos</div>
+                            <div class="stat-value" style="color: white; font-size: 2rem; font-weight: 700;" id="stat-danos-valor-total">R$ 0,00</div>
+                            <div class="stat-subtitle" style="color: rgba(255, 255, 255, 0.8);">com filtros aplicados</div>
+                        </div>
+                        <div class="danos-stat-card" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: var(--border-radius); padding: 20px; color: white;">
+                            <div class="stat-title" style="color: rgba(255, 255, 255, 0.9);">Total de Registros</div>
+                            <div class="stat-value" style="color: white; font-size: 2rem; font-weight: 700;" id="stat-danos-total">0</div>
+                            <div class="stat-subtitle" style="color: rgba(255, 255, 255, 0.8);">com filtros aplicados</div>
+                        </div>
+                    </div>
+                    
+                    <div id="danos-alert"></div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Colaborador</th>
+                                    <th>Departamento</th>
+                                    <th>Data</th>
+                                    <th>Motivo</th>
+                                    <th>Valor (R$)</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="danos-table-body">
+                                <tr>
+                                    <td colspan="6" class="loading">
+                                        <div class="loading-spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="faltas" class="section-content" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Faltas</h3>
+                        <button class="btn btn-primary" id="add-falta-btn">Registrar Falta</button>
+                    </div>
+                    
+                    <div class="btn-filters">
+                        <button class="btn-toggle-filters" id="toggle-filters-faltas">
+                            <i class="fas fa-filter"></i> Mostrar Filtros
+                        </button>
+                    </div>
+                    
+                    <div class="filters-container" id="filters-faltas">
+                        <div class="filters-header">
+                            <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                            <button class="close-filters-btn" onclick="closeFilters('faltas')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-nome-falta">Nome do Colaborador</label>
+                                <input type="text" id="filtro-nome-falta" class="filter-input" placeholder="Digite o nome...">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-departamento-falta">Departamento</label>
+                                <select id="filtro-departamento-falta" class="filter-input">
+                                    <option value="">Todos os departamentos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-data-inicio-falta">Data Início</label>
+                                <input type="date" id="filtro-data-inicio-falta" class="filter-input">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-data-fim-falta">Data Fim</label>
+                                <input type="date" id="filtro-data-fim-falta" class="filter-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faltas-stats-container" style="display: flex; gap: 15px; margin-bottom: 25px;">
+                        <div class="faltas-stat-card" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: var(--border-radius); padding: 20px; color: white;">
+                            <div class="stat-title" style="color: rgba(255, 255, 255, 0.9);">Total de Faltas</div>
+                            <div class="stat-value" style="color: white; font-size: 2rem; font-weight: 700;" id="stat-faltas-total">0</div>
+                            <div class="stat-subtitle" style="color: rgba(255, 255, 255, 0.8);">com filtros aplicados</div>
+                        </div>
+                    </div>
+                    
+                    <div id="faltas-alert"></div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Colaborador</th>
+                                    <th>Departamento</th>
+                                    <th>Data da Falta</th>
+                                    <th>Período</th>
+                                    <th>Quantidade</th>
+                                    <th>Justificativa</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="faltas-table-body">
+                                <tr>
+                                    <td colspan="7" class="loading">
+                                        <div class="loading-spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="feedbacks" class="section-content" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Feedbacks</h3>
+                        <button class="btn btn-primary" id="add-feedback-btn">Adicionar Feedback</button>
+                    </div>
+                    
+                    <div class="btn-filters">
+                        <button class="btn-toggle-filters" id="toggle-filters-feedbacks">
+                            <i class="fas fa-filter"></i> Mostrar Filtros
+                        </button>
+                    </div>
+                    
+                    <div class="filters-container" id="filters-feedbacks">
+                        <div class="filters-header">
+                            <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                            <button class="close-filters-btn" onclick="closeFilters('feedbacks')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-mes-feedback">Mês/Ano</label>
+                                <input type="month" id="filtro-mes-feedback" class="filter-input">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-departamento-feedback">Departamento</label>
+                                <select id="filtro-departamento-feedback" class="filter-input">
+                                    <option value="">Todos os departamentos</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-title">Positivos</div>
+                            <div class="stat-value" id="stat-positivos">0</div>
+                            <div class="stat-subtitle" id="stat-positivos-subtitle">Total geral</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-title">Neutros</div>
+                            <div class="stat-value" id="stat-neutros">0</div>
+                            <div class="stat-subtitle" id="stat-neutros-subtitle">Total geral</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-title">A Melhorar</div>
+                            <div class="stat-value" id="stat-melhorar">0</div>
+                            <div class="stat-subtitle" id="stat-melhorar-subtitle">Total geral</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-title">Total</div>
+                            <div class="stat-value" id="stat-total-feedbacks">0</div>
+                            <div class="stat-subtitle" id="stat-total-subtitle">Total geral</div>
+                        </div>
+                    </div>
+                    
+                    <div id="feedbacks-alert"></div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Mês/Ano</th>
+                                    <th>Departamento</th>
+                                    <th>Positivos</th>
+                                    <th>Neutros</th>
+                                    <th>A Melhorar</th>
+                                    <th>Total</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feedbacks-table-body">
+                                <tr>
+                                    <td colspan="7" class="loading">
+                                        <div class="loading-spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="multas" class="section-content" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Gestão de Multas</h3>
+                        <button class="btn btn-primary" id="add-multa-btn">
+                            <i class="fas fa-plus"></i> Registrar Multa
+                        </button>
+                    </div>
+
+                    <div class="btn-filters">
+                        <button class="btn-toggle-filters" id="toggle-filters-multas">
+                            <i class="fas fa-filter"></i> Mostrar Filtros
+                        </button>
+                    </div>
+
+                    <div class="filters-container" id="filters-multas">
+                        <div class="filters-header">
+                            <h4 class="filters-title"><i class="fas fa-filter"></i> Filtros</h4>
+                            <button class="close-filters-btn" onclick="closeFilters('multas')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-nome-multa">Nome do Colaborador</label>
+                                <input type="text" id="filtro-nome-multa" class="filter-input" placeholder="Digite o nome...">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-departamento-multa">Departamento</label>
+                                <select id="filtro-departamento-multa" class="filter-input">
+                                    <option value="">Todos os departamentos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-status-multa">Status</label>
+                                <select id="filtro-status-multa" class="filter-input">
+                                    <option value="">Todos os status</option>
+                                    <option value="Colaborador ciente">Colaborador ciente</option>
+                                    <option value="Aguardando CNH">Aguardando CNH</option>
+                                    <option value="Indicação realizada">Indicação realizada</option>
+                                    <option value="Indicação aceita">Indicação aceita</option>
+                                    <option value="Aguardando penalidade">Aguardando penalidade</option>
+                                    <option value="Desconto Realizado">Desconto Realizado</option>
+                                    <option value="Processo finalizado">Processo finalizado</option>
+                                    <option value="Aguardando recurso">Aguardando recurso</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-placa-multa">Placa do Veículo</label>
+                                <input type="text" id="filtro-placa-multa" class="filter-input" placeholder="Digite a placa...">
+                            </div>
+                        </div>
+                        <div class="filters-row">
+                            <div class="filter-group">
+                                <label for="filtro-ait-multa">Número do AIT</label>
+                                <input type="text" id="filtro-ait-multa" class="filter-input" placeholder="Digite o AIT...">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-data-inicio-multa">Data Início</label>
+                                <input type="date" id="filtro-data-inicio-multa" class="filter-input">
+                            </div>
+                            <div class="filter-group">
+                                <label for="filtro-data-fim-multa">Data Fim</label>
+                                <input type="date" id="filtro-data-fim-multa" class="filter-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="multas-stats-container" style="display: flex; gap: 15px; margin-bottom: 25px;">
+                        <div class="multa-stat-card" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: var(--border-radius); padding: 20px; color: white;">
+                            <div class="stat-title" style="color: rgba(255, 255, 255, 0.9);">Total de Multas</div>
+                            <div class="stat-value" style="color: white; font-size: 2rem; font-weight: 700;" id="stat-multas-total">0</div>
+                            <div class="stat-subtitle" style="color: rgba(255, 255, 255, 0.8);">registros</div>
+                        </div>
+                        <div class="multa-stat-card" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: var(--border-radius); padding: 20px; color: white;">
+                            <div class="stat-title" style="color: rgba(255, 255, 255, 0.9);">Valor Total</div>
+                            <div class="stat-value" style="color: white; font-size: 2rem; font-weight: 700;" id="stat-valor-total">R$ 0,00</div>
+                            <div class="stat-subtitle" style="color: rgba(255, 255, 255, 0.8);">total geral</div>
+                        </div>
+                    </div>
+
+                    <div id="multas-alert"></div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Colaborador</th>
+                                    <th>Departamento</th>
+                                    <th>Data/Hora</th>
+                                    <th>Tipo</th>
+                                    <th>Placa</th>
+                                    <th>AIT</th>
+                                    <th>Local</th>
+                                    <th>Valor (R$)</th>
+                                    <th>Status</th>
+                                    <th>Data Limite</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="multas-table-body">
+                                <tr>
+                                    <td colspan="11" class="loading">
+                                        <div class="loading-spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -2041,7 +2693,6 @@
                 const advertencias = await buscarDadosFiltrados('advertencias', 'data');
                 const faltas = await buscarDadosFiltrados('faltas', 'dataInicio');
                 const multas = await buscarDadosFiltrados('multas', 'data');
-                const promocoes = await buscarDadosFiltrados('promocoes', 'dataPromocao');
                 
                 // Atualizar cards
                 document.getElementById('total-advertencias-dashboard').textContent = advertencias.length;
@@ -2061,9 +2712,6 @@
                 } else {
                     document.getElementById('dashboard-turnover-status').innerHTML = `<span class="status status-info">${turnoverGeral.classificacao}</span>`;
                 }
-
-                // Atualizar total de promoções
-                document.getElementById('total-promocoes-dashboard').textContent = promocoes.length;
                 
                 // Atualizar textos do período
                 let periodoTexto = 'Período filtrado';
@@ -2085,7 +2733,6 @@
                 document.getElementById('advertencias-periodo').textContent = periodoTexto;
                 document.getElementById('faltas-periodo').textContent = periodoTexto;
                 document.getElementById('multas-periodo').textContent = periodoTexto;
-                document.getElementById('promocoes-periodo').textContent = periodoTexto;
                 
                 // Atualizar gráficos e listas
                 updateAllCharts();
