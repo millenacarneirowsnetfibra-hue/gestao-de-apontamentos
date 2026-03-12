@@ -1459,7 +1459,7 @@
                                     <th>Salário Novo</th>
                                     <th>Aumento</th>
                                     <th>Data Promoção</th>
-                                    <th>Data Vigência</th>
+                                    <th>Data Alteração</th>
                                     <th>Chamado</th>
                                     <th>Ações</th>
                                 </tr>
@@ -3465,7 +3465,7 @@
                         <td>R$ ${salarioNovo}</td>
                         <td><span class="badge badge-positivo">+R$ ${aumento} (${percentual}%)</span></td>
                         <td>${formatDateExactly(data.dataPromocao) || 'Não especificada'}</td>
-                        <td>${formatDateExactly(data.dataVigencia) || 'Não especificada'}</td>
+                        <td>${formatDateExactly(data.dataAlteracao) || 'Não especificada'}</td>
                         <td><span class="status status-info">${data.chamado || 'Não informado'}</span></td>
                         <td>
                             <div class="action-buttons">
@@ -5208,7 +5208,7 @@
                 const promocaoData = {
                     colaborador: formData.colaborador,
                     dataPromocao: formData.dataPromocao,
-                    dataVigencia: formData.dataVigencia,
+                    dataAlteracao: formData.dataAlteracao,
                     chamado: formData.chamado,
                     cargoAntigo: formData.cargoAntigo,
                     cargoNovo: formData.cargoNovo,
