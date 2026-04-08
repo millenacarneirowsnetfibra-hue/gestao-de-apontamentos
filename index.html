@@ -1019,6 +1019,7 @@
             <ul class="sidebar-menu">
                 <li><a href="#" class="active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                 <li><a href="#" data-section="turnover"><i class="fas fa-chart-line"></i> Turnover</a></li>
+                <li><a href="#" data-section="rotatividade"><i class="fas fa-exchange-alt"></i> Rotatividade</a></li>
                 <li><a href="#" data-section="promocoes"><i class="fas fa-arrow-up"></i> Promoções</a></li>
                 <li><a href="#" data-section="empresas"><i class="fas fa-building"></i> Empresas</a></li>
                 <li><a href="#" data-section="departamentos"><i class="fas fa-sitemap"></i> Departamentos</a></li>
@@ -1373,6 +1374,36 @@
                             <tbody id="turnover-table-body">
                                 <tr>
                                     <td colspan="8" class="loading">
+                                        <div class="loading-spinner"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="rotatividade" class="section-content" style="display: none;">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">🔄 Rotatividade por Departamento</h3>
+                    </div>
+                    <div id="rotatividade-alert"></div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Departamento</th>
+                                    <th>Total Admissões</th>
+                                    <th>Total Desligamentos</th>
+                                    <th>Média de Colaboradores</th>
+                                    <th>Taxa de Rotatividade</th>
+                                    <th>Classificação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rotatividade-table-body">
+                                <tr>
+                                    <td colspan="6" class="loading">
                                         <div class="loading-spinner"></div>
                                     </td>
                                 </tr>
@@ -2786,6 +2817,75 @@
             }
         }
 
+        // Função para atualizar rotatividade por departamento (NOVA FUNÇÃO)
+        async function atualizarRotatividade() {
+            try {
+                const colaboradores = await firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'colaboradores'));
+                const colaboradoresList = colaboradores.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                const turnover = await firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'turnover'));
+                const turnoverList = turnover.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                // Agrupar por departamento
+                const deptoStats = {};
+                
+                colaboradoresList.forEach(colab => {
+                    const depto = colab.departamento || 'Sem departamento';
+                    if (!deptoStats[depto]) {
+                        deptoStats[depto] = {
+                            colaboradores: 0,
+                            desligamentos: 0,
+                            admissoes: 0
+                        };
+                    }
+                    deptoStats[depto].colaboradores++;
+                    if (colab.status === 'Inativo') {
+                        deptoStats[depto].desligamentos++;
+                    }
+                });
+                
+                turnoverList.forEach(t => {
+                    // Admissões totais por mês - distribuímos igualmente entre departamentos ativos
+                    const admissoes = parseInt(t.admissoes) || 0;
+                    if (admissoes > 0 && Object.keys(deptoStats).length > 0) {
+                        const admissoesPorDepto = Math.floor(admissoes / Object.keys(deptoStats).length);
+                        Object.keys(deptoStats).forEach(depto => {
+                            deptoStats[depto].admissoes += admissoesPorDepto;
+                        });
+                    }
+                });
+                
+                const tbody = document.getElementById('rotatividade-table-body');
+                tbody.innerHTML = '';
+                
+                for (const [depto, stats] of Object.entries(deptoStats)) {
+                    const mediaColab = stats.colaboradores;
+                    const taxa = mediaColab > 0 ? ((stats.desligamentos / mediaColab) * 100).toFixed(2) : 0;
+                    const classificacao = classificarTurnover(taxa);
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${depto}</strong></td>
+                        <td>${stats.admissoes}</td>
+                        <td>${stats.desligamentos}</td>
+                        <td>${mediaColab}</td>
+                        <td><strong>${taxa}%</strong></td>
+                        <td><span class="status ${classificacao.classe}"><i class="fas ${classificacao.icone}" style="margin-right: 5px;"></i>${classificacao.texto}</span></td>
+                    `;
+                    tbody.appendChild(row);
+                }
+                
+                if (tbody.children.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6">Nenhum dado disponível</td></tr>';
+                }
+                
+            } catch (error) {
+                console.error('Erro ao atualizar rotatividade:', error);
+                const tbody = document.getElementById('rotatividade-table-body');
+                if (tbody) tbody.innerHTML = '<tr><td colspan="6">Erro ao carregar dados</td></tr>';
+            }
+        }
+
         // Inicialização
         document.addEventListener('DOMContentLoaded', async function() {
             console.log('Aplicação iniciando...');
@@ -2876,6 +2976,7 @@
                             
                             if (section === 'colaboradores' || section === 'advertencias' || section === 'faltas' || section === 'multas' || section === 'danos' || section === 'feedbacks' || section === 'turnover' || section === 'promocoes') {
                                 updateDashboardWithFilters();
+                                atualizarRotatividade(); // Atualizar rotatividade sempre que houver mudanças
                             }
                             
                             if (section === 'departamentos' || section === 'colaboradores' || section === 'feedbacks' || section === 'promocoes') {
@@ -2888,6 +2989,11 @@
                             
                             if (section === 'turnover') {
                                 updateTurnoverGeralNoCard();
+                                atualizarRotatividade();
+                            }
+                            
+                            if (section === 'colaboradores') {
+                                atualizarRotatividade();
                             }
                         },
                         (error) => {
@@ -3154,6 +3260,7 @@
                 updateMultasFilterOptions();
                 updatePromocoesFilterOptions();
                 await updateTurnoverGeralNoCard();
+                await atualizarRotatividade(); // Carregar rotatividade inicial
                 
                 const feedbacksRef = firebaseApp.firestore.collection(firebaseApp.db, 'feedbacks');
                 const feedbacksSnapshot = await firebaseApp.firestore.getDocs(feedbacksRef);
@@ -3463,7 +3570,7 @@
                         <td><strong>${data.cargoNovo || 'Não especificado'}</strong></td>
                         <td>R$ ${salarioAntigo}</td>
                         <td>R$ ${salarioNovo}</td>
-                        <td><span class="badge badge-positivo">+R$ ${aumento} (${percentual}%)</span></td>
+                        <td><span class="badge-positivo">+R$ ${aumento} (${percentual}%)</span></td>
                         <td>${formatDateExactly(data.dataPromocao) || 'Não especificada'}</td>
                         <td>${formatDateExactly(data.dataAlteracao) || 'Não especificada'}</td>
                         <td><span class="status status-info">${data.chamado || 'Não informado'}</span></td>
@@ -3650,9 +3757,9 @@
                     row.innerHTML = `
                         <td><strong>${mesAnoFormatado}</strong></td>
                         <td>${data.departamento || 'Não especificado'}</td>
-                        <td><span class="badge badge-positivo">${data.positivos || 0}</span></td>
-                        <td><span class="badge badge-neutro">${data.neutros || 0}</span></td>
-                        <td><span class="badge badge-melhorar">${data.melhorar || 0}</span></td>
+                        <td><span class="badge-positivo">${data.positivos || 0}</span></td>
+                        <td><span class="badge-neutro">${data.neutros || 0}</span></td>
+                        <td><span class="badge-melhorar">${data.melhorar || 0}</span></td>
                         <td><strong>${total}</strong></td>
                         <td>
                             <div class="action-buttons">
@@ -5506,12 +5613,16 @@
                     if (currentSection === 'turnover') {
                         await loadTableData('turnover');
                         await updateTurnoverGeralNoCard();
+                        await atualizarRotatividade();
                     }
                     if (currentSection === 'promocoes') {
                         const snapshot = await firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'promocoes'));
                         const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                         const filteredDocs = applyPromocoesFilters(docs);
                         updatePromocoesStats(filteredDocs);
+                    }
+                    if (currentSection === 'colaboradores') {
+                        await atualizarRotatividade();
                     }
                 } else {
                     showAlert('Erro ao salvar. Verifique o console (F12).', 'error', `${currentSection}-alert`);
@@ -5609,6 +5720,7 @@
                     const titles = {
                         dashboard: 'Dashboard',
                         turnover: 'Turnover',
+                        rotatividade: 'Rotatividade',
                         promocoes: 'Promoções',
                         empresas: 'Empresas',
                         departamentos: 'Departamentos',
@@ -5737,6 +5849,10 @@
                     if (targetSection === 'turnover') {
                         loadTableData('turnover');
                         updateTurnoverGeralNoCard();
+                    }
+                    
+                    if (targetSection === 'rotatividade') {
+                        atualizarRotatividade();
                     }
                     
                     if (targetSection === 'promocoes') {
@@ -5895,12 +6011,16 @@
                     if (section === 'turnover') {
                         await loadTableData('turnover');
                         await updateTurnoverGeralNoCard();
+                        await atualizarRotatividade();
                     }
                     if (section === 'promocoes') {
                         const snapshot = await firebaseApp.firestore.getDocs(firebaseApp.firestore.collection(firebaseApp.db, 'promocoes'));
                         const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                         const filteredDocs = applyPromocoesFilters(docs);
                         updatePromocoesStats(filteredDocs);
+                    }
+                    if (section === 'colaboradores') {
+                        await atualizarRotatividade();
                     }
                 }
             } catch (error) {
